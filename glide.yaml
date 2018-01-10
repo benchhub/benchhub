@@ -1,0 +1,15 @@
+package: github.com/benchhub/benchhub
+import:
+- package: github.com/spf13/cobra
+  vcs: git
+  version: 4a7b7e65864c064d48dce82efbbfed2bdc0bf2aa
+# FIXME: we are using sync_local.py to get latest gommon
+- package: github.com/dyweb/gommon
+  vcs: git
+  version: 121cf3258ee39c5e970aa3ce55a1b329c1099b05
+# FIXME: we are using sync_local.py to get latest go.ice
+#- package: github.com/at15/go.ice
+testImport:
+- package: github.com/stretchr/testify
+  vcs: git
+  version: f6abca593680b2315d2075e0f5e2a9751e3f431a

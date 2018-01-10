@@ -22,3 +22,27 @@ https://github.com/kubernetes/community/blob/master/contributors/design-proposal
   - Kube Proxy
     - ? implementation?
     - 'Each node runs a kube-proxy process which programs iptables rules to trap access to service IPs and redirect them to the correct backends'
+
+## Nodes
+
+- https://kubernetes.io/docs/concepts/architecture/nodes/
+  - register in master by human, master will try to reach the node, i.e. using its IP or FQDN provided in meta as name
+  - let node register itself to master when start
+
+````json
+{
+  "kind": "Node",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "10.240.79.157",
+    "labels": {
+      "name": "my-first-k8s-node"
+    }
+  }
+}
+````
+
+- https://kubernetes.io/docs/tasks/debug-application-cluster/monitor-node-health/
+- https://github.com/kubernetes/node-problem-detector
+  - used to detect issues like kernel deadlock, corrupted fs, broken container runtime
+  - seems to have low overhead https://github.com/kubernetes/node-problem-detector/issues/2#issuecomment-220255629

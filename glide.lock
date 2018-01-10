@@ -1,0 +1,13 @@
+hash: 972fa38e88056410bc0b0e6472d7ce947ddb1c7fede78e21c7d6ae8e95eb340c
+updated: 2018-01-09T18:56:43.279302191-08:00
+imports:
+- name: github.com/dyweb/gommon
+  version: 121cf3258ee39c5e970aa3ce55a1b329c1099b05
+  vcs: git
+- name: github.com/spf13/cobra
+  version: 4a7b7e65864c064d48dce82efbbfed2bdc0bf2aa
+  vcs: git
+testImports:
+- name: github.com/stretchr/testify
+  version: f6abca593680b2315d2075e0f5e2a9751e3f431a
+  vcs: git
