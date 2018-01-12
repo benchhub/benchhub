@@ -3,6 +3,7 @@
 import os
 from shutil import copytree, ignore_patterns, rmtree
 
+# deprecated, just comment out glide and let go lookup workspace
 # hard coded path to sync local gommon to vendor folder
 # https://github.com/benchhub/benchboard/issues/4
 
