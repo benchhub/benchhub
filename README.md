@@ -1,2 +1,4 @@
 # benchhub
-Benchub web service for store &amp; explore benchmark results and integration w/ GitHub
+
+Benchub is a web service for store & explore benchmark results.
+It also contains a continuous integration service to automatically run benchmarks.

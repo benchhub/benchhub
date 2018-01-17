@@ -13,7 +13,7 @@ NOTE: this is a draft, and the eventual implementation might be much simpler tha
   - run container/command
   - collect hardware/container metric
   - allow debug on specific machine
-  
+
 ## directory layout
 
 cmd simple`main.go` import package w/ side effect and cobra.Command, no real command logic 
