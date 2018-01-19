@@ -8,6 +8,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { AuthModule } from './auth/auth.module';
+import { DashModule } from './dash/dash.module';
 
 
 @NgModule({
@@ -17,9 +18,10 @@ import { AuthModule } from './auth/auth.module';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    NgZorroAntdModule.forRoot(),
     AuthModule,
-    AppRoutingModule
+    DashModule,
+    AppRoutingModule,
+    NgZorroAntdModule.forRoot()
   ],
   providers: [{provide: NZ_LOCALE, useValue: enUS}],
   bootstrap: [AppComponent]

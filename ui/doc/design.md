@@ -21,3 +21,11 @@ ng generate component auth --module auth --flat --inline-style --inline-template
 ng generate component login --module auth
 ng generate component register --module auth
 ````
+
+- dash has a lot of html and css, so we don't inline them
+
+````bash
+ng generate module dash --routing
+cd src/app/dash
+ng generate component dash --module dash --flat
+````
