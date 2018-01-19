@@ -16,4 +16,8 @@ m for module, c for component
 
 ````bash
 ng generate module auth --routing
+cd src/app/auth
+ng generate component auth --module auth --flat --inline-style --inline-template
+ng generate component login --module auth
+ng generate component register --module auth
 ````
