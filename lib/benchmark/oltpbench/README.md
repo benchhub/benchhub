@@ -6,8 +6,9 @@ TODO
 - config spec
 - result format
 
-I think have run it w/ tpcc using very small scale factor
+DOING
 
-Backlog
+https://github.com/oltpbenchmark/oltpbench/issues/209 trying to clean up config
 
-https://github.com/oltpbenchmark/oltpbench/issues/209
+I think have run it w/ tpcc using very small scale factor https://github.com/benchhub/forks/issues/2
+
