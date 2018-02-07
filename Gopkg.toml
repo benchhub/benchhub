@@ -24,6 +24,9 @@
 #   go-tests = true
 #   unused-packages = true
 
+[[constraint]]
+  name = "github.com/at15/go.ice"
+  revision = "9b07cc6040a22a4fa2200ca77d1db3c244e4cfcf"
 
 [prune]
   go-tests = true

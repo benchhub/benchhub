@@ -6,10 +6,12 @@
   packages = [
     "log",
     "structure",
+    "util/color",
     "util/hashutil",
     "util/runtimeutil"
   ]
-  revision = "415a3166123eb80230e9d9e3fb6623efa51530ba"
+  revision = "e5dc69af993b5eded9b8ee55835c53e142c231e7"
+  version = "v0.0.3"
 
 [solve-meta]
   analyzer-name = "dep"

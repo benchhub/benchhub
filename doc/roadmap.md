@@ -25,6 +25,8 @@ Week 4
 Week 5
 
 - have the whole stuff running?....
+- it's already week 5 ... but I got nothing, except a bunch of survey (as usual)
+  - got a lot of achievement on steam though ...
 
 Week 6
 
