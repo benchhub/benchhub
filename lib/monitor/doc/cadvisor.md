@@ -6,6 +6,20 @@
   - in `manager/watcher` seems to be watching pseudo-fs
   - `manager` is used kubelet https://github.com/kubernetes/kubernetes/blob/master/pkg/kubelet/cadvisor/cadvisor_linux.go 
     - kubelet is used by k8s heapster 
+- to observe the host fs inside a container, cadvisor requires mount `/` to `/rootfs`
+
+````bash
+sudo docker run \
+  --volume=/:/rootfs:ro \
+  --volume=/var/run:/var/run:rw \
+  --volume=/sys:/sys:ro \
+  --volume=/var/lib/docker/:/var/lib/docker:ro \
+  --volume=/dev/disk/:/dev/disk:ro \
+  --publish=8080:8080 \
+  --detach=true \
+  --name=cadvisor \
+  google/cadvisor:latest
+````
 
 - accelerators GPU support
   - nvidia.go using [mindprince/gonvml](https://github.com/mindprince/gonvml) @mindprince works for google ...

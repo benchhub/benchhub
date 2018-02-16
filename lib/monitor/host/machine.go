@@ -18,6 +18,7 @@ func (s *Machine) IsStatic() bool {
 }
 
 func (s *Machine) Update() error {
+	// TODO: NumCPU does not match /proc/stat on travis containerized build https://github.com/benchhub/benchhub/issues/9
 	s.NumCores = runtime.NumCPU()
 	hostname, err := os.Hostname()
 	if err != nil {

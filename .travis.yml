@@ -1,6 +1,6 @@
 # TODO: check the angular project build as well
 language: go
-sudo: false
+sudo: true
 git:
   depth: 3
 
