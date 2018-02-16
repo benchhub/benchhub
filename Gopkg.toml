@@ -26,7 +26,7 @@
 
 [[constraint]]
   name = "github.com/at15/go.ice"
-  revision = "9b07cc6040a22a4fa2200ca77d1db3c244e4cfcf"
+  revision = "5aa595e30ed9e64a5aab8cf1021471bf2025de2b"
 
 [prune]
   go-tests = true

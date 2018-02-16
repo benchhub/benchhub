@@ -6,6 +6,7 @@
   - https://prometheus.io/docs/practices/histograms/
 - [Prometheus: Design and Philosophy - why it is the way it is](https://youtu.be/QgJbxCWRZ1s?t=29m31s)
   - also showed example of promql
+- https://github.com/prometheus/procfs
 
 Metric Types
 

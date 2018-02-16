@@ -4,6 +4,8 @@
 - [ ] does it use go-ps like library to monitor host
 - [ ] does it handle container that is started after cAdvisor has started, if so, how? API or watch folder
   - in `manager/watcher` seems to be watching pseudo-fs
+  - `manager` is used kubelet https://github.com/kubernetes/kubernetes/blob/master/pkg/kubelet/cadvisor/cadvisor_linux.go 
+    - kubelet is used by k8s heapster 
 
 - accelerators GPU support
   - nvidia.go using [mindprince/gonvml](https://github.com/mindprince/gonvml) @mindprince works for google ...
@@ -64,3 +66,31 @@
   - tail `tail-F`
     - use `golang.org/x/exp/inotify`, deprecated by [fsnotify](https://github.com/fsnotify/fsnotify)
   - timed_store a in memory store of data with timestamp, just wrapper for slice
+
+The basic workflow is 
+
+- manager start
+- grab machine info from sysfs, in `machine/info.go` `func Info(sysFs sysfs.SysFs, fsInfo fs.FsInfo, inHostNamespace bool) (*info.MachineInfo, error)`
+- have a map of container data `map[namespacedContainerName]*containerData`, which is update periodically (I believe) 
+  - `func (self *manager) GetContainerInfoV2(containerName string, options v2.RequestOptions) (map[string]v2.ContainerInfo, error)`
+  - `func (c *containerData) GetInfo(shouldUpdateSubcontainers bool) (*containerInfo, error)`
+  - `c.updateSpec()`
+  - `func (c *containerData) updateSpec() error`
+- `colletor` package
+
+````go
+// Manages and runs collectors.
+type CollectorManager interface {
+	// Register a collector.
+	RegisterCollector(collector Collector) error
+
+	// Collect from collectors that are ready and return the next time
+	// at which a collector will be ready to collect from.
+	// Next collection time is always returned, even when an error occurs.
+	// A collection time of zero means no more collection.
+	Collect() (time.Time, map[string][]v1.MetricVal, error)
+
+	// Get metric spec from all registered collectors.
+	GetSpec() ([]v1.MetricSpec, error)
+}
+````
