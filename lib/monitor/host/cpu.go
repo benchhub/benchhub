@@ -10,7 +10,8 @@ import (
 const (
 	// TODO: it seems it is always the case for x86, sysconf(_SC_CLK_TCK) would have the right value
 	// TODO: should we / CPUUserHz like we did in xephon-k collector
-	CPUUserHz = 100
+	CPUUserHz   = 100
+	cpuStatPath = "/proc/stat"
 )
 
 type Cpus struct {
@@ -35,7 +36,7 @@ type Cpu struct {
 
 func NewCpus(path string) *Cpus {
 	if path == "" {
-		path = "/proc/stat"
+		path = cpuStatPath
 	}
 	return &Cpus{
 		path: path,
