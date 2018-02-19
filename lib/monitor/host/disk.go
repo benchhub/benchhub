@@ -36,7 +36,7 @@ const (
 // TODO: what are loop device? https://en.wikipedia.org/wiki/Loop_device
 
 type BlockDevices struct {
-	Devices map[string]*BlockDevice
+	Devices []BlockDevice
 	path    string
 }
 
@@ -71,8 +71,7 @@ func NewBlockDevices(path string) *BlockDevices {
 		path = diskStatPath
 	}
 	return &BlockDevices{
-		Devices: make(map[string]*BlockDevice, 5),
-		path:    path,
+		path: path,
 	}
 }
 
@@ -81,16 +80,16 @@ func (s *BlockDevices) Path() string {
 }
 
 func (s *BlockDevices) Update() error {
-	devices := make(map[string]*BlockDevice, len(s.Devices))
+	devices := make([]BlockDevice, 0, len(s.Devices))
 	err := readFile(s.Path(), func(line string) (stop bool) {
 		parts := strings.Fields(line)
 		// invalid, but don't stop
 		if len(parts) < 14 {
 			return false
 		}
-		device := &BlockDevice{}
-		parseDiskStatLine(parts, device)
-		devices[device.Name] = device
+		device := BlockDevice{}
+		parseDiskStatLine(parts, &device)
+		devices = append(devices, device)
 		return false
 	})
 	s.Devices = devices

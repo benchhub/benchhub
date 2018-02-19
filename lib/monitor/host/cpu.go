@@ -63,12 +63,12 @@ func (s *Cpus) Update() error {
 		if head[:3] != "cpu" {
 			return true
 		}
-		core := &Cpu{}
-		parseCpuStatLine(parts[1:], core)
+		core := Cpu{}
+		parseCpuStatLine(parts[1:], &core)
 		if head == "cpu" {
-			s.Total = *core
+			s.Total = core
 		} else {
-			cores = append(cores, *core)
+			cores = append(cores, core)
 		}
 		return false
 	})

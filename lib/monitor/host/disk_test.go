@@ -12,12 +12,15 @@ func TestBlockDevices_Update(t *testing.T) {
 	devices := NewBlockDevices("testdata/proc/diskstats")
 	assert.Nil(devices.Update())
 
-	assert.Equal("loop0", devices.Devices["loop0"].Name)
-	assert.Equal(uint64(148503), devices.Devices["sda"].ReadsCompleted)
-	assert.Equal(uint64(190248), devices.Devices["sda"].TimeSpentWritingMs)
+	assert.Equal("loop0", devices.Devices[0].Name)
+	assert.Equal("sda", devices.Devices[8].Name)
+	assert.Equal(uint64(148503), devices.Devices[8].ReadsCompleted)
+	assert.Equal(uint64(190248), devices.Devices[8].TimeSpentWritingMs)
 
 	devices = NewBlockDevices("")
 	assert.Nil(devices.Update())
-	// TODO: maybe we should use slice of struct instead of slice of pointer to struct, latter makes default print easier
+	numDevices := len(devices.Devices)
+	assert.Nil(devices.Update())
+	assert.Equal(numDevices, len(devices.Devices))
 	t.Log(devices.Devices)
 }
