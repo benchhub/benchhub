@@ -140,3 +140,7 @@ func parseMemInfo(r io.Reader) (map[string]float64, error) {
 	return memInfo, scanner.Err()
 }
 ````
+
+collector/diskstats_linux.go
+
+- /proc/diskstats

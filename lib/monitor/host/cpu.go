@@ -78,16 +78,16 @@ func (s *Cpus) Update() error {
 
 // The amount of time, measured in units of USER_HZ (1/100ths of a second on most architectures,
 // use sysconf(_SC_CLK_TCK) to obtain the right value)
-func parseCpuStatLine(vals []string, cpu *Cpu) {
-	cpu.User = toUint64(vals[0])
-	cpu.Nice = toUint64(vals[1])
-	cpu.System = toUint64(vals[2])
-	cpu.Idle = toUint64(vals[3])
-	cpu.IOWait = toUint64(vals[4])
-	cpu.Irq = toUint64(vals[5])
-	cpu.SoftIrq = toUint64(vals[6])
-	cpu.Steal = toUint64(vals[7])
+func parseCpuStatLine(fields []string, cpu *Cpu) {
+	cpu.User = toUint64(fields[0])
+	cpu.Nice = toUint64(fields[1])
+	cpu.System = toUint64(fields[2])
+	cpu.Idle = toUint64(fields[3])
+	cpu.IOWait = toUint64(fields[4])
+	cpu.Irq = toUint64(fields[5])
+	cpu.SoftIrq = toUint64(fields[6])
+	cpu.Steal = toUint64(fields[7])
 	// TODO: does vm have this?
-	cpu.Guest = toUint64(vals[8])
-	cpu.GuestNice = toUint64(vals[9])
+	cpu.Guest = toUint64(fields[8])
+	cpu.GuestNice = toUint64(fields[9])
 }

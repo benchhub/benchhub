@@ -13,7 +13,6 @@ const (
 	myname = "bhubcentral"
 )
 
-// TODO: we should not use lib log as top registry, but they are same struct, so it should work
 var log = logutil.Registry
 
 var (

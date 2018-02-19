@@ -2,9 +2,9 @@ package host
 
 import (
 	"testing"
+	"runtime"
 
 	asst "github.com/stretchr/testify/assert"
-	"runtime"
 )
 
 func TestCpus_Update(t *testing.T) {

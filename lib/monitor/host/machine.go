@@ -7,6 +7,8 @@ import (
 	"github.com/pkg/errors"
 )
 
+// TODO: release information from lsb-release and os-release, saw it in gopsutil
+// TODO:
 // Machine contains information about physical node or vm, it won't change unless there are external forces
 type Machine struct {
 	NumCores int
