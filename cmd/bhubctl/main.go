@@ -33,6 +33,7 @@ func main() {
 		icli.LogRegistry(log),
 	)
 	root := cli.Command()
+	root.AddCommand(centralCmd)
 	if err := root.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)

@@ -1,5 +1,6 @@
 VAGRANTFILE_API_VERSION = "2"
 
+# host IP address is 10.0.2.2 from guest perspective
 Vagrant.configure("2") do |config|
   config.vm.define "central", primary: true do |central|
     central.vm.box = "bento/ubuntu-17.10"
