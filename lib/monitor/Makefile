@@ -6,15 +6,12 @@ FLAGS = -X main.version=$(VERSION) -X main.commit=$(BUILD_COMMIT) -X main.buildT
 
 .PHONY: install
 install:
-	go install -ldflags "$(FLAGS)" ./cmd/bhubagent
-	go install -ldflags "$(FLAGS)" ./cmd/bhubcentral
-	go install -ldflags "$(FLAGS)" ./cmd/bhubctl
-	go install -ldflags "$(FLAGS)" ./cmd/bhubdoctor
+	go install -ldflags "$(FLAGS)" ./cmd/bhmon
+
+.PHONY: clean
+clean:
+	rm $(shell which bhmon)
 
 .PHONY: fmt
 fmt:
-	gofmt -d -l -w ./cmd ./lib ./pkg
-
-.PHONY: test
-test:
-	go test -v -cover ./lib/... ./pkg/...
+	gofmt -d -l -w .

@@ -1,0 +1,20 @@
+# TODO: check the angular project build as well
+language: go
+sudo: true
+git:
+  depth: 3
+
+go:
+  - 1.9.x
+  - tip
+
+install:
+  - go get -u github.com/golang/dep/cmd/dep
+  - dep version
+  - dep ensure
+  - pwd
+
+script:
+  - make install
+  - make test
+  # TODO: test install bhmon

@@ -3,6 +3,7 @@
 TODO
 
 - CPU, Memory on Host, per process metrics
+- Network, Disk
 - use fsnotify to monitor events in certain directories?
 - stat
 - iostat
@@ -12,6 +13,9 @@ TODO
 - shared memory `/dev/shm` https://gerardnico.com/wiki/linux/shared_memory
 - https://osquery.io/schema/
 - [ ] description of each metrics?
+
+## Known issues
+
 
 ## Test data
 

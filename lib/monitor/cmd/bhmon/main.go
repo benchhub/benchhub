@@ -6,13 +6,14 @@ import (
 	"runtime"
 
 	icli "github.com/at15/go.ice/ice/cli"
-	"github.com/benchhub/benchhub/pkg/util/logutil"
+	"github.com/benchhub/benchhub/lib/monitor/util/logutil"
 )
 
 const (
-	myname = "bhubcentral"
+	myname = "bhmon"
 )
 
+// TODO: we should not use lib log as top registry, but they are same struct, so it should work
 var log = logutil.Registry
 
 var (
@@ -28,7 +29,7 @@ var buildInfo = icli.BuildInfo{Version: version, Commit: commit, BuildTime: buil
 func main() {
 	cli := icli.New(
 		icli.Name(myname),
-		icli.Description("BenchHub node agent"),
+		icli.Description("BenchHub monitor lib test command"),
 		icli.Version(buildInfo),
 		icli.LogRegistry(log),
 	)
