@@ -7,11 +7,11 @@ import (
 	dlog "github.com/dyweb/gommon/log"
 	"github.com/pkg/errors"
 
-	pb "github.com/benchhub/benchhub/pkg/central/centralpb"
-	rpc "github.com/benchhub/benchhub/pkg/central/transport/grpc"
+	pb "github.com/benchhub/benchhub/pkg/agent/agentpb"
+	rpc "github.com/benchhub/benchhub/pkg/agent/transport/grpc"
 )
 
-var _ rpc.BenchHubCentralServer = (*GrpcServer)(nil)
+var _ rpc.BenchHubAgentServer = (*GrpcServer)(nil)
 
 type GrpcServer struct {
 	log *dlog.Logger
@@ -29,12 +29,4 @@ func (srv *GrpcServer) Ping(ctx context.Context, ping *pb.Ping) (*pb.Pong, error
 	} else {
 		return &pb.Pong{Name: host}, nil
 	}
-}
-
-func (srv *GrpcServer) RegisterAgent(ctx context.Context, req *pb.RegisterReq) (*pb.RegisterRes, error) {
-	// TODO: https://groups.google.com/forum/#!topic/grpc-io/UodEY4N78Sk
-	// tell the agent what its address in central's perspective,
-	//peer, err := peer.FromContext(ctx)
-	//peer.Addr
-	return nil, nil
 }

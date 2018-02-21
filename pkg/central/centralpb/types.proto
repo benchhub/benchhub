@@ -18,3 +18,21 @@ message Ping {
 message Pong {
     string name = 1;
 }
+
+message Node {
+    string addr = 1;
+    string ip = 2;
+    int64 port = 3;
+    int64 uid = 4;
+    string host = 5;
+}
+
+message RegisterReq {
+    Node central = 1;
+    Node agent = 2;
+}
+
+message RegisterRes {
+    Node central = 1;
+    Node agent = 2;
+}

@@ -31,7 +31,7 @@ var cfg config.ServerConfig
 func main() {
 	cli = icli.New(
 		icli.Name(myname),
-		icli.Description("BenchHub node agent"),
+		icli.Description("BenchHub central"),
 		icli.Version(buildInfo),
 		icli.LogRegistry(log),
 	)

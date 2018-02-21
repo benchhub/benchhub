@@ -28,12 +28,12 @@ var buildInfo = icli.BuildInfo{Version: version, Commit: commit, BuildTime: buil
 func main() {
 	cli := icli.New(
 		icli.Name(myname),
-		icli.Description("BenchHub node agent"),
+		icli.Description("BenchHub ctrl"),
 		icli.Version(buildInfo),
 		icli.LogRegistry(log),
 	)
 	root := cli.Command()
-	root.AddCommand(centralCmd)
+	root.AddCommand(centralCmd, agentCmd)
 	if err := root.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
