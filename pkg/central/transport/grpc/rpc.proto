@@ -1,0 +1,22 @@
+// protoc --proto_path=/home/at15/workspace/src/:. --gogo_out=plugins=grpc:. rpc.proto
+syntax = "proto3";
+
+package benchubcentralrpc;
+
+option go_package = "grpc";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "github.com/benchhub/benchhub/pkg/central/centralpb/types.proto";
+
+option (gogoproto.sizer_all) = true;
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+option (gogoproto.goproto_getters_all) = false;
+
+
+service BenchHubCentral {
+    rpc Ping (central.Ping) returns (central.Pong) {
+    }
+    rpc RegisterAgent (central.RegisterReq) returns (central.RegisterRes) {
+    }
+}

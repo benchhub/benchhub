@@ -1,0 +1,22 @@
+VAGRANTFILE_API_VERSION = "2"
+
+# host IP address is 10.0.2.2 from guest perspective
+Vagrant.configure("2") do |config|
+  config.vm.define "central", primary: true do |central|
+    central.vm.box = "bento/ubuntu-17.10"
+    central.vm.hostname = "bhcentral"
+    central.vm.network :private_network, ip: "192.168.32.10"
+  end
+
+  config.vm.define "worker1" do |worker1|
+    worker1.vm.box = "bento/ubuntu-17.10"
+    worker1.vm.hostname = "bhworker1"
+    worker1.vm.network :private_network, ip: "192.168.32.11"
+  end
+
+  config.vm.define "worker2" do |worker2|
+    worker2.vm.box = "bento/ubuntu-17.10"
+    worker2.vm.hostname = "bhworker2"
+    worker2.vm.network :private_network, ip: "192.168.32.12"
+  end
+end

@@ -1,0 +1,6 @@
+grpc:
+  addr: :6082
+  secure: false
+  cert: icehub.crt
+  key: icehub.key
+  enableTracing: false
