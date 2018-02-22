@@ -3,3 +3,11 @@ body {
   background:  url("assets/images/kalen-emsley-98264-unsplash.jpg") no-repeat;
   background-size: cover;
 }
+
+/* start of override ant-d */
+.ant-menu-item {
+  /* TODO: it would become changeable in 0.7.0, currently the only way is to re publish it locally
+  see https://github.com/NG-ZORRO/ng-zorro-antd/issues/984 and many other issues in the repo */
+  /* ugly way to make the font in menu bar bigger, default font size is too small*/
+  font-size: 16px !important;
+}
