@@ -19,6 +19,7 @@ message Pong {
     string name = 1;
 }
 
+// TODO: modify this ...
 message Node {
     string addr = 1;
     string ip = 2;

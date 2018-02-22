@@ -28,7 +28,12 @@ https://github.com/kubernetes/community/blob/master/contributors/design-proposal
 - https://kubernetes.io/docs/concepts/architecture/nodes/
   - register in master by human, master will try to reach the node, i.e. using its IP or FQDN provided in meta as name
   - let node register itself to master when start
-
+- node status
+  - addresses, HostName, External IP, Internal IP
+  - condition, OutOfDisk, Ready, MemoryPressure, DiskPressure, NetworkUnavailable, ConfigOK
+  - capacity, CPU, memory, maximum number of pods 
+  - info, kernel version, k8s version, docker version, os name
+  
 ````json
 {
   "kind": "Node",
@@ -46,3 +51,12 @@ https://github.com/kubernetes/community/blob/master/contributors/design-proposal
 - https://github.com/kubernetes/node-problem-detector
   - used to detect issues like kernel deadlock, corrupted fs, broken container runtime
   - seems to have low overhead https://github.com/kubernetes/node-problem-detector/issues/2#issuecomment-220255629
+  
+## Master Node Communication
+
+- https://kubernetes.io/docs/concepts/architecture/master-node-communication/
+- apiserver -> kublet
+  - fetching logs for pods
+  - attaching through kubectl to running pods
+  - providing the kubelet's port-forwarding functionality
+- apiserver -> nodes, pods and services
