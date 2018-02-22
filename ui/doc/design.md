@@ -28,4 +28,7 @@ ng generate component register --module auth
 ng generate module dash --routing
 cd src/app/dash
 ng generate component dash --module dash --flat
+ng generate component job --module dash
 ````
+
+

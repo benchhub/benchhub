@@ -5,6 +5,7 @@ import { NgZorroAntdModule } from 'ng-zorro-antd';
 
 import { DashRoutingModule } from './dash-routing.module';
 import { DashComponent } from './dash.component';
+import { JobComponent } from './job/job.component';
 
 @NgModule({
   imports: [
@@ -12,6 +13,6 @@ import { DashComponent } from './dash.component';
     DashRoutingModule,
     NgZorroAntdModule
   ],
-  declarations: [DashComponent]
+  declarations: [DashComponent, JobComponent]
 })
 export class DashModule { }
