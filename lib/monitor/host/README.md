@@ -16,6 +16,7 @@ TODO
 
 ## Known issues
 
+- machine disk space only consider filesystem mount to `/`
 
 ## Test data
 

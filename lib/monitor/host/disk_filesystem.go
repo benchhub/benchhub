@@ -13,7 +13,7 @@ const (
 type Filesystem struct {
 	Type int64
 	// Optimal transfer block size
-	BlockSize int64
+	BlockSize uint64
 	// Total data blocks in filesystem
 	Blocks uint64
 	// Free blocks in filesystem
@@ -54,7 +54,7 @@ func (s *Filesystem) Update() error {
 	}
 	// TODO: gopsutil has mapping for filesystem types
 	s.Type = fs.Type
-	s.BlockSize = fs.Bsize
+	s.BlockSize = uint64(fs.Bsize)
 	s.Blocks = fs.Blocks
 	s.BlocksFree = fs.Bfree
 	s.BlocksAvail = fs.Bavail
