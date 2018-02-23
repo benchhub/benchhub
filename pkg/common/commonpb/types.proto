@@ -1,0 +1,43 @@
+// protoc --proto_path=/home/at15/workspace/src/:. --gogo_out=. types.proto
+syntax = "proto3";
+package bhcommon;
+
+option go_package = "commonpb";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.sizer_all) = true;
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+option (gogoproto.goproto_getters_all) = false;
+
+message Ping {
+    string message = 1;
+}
+
+message Pong {
+    string message = 1;
+}
+
+message Node {
+    // addr should be ip:port
+    string addr = 1;
+    string ip = 2;
+    int64 port = 3;
+    // self generated uuid, used through a node agent's lifetime, lost when restart
+    int64 uid = 4;
+    // hostname
+    string host = 5;
+    // unix timestamp
+    int64 startTime = 6;
+    NodeCapacity capticy = 7;
+}
+
+message NodeCapacity {
+    // number of cpu cores
+    int32 cores = 1;
+    // memory in MB
+    int32 memory = 2;
+    // disk space in GB
+    int32 disk = 3;
+}

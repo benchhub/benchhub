@@ -2,13 +2,14 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	dlog "github.com/dyweb/gommon/log"
 	"github.com/pkg/errors"
 
-	pb "github.com/benchhub/benchhub/pkg/agent/agentpb"
 	rpc "github.com/benchhub/benchhub/pkg/agent/transport/grpc"
+	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
 )
 
 var _ rpc.BenchHubAgentServer = (*GrpcServer)(nil)
@@ -23,10 +24,18 @@ func NewGrpcServer() (*GrpcServer, error) {
 	return srv, nil
 }
 
-func (srv *GrpcServer) Ping(ctx context.Context, ping *pb.Ping) (*pb.Pong, error) {
+// TODO: get peer information
+// TODO: https://groups.google.com/forum/#!topic/grpc-io/UodEY4N78Sk
+// tell the agent what its address in central's perspective,
+//peer, err := peer.FromContext(ctx)
+//peer.Addr
+
+func (srv *GrpcServer) Ping(ctx context.Context, ping *pbc.Ping) (*pbc.Pong, error) {
+	srv.log.Infof("got ping, message is %s", ping.Message)
 	if host, err := os.Hostname(); err != nil {
-		return &pb.Pong{Name: "unknown"}, errors.Wrap(err, "can't get hostname")
+		return &pbc.Pong{Message: "pong from unknown"}, errors.Wrap(err, "can't get hostname")
 	} else {
-		return &pb.Pong{Name: host}, nil
+		res := fmt.Sprintf("pong from agent %s your message is %s", host, ping.Message)
+		return &pbc.Pong{Message: res}, nil
 	}
 }

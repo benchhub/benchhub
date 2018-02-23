@@ -7,8 +7,8 @@ import (
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 
-	pb "github.com/benchhub/benchhub/pkg/central/centralpb"
 	mygrpc "github.com/benchhub/benchhub/pkg/central/transport/grpc"
+	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
 )
 
 const (
@@ -41,10 +41,10 @@ func (c *CentralCommand) PingCmd() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			c.mustCreateClient()
 			host, _ := os.Hostname()
-			if res, err := c.client.Ping(context.Background(), &pb.Ping{Name: host}); err != nil {
+			if res, err := c.client.Ping(context.Background(), &pbc.Ping{Message: "ping from " + host}); err != nil {
 				log.Fatal(err)
 			} else {
-				log.Infof("ping finished central host name is %s", res.Name)
+				log.Infof("ping finished central response is %s", res.Message)
 			}
 		},
 	}

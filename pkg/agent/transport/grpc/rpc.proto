@@ -1,6 +1,3 @@
-// TODO: do we need grpc for benchhub now ... we have log and tracing for http api in go.ice
-// even websocket could be more useful than grpc ....
-
 // protoc --proto_path=/home/at15/workspace/src/:. --gogo_out=plugins=grpc:. rpc.proto
 syntax = "proto3";
 
@@ -9,6 +6,7 @@ package benchubcentralrpc;
 option go_package = "grpc";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "github.com/benchhub/benchhub/pkg/common/commonpb/types.proto";
 import "github.com/benchhub/benchhub/pkg/agent/agentpb/types.proto";
 
 option (gogoproto.sizer_all) = true;
@@ -18,6 +16,6 @@ option (gogoproto.goproto_getters_all) = false;
 
 
 service BenchHubAgent {
-    rpc Ping (agent.Ping) returns (agent.Pong) {
+    rpc Ping (bhcommon.Ping) returns (bhcommon.Pong) {
     }
 }
