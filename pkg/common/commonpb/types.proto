@@ -30,7 +30,8 @@ message Node {
     string host = 5;
     // unix timestamp
     int64 startTime = 6;
-    NodeCapacity capticy = 7;
+    NodeCapacity capacity = 7 [(gogoproto.nullable) = false];
+    NodeProvider provider = 8 [(gogoproto.nullable) = false];
 }
 
 message NodeCapacity {
@@ -41,3 +42,33 @@ message NodeCapacity {
     // disk space in GB
     int32 disk = 3;
 }
+
+enum Region {
+    // NOTE: we add the ugly REGION suffix because name of enum should be uinquie inside whole proto file, not just the
+    // enum that declared it, the generated go would have constant with Region prefix ....
+    UNKNOWN_REGION = 0;
+    LOCAL_REGION = 1; // local dev environment
+    US_EAST_REGION = 2;
+    US_WEST_REGION = 3;
+    CN_REGION = 4;
+}
+
+enum Provider {
+    UNKNOWN_PROVIDER = 0;
+    LOCAL_PROVIDER = 1; // local dev environment
+    VAGRANT_PROVIDER = 2; // vagrant, mostly local
+    ALI_PROVIDER = 3;
+    AWS_PROVIDER = 4;
+    AZURE_PROVIDER = 5;
+    GCP_PROVIDER = 6;
+    PACKET_PROVIDER = 7;
+}
+
+message NodeProvider {
+    Provider code = 1;
+    Region regionCode = 2;
+    string name = 3;
+    string region = 4;
+}
+
+// TODO: node price

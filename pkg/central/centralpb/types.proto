@@ -5,10 +5,19 @@ package bhcentral;
 option go_package = "centralpb";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "github.com/benchhub/benchhub/pkg/common/commonpb/types.proto";
 
 option (gogoproto.sizer_all) = true;
 option (gogoproto.marshaler_all) = true;
 option (gogoproto.unmarshaler_all) = true;
 option (gogoproto.goproto_getters_all) = false;
 
-// TODO: register req
+message RegisterAgentReq {
+    bhcommon.Node node = 1;
+}
+
+message RegisterAgentRes {
+    string id = 1; // uinque id for this agent assigned by central
+    bhcommon.Node node = 2 [(gogoproto.nullable) = false]; // addr, ip, port would be added TODO: node should be able to find this out locally
+    bhcommon.Node central = 3 [(gogoproto.nullable) = false]; // all the information about the central
+}

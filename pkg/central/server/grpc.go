@@ -8,6 +8,7 @@ import (
 	dlog "github.com/dyweb/gommon/log"
 	"github.com/pkg/errors"
 
+	pb "github.com/benchhub/benchhub/pkg/central/centralpb"
 	rpc "github.com/benchhub/benchhub/pkg/central/transport/grpc"
 	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
 )
@@ -38,4 +39,12 @@ func (srv *GrpcServer) Ping(ctx context.Context, ping *pbc.Ping) (*pbc.Pong, err
 		res := fmt.Sprintf("pong from central %s your message is %s", host, ping.Message)
 		return &pbc.Pong{Message: res}, nil
 	}
+}
+
+func (srv *GrpcServer) RegisterAgent(ctx context.Context, req *pb.RegisterAgentReq) (*pb.RegisterAgentRes, error) {
+	// TODO:
+	// - check if the node is already registered
+	// - assign it id
+	// - return information about itself
+	return nil, nil
 }
