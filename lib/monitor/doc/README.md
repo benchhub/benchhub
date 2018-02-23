@@ -1,4 +1,8 @@
-# Agent
+# Monitor
+
+## Take away
+
+- use `strace -e trace=file df` to see syscall on file
 
 ## Related Issues
 

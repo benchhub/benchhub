@@ -12,7 +12,10 @@ import (
 // Machine contains information about physical node or vm, it won't change unless there are external forces
 type Machine struct {
 	NumCores int
+	Mem      uint64
 	HostName string
+
+	mem Mem
 }
 
 func (s *Machine) IsStatic() bool {
@@ -27,5 +30,9 @@ func (s *Machine) Update() error {
 		return errors.Wrap(err, "can't get host name")
 	}
 	s.HostName = hostname
+	if err := s.mem.Update(); err != nil {
+		return err
+	}
+	s.Mem = s.mem.MemTotal
 	return nil
 }

@@ -3,6 +3,7 @@ package host
 import (
 	"testing"
 
+	"github.com/davecgh/go-spew/spew"
 	asst "github.com/stretchr/testify/assert"
 )
 
@@ -22,5 +23,5 @@ func TestBlockDevices_Update(t *testing.T) {
 	numDevices := len(devices.Devices)
 	assert.Nil(devices.Update())
 	assert.Equal(numDevices, len(devices.Devices))
-	t.Log(devices.Devices)
+	spew.Dump(devices.Devices)
 }
