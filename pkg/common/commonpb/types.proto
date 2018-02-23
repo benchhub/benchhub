@@ -1,0 +1,74 @@
+// protoc --proto_path=/home/at15/workspace/src/:. --gogo_out=. types.proto
+syntax = "proto3";
+package bhcommon;
+
+option go_package = "commonpb";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.sizer_all) = true;
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+option (gogoproto.goproto_getters_all) = false;
+
+message Ping {
+    string message = 1;
+}
+
+message Pong {
+    string message = 1;
+}
+
+message Node {
+    // addr should be ip:port
+    string addr = 1;
+    string ip = 2;
+    int64 port = 3;
+    // self generated uuid, used through a node agent's lifetime, lost when restart
+    int64 uid = 4;
+    // hostname
+    string host = 5;
+    // unix timestamp
+    int64 startTime = 6;
+    NodeCapacity capacity = 7 [(gogoproto.nullable) = false];
+    NodeProvider provider = 8 [(gogoproto.nullable) = false];
+}
+
+message NodeCapacity {
+    // number of cpu cores
+    int32 cores = 1;
+    // memory in MB
+    int32 memory = 2;
+    // disk space in GB
+    int32 disk = 3;
+}
+
+enum Region {
+    // NOTE: we add the ugly REGION suffix because name of enum should be uinquie inside whole proto file, not just the
+    // enum that declared it, the generated go would have constant with Region prefix ....
+    UNKNOWN_REGION = 0;
+    LOCAL_REGION = 1; // local dev environment
+    US_EAST_REGION = 2;
+    US_WEST_REGION = 3;
+    CN_REGION = 4;
+}
+
+enum Provider {
+    UNKNOWN_PROVIDER = 0;
+    LOCAL_PROVIDER = 1; // local dev environment
+    VAGRANT_PROVIDER = 2; // vagrant, mostly local
+    ALI_PROVIDER = 3;
+    AWS_PROVIDER = 4;
+    AZURE_PROVIDER = 5;
+    GCP_PROVIDER = 6;
+    PACKET_PROVIDER = 7;
+}
+
+message NodeProvider {
+    Provider code = 1;
+    Region regionCode = 2;
+    string name = 3;
+    string region = 4;
+}
+
+// TODO: node price

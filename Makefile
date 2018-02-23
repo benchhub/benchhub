@@ -11,6 +11,10 @@ install:
 	go install -ldflags "$(FLAGS)" ./cmd/bhubctl
 	go install -ldflags "$(FLAGS)" ./cmd/bhubdoctor
 
+.PHONY: generate
+generate:
+	gommon generate -v
+
 .PHONY: fmt
 fmt:
 	gofmt -d -l -w ./cmd ./lib ./pkg

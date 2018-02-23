@@ -2,8 +2,11 @@
 <nz-layout>
   <nz-sider nzCollapsible [(nzCollapsed)]="isCollapsed" [nzTrigger]="null">
     <div class="logo">
+      <!-- TODO: the image is not shown fully when the side bar is expanded -->
+      <img src="assets/images/benchhub.png" alt="BenchHub" style="max-height: 100%;max-width: 100%">
     </div>
     <ul nz-menu [nzTheme]="'dark'" [nzMode]="isCollapsed?'vertical':'inline'">
+      <!--
       <li nz-submenu>
         <span title><i class="anticon anticon-user"></i><span class="nav-text">User</span></span>
         <ul>
@@ -12,29 +15,28 @@
           <li nz-menu-item>Alex</li>
         </ul>
       </li>
-      <li nz-submenu>
-        <span title><i class="anticon anticon-team"></i><span class="nav-text">Team</span></span>
-        <ul>
-          <li nz-menu-item>Team 1</li>
-          <li nz-menu-item>Team 2</li>
-        </ul>
-      </li>
-      <li nz-menu-item><span><i class="anticon anticon-file"></i><span class="nav-text">File</span></span></li>
+      -->
+      <li nz-menu-item><a routerLink="job"><i class="anticon anticon-shopping-cart"></i><span
+        class="nav-text">Job</span></a></li>
+      <li nz-menu-item><a routerLink="about"><i class="anticon anticon-info-circle"></i><span
+        class="nav-text">About</span></a></li>
     </ul>
   </nz-sider>
   <nz-layout>
     <nz-header style="background: #fff; padding:0;">
-      <i class="anticon trigger" [class.anticon-menu-fold]="!isCollapsed" [class.anticon-menu-unfold]="isCollapsed" (click)="isCollapsed=!isCollapsed"></i>
+      <i class="anticon trigger" [class.anticon-menu-fold]="!isCollapsed" [class.anticon-menu-unfold]="isCollapsed"
+         (click)="isCollapsed=!isCollapsed"></i>
     </nz-header>
     <nz-content style="margin:0 16px;">
+      <!-- TODO: real breadcrumb -->
       <nz-breadcrumb style="margin:12px 0;">
         <nz-breadcrumb-item>User</nz-breadcrumb-item>
         <nz-breadcrumb-item>Bill</nz-breadcrumb-item>
       </nz-breadcrumb>
       <div style="padding:24px; background: #fff; min-height: 360px;">
-        TODO: this should be router outlet
+        <router-outlet></router-outlet>
       </div>
     </nz-content>
-    <nz-footer style="text-align: center;">Ant Design ©2017 Implement By Angular</nz-footer>
+    <nz-footer style="text-align: center;">BenchHub ©2018</nz-footer>
   </nz-layout>
 </nz-layout>

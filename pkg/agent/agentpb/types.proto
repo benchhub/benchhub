@@ -1,6 +1,6 @@
 // protoc --proto_path=/home/at15/workspace/src/:. --gogo_out=. types.proto
 syntax = "proto3";
-package agent;
+package bhagent;
 
 option go_package = "agentpb";
 
@@ -10,11 +10,3 @@ option (gogoproto.sizer_all) = true;
 option (gogoproto.marshaler_all) = true;
 option (gogoproto.unmarshaler_all) = true;
 option (gogoproto.goproto_getters_all) = false;
-
-message Ping {
-    string name = 1;
-}
-
-message Pong {
-    string name = 1;
-}

@@ -1,38 +1,23 @@
 // protoc --proto_path=/home/at15/workspace/src/:. --gogo_out=. types.proto
 syntax = "proto3";
-package central;
+package bhcentral;
 
 option go_package = "centralpb";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "github.com/benchhub/benchhub/pkg/common/commonpb/types.proto";
 
 option (gogoproto.sizer_all) = true;
 option (gogoproto.marshaler_all) = true;
 option (gogoproto.unmarshaler_all) = true;
 option (gogoproto.goproto_getters_all) = false;
 
-message Ping {
-    string name = 1;
+message RegisterAgentReq {
+    bhcommon.Node node = 1;
 }
 
-message Pong {
-    string name = 1;
-}
-
-message Node {
-    string addr = 1;
-    string ip = 2;
-    int64 port = 3;
-    int64 uid = 4;
-    string host = 5;
-}
-
-message RegisterReq {
-    Node central = 1;
-    Node agent = 2;
-}
-
-message RegisterRes {
-    Node central = 1;
-    Node agent = 2;
+message RegisterAgentRes {
+    string id = 1; // uinque id for this agent assigned by central
+    bhcommon.Node node = 2 [(gogoproto.nullable) = false]; // addr, ip, port would be added TODO: node should be able to find this out locally
+    bhcommon.Node central = 3 [(gogoproto.nullable) = false]; // all the information about the central
 }

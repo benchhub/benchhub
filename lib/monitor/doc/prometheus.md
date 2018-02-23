@@ -144,3 +144,7 @@ func parseMemInfo(r io.Reader) (map[string]float64, error) {
 collector/diskstats_linux.go
 
 - /proc/diskstats
+
+collector/filefd_linux.go
+
+- /sys/fs/file-nr

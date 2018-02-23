@@ -2,6 +2,7 @@
 
 
 [[projects]]
+  branch = "master"
   name = "github.com/at15/go.ice"
   packages = [
     "ice/cli",
@@ -9,7 +10,7 @@
     "ice/transport/grpc",
     "ice/util/logutil"
   ]
-  revision = "5aa595e30ed9e64a5aab8cf1021471bf2025de2b"
+  revision = "7e798fcdc8e077861025c34bde79ccdb15474799"
 
 [[projects]]
   name = "github.com/davecgh/go-spew"
@@ -32,7 +33,7 @@
     "util/logutil",
     "util/runtimeutil"
   ]
-  revision = "391e17305c8fd0af4d0d83aad7aba55f768089b7"
+  revision = "73605818e0751af6bdcdada4de2d63157a0bf814"
 
 [[projects]]
   name = "github.com/gogo/protobuf"
@@ -108,7 +109,6 @@
   revision = "cbe0f9307d0156177f9dd5dc85da1a31abc5f2fb"
 
 [[projects]]
-  branch = "master"
   name = "golang.org/x/text"
   packages = [
     "collate",
@@ -126,7 +126,8 @@
     "unicode/norm",
     "unicode/rangetable"
   ]
-  revision = "4e4a3210bb54bb31f6ab2cdca2edcc0b50c420c1"
+  revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
+  version = "v0.3.0"
 
 [[projects]]
   branch = "master"
@@ -175,6 +176,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "8501b580fa18b7e15dda243454f573bfd918b37306ba2f1a5b2bff250ff17430"
+  inputs-digest = "ba2fe375c42b1e41e831ae649f8b1bcd4de14877d60a426de088c45b6986bc28"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -6,6 +6,7 @@ package benchubcentralrpc;
 option go_package = "grpc";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "github.com/benchhub/benchhub/pkg/common/commonpb/types.proto";
 import "github.com/benchhub/benchhub/pkg/central/centralpb/types.proto";
 
 option (gogoproto.sizer_all) = true;
@@ -15,8 +16,8 @@ option (gogoproto.goproto_getters_all) = false;
 
 
 service BenchHubCentral {
-    rpc Ping (central.Ping) returns (central.Pong) {
+    rpc Ping (bhcommon.Ping) returns (bhcommon.Pong) {
     }
-    rpc RegisterAgent (central.RegisterReq) returns (central.RegisterRes) {
+    rpc RegisterAgent(bhcentral.RegisterAgentReq) returns (bhcentral.RegisterAgentRes) {
     }
 }

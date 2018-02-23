@@ -47,6 +47,9 @@ func NewMem(path string) *Mem {
 }
 
 func (s *Mem) Path() string {
+	if s.path == "" {
+		return memStatPath
+	}
 	return s.path
 }
 
