@@ -75,9 +75,9 @@ func (mgr *Manager) Run() error {
 	var (
 		wg      sync.WaitGroup
 		grpcErr error // TODO: multiple error
-		//httpErr error
+		httpErr error
 	)
-	wg.Add(1)
+	wg.Add(2)
 	ctx, cancel := context.WithCancel(context.Background())
 	// grpc server
 	go func() {
@@ -93,13 +93,31 @@ func (mgr *Manager) Run() error {
 				mgr.log.Errorf("can't run grpc server %v", grpcErr)
 			} else {
 				// other service's fault ...
-				mgr.log.Warn("TODO: need to shutdown grpc server")
+				mgr.log.Warn("TODO: other's fault, need to shutdown grpc server")
 			}
 			wg.Done()
 			return
 		}
 	}()
 	// http server
+	go func() {
+		go func() {
+			if err := mgr.httpTransport.Run(); err != nil {
+				httpErr = err
+				cancel()
+			}
+		}()
+		select {
+		case <-ctx.Done():
+			if httpErr != nil {
+				mgr.log.Errorf("can't run http server %v", httpErr)
+			} else {
+				mgr.log.Warn("TODO: other's fault, need to shutdown http server")
+			}
+			wg.Done()
+			return
+		}
+	}()
 	wg.Wait()
 	return grpcErr
 }
