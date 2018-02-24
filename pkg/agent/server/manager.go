@@ -9,8 +9,10 @@ import (
 	"google.golang.org/grpc"
 
 	igrpc "github.com/at15/go.ice/ice/transport/grpc"
+	ihttp "github.com/at15/go.ice/ice/transport/http"
 	"github.com/benchhub/benchhub/pkg/agent/config"
 	mygrpc "github.com/benchhub/benchhub/pkg/agent/transport/grpc"
+	myhttp "github.com/benchhub/benchhub/pkg/agent/transport/http"
 )
 
 type Manager struct {
@@ -19,6 +21,7 @@ type Manager struct {
 	grpcSrv       *GrpcServer
 	grpcTransport *igrpc.Server
 	httpSrv       *HttpServer
+	httpTransport *ihttp.Server
 	log           *dlog.Logger
 }
 
@@ -26,18 +29,29 @@ func NewManager(cfg config.ServerConfig) (*Manager, error) {
 	log.Info("creating benchhub agent manager")
 	grpcSrv, err := NewGrpcServer()
 	if err != nil {
-		return nil, errors.Wrap(err, "manager can't create grpc server")
+		return nil, errors.WithMessage(err, "manager can't create grpc server")
 	}
 	grpcTransport, err := igrpc.NewServer(cfg.Grpc, func(s *grpc.Server) {
 		mygrpc.RegisterBenchHubAgentServer(s, grpcSrv)
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "manager can't create grpc transport")
+		return nil, errors.WithMessage(err, "manager can't create grpc transport")
+	}
+	httpSrv, err := NewHttpServer()
+	if err != nil {
+		return nil, errors.WithMessage(err, "manager can't create http server")
+	}
+	httpHandler := myhttp.NewHttpHandler(httpSrv.HandlerRegister)
+	httpTransport, err := ihttp.NewServer(cfg.Http, httpHandler, nil)
+	if err != nil {
+		return nil, errors.WithMessage(err, "manager can't create http transport")
 	}
 	mgr := &Manager{
 		cfg:           cfg,
 		grpcSrv:       grpcSrv,
 		grpcTransport: grpcTransport,
+		httpSrv:       httpSrv,
+		httpTransport: httpTransport,
 	}
 	dlog.NewStructLogger(log, mgr)
 	return mgr, nil
@@ -61,9 +75,11 @@ func (mgr *Manager) Run() error {
 	var (
 		wg      sync.WaitGroup
 		grpcErr error // TODO: multiple error
+		//httpErr error
 	)
 	wg.Add(1)
 	ctx, cancel := context.WithCancel(context.Background())
+	// grpc server
 	go func() {
 		go func() {
 			if err := mgr.grpcTransport.Run(); err != nil {
@@ -83,6 +99,7 @@ func (mgr *Manager) Run() error {
 			return
 		}
 	}()
+	// http server
 	wg.Wait()
 	return grpcErr
 }

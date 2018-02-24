@@ -2,13 +2,13 @@ package server
 
 import (
 	"context"
-	"os"
 	"fmt"
+	"os"
 
 	"github.com/pkg/errors"
 
+	myhttp "github.com/benchhub/benchhub/pkg/agent/transport/http"
 	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
-	"net/http"
 )
 
 // HttpServer is mainly used to communicate with browser, routes are mounted in transport http package
@@ -28,6 +28,14 @@ func (srv *HttpServer) Ping(ctx context.Context, ping *pbc.Ping) (*pbc.Pong, err
 	}
 }
 
-func (srv *HttpServer) HandlerRegister(mux *http.ServeMux) {
-	mux.Handle("/ping", http.)
+func (srv *HttpServer) HandlerRegister(mux *myhttp.Mux) {
+	mux.AddHandler("/ping", func() interface{} {
+		return &pbc.Ping{}
+	}, func(ctx context.Context, req interface{}) (res interface{}, err error) {
+		if ping, ok := req.(*pbc.Ping); !ok {
+			return nil, errors.New("invalid type, can't cast to *pbc.Ping")
+		} else {
+			return srv.Ping(ctx, ping)
+		}
+	})
 }

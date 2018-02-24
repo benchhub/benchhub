@@ -8,6 +8,7 @@
     "ice/cli",
     "ice/config",
     "ice/transport/grpc",
+    "ice/transport/http",
     "ice/util/logutil"
   ]
   revision = "7e798fcdc8e077861025c34bde79ccdb15474799"
@@ -33,7 +34,7 @@
     "util/logutil",
     "util/runtimeutil"
   ]
-  revision = "73605818e0751af6bdcdada4de2d63157a0bf814"
+  revision = "7a8a931fc45eb397331e39ecd011017e6454e815"
 
 [[projects]]
   name = "github.com/gogo/protobuf"
@@ -63,6 +64,16 @@
   packages = ["."]
   revision = "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75"
   version = "v1.0"
+
+[[projects]]
+  name = "github.com/opentracing/opentracing-go"
+  packages = [
+    ".",
+    "ext",
+    "log"
+  ]
+  revision = "1949ddbfd147afd4d964a9f00b24eb291e0e7c38"
+  version = "v1.0.2"
 
 [[projects]]
   name = "github.com/pkg/errors"
@@ -168,14 +179,14 @@
   version = "v1.10.0"
 
 [[projects]]
-  branch = "v2"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
-  revision = "d670f9405373e636a5a2765eea47fac0c9bc91a4"
+  revision = "7f97868eec74b32b0982dd158a51a446d1da7eb5"
+  version = "v2.1.1"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ba2fe375c42b1e41e831ae649f8b1bcd4de14877d60a426de088c45b6986bc28"
+  inputs-digest = "81eea3cec97cbe9c933eba5f7a66f8c477998546b1c7adee2c6d50a994ef111d"
   solver-name = "gps-cdcl"
   solver-version = 1
