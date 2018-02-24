@@ -18,6 +18,7 @@ type GrpcServer struct {
 	log *dlog.Logger
 }
 
+// TODO: it might need registry
 func NewGrpcServer() (*GrpcServer, error) {
 	srv := &GrpcServer{}
 	dlog.NewStructLogger(log, srv)
