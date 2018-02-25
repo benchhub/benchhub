@@ -115,3 +115,10 @@ message NodeRole {
 
 // TODO: node price
 // ----- end of node -------------
+
+// ----- start of job ------
+message Job {
+    // TODO: job should have much more info
+    string id = 1;
+}
+// ----- end of job ------

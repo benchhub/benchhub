@@ -3,3 +3,5 @@ loggers:
     receiver: "srv"
   - struct: "*Manager"
     receiver: "mgr"
+  - struct: "*Beater"
+    receiver: "b"

@@ -10,3 +10,5 @@ http:
   cert: icehub.crt
   key: icehub.key
   enableTracing: false
+central:
+  addr: "localhost:6081"

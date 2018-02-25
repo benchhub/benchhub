@@ -13,11 +13,20 @@ option (gogoproto.unmarshaler_all) = true;
 option (gogoproto.goproto_getters_all) = false;
 
 message RegisterAgentReq {
-    bhcommon.Node node = 1;
+    bhcommon.Node node = 1 [(gogoproto.nullable) = false];
 }
 
 message RegisterAgentRes {
     string id = 1; // uinque id for this agent assigned by central
     bhcommon.Node node = 2 [(gogoproto.nullable) = false]; // addr, ip, port would be added TODO: node should be able to find this out locally
     bhcommon.Node central = 3 [(gogoproto.nullable) = false]; // all the information about the central
+}
+
+message AgentHeartbeatReq {
+    string id = 1;
+    bhcommon.NodeStatus status = 2 [(gogoproto.nullable) = false];
+}
+
+message AgentHeartbeatRes {
+    bhcommon.Job job = 1 [(gogoproto.nullable) = false];
 }

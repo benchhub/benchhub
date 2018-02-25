@@ -10,6 +10,8 @@
 	It has these top-level messages:
 		RegisterAgentReq
 		RegisterAgentRes
+		AgentHeartbeatReq
+		AgentHeartbeatRes
 */
 package centralpb
 
@@ -33,7 +35,7 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 
 type RegisterAgentReq struct {
-	Node *bhcommon.Node `protobuf:"bytes,1,opt,name=node" json:"node,omitempty"`
+	Node bhcommon.Node `protobuf:"bytes,1,opt,name=node" json:"node"`
 }
 
 func (m *RegisterAgentReq) Reset()                    { *m = RegisterAgentReq{} }
@@ -52,9 +54,30 @@ func (m *RegisterAgentRes) String() string            { return proto.CompactText
 func (*RegisterAgentRes) ProtoMessage()               {}
 func (*RegisterAgentRes) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{1} }
 
+type AgentHeartbeatReq struct {
+	Id     string              `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Status bhcommon.NodeStatus `protobuf:"bytes,2,opt,name=status" json:"status"`
+}
+
+func (m *AgentHeartbeatReq) Reset()                    { *m = AgentHeartbeatReq{} }
+func (m *AgentHeartbeatReq) String() string            { return proto.CompactTextString(m) }
+func (*AgentHeartbeatReq) ProtoMessage()               {}
+func (*AgentHeartbeatReq) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{2} }
+
+type AgentHeartbeatRes struct {
+	Job bhcommon.Job `protobuf:"bytes,1,opt,name=job" json:"job"`
+}
+
+func (m *AgentHeartbeatRes) Reset()                    { *m = AgentHeartbeatRes{} }
+func (m *AgentHeartbeatRes) String() string            { return proto.CompactTextString(m) }
+func (*AgentHeartbeatRes) ProtoMessage()               {}
+func (*AgentHeartbeatRes) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{3} }
+
 func init() {
 	proto.RegisterType((*RegisterAgentReq)(nil), "bhcentral.RegisterAgentReq")
 	proto.RegisterType((*RegisterAgentRes)(nil), "bhcentral.RegisterAgentRes")
+	proto.RegisterType((*AgentHeartbeatReq)(nil), "bhcentral.AgentHeartbeatReq")
+	proto.RegisterType((*AgentHeartbeatRes)(nil), "bhcentral.AgentHeartbeatRes")
 }
 func (m *RegisterAgentReq) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
@@ -71,16 +94,14 @@ func (m *RegisterAgentReq) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.Node != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintTypes(dAtA, i, uint64(m.Node.Size()))
-		n1, err := m.Node.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n1
+	dAtA[i] = 0xa
+	i++
+	i = encodeVarintTypes(dAtA, i, uint64(m.Node.Size()))
+	n1, err := m.Node.MarshalTo(dAtA[i:])
+	if err != nil {
+		return 0, err
 	}
+	i += n1
 	return i, nil
 }
 
@@ -124,6 +145,64 @@ func (m *RegisterAgentRes) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
+func (m *AgentHeartbeatReq) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *AgentHeartbeatReq) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Id) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintTypes(dAtA, i, uint64(len(m.Id)))
+		i += copy(dAtA[i:], m.Id)
+	}
+	dAtA[i] = 0x12
+	i++
+	i = encodeVarintTypes(dAtA, i, uint64(m.Status.Size()))
+	n4, err := m.Status.MarshalTo(dAtA[i:])
+	if err != nil {
+		return 0, err
+	}
+	i += n4
+	return i, nil
+}
+
+func (m *AgentHeartbeatRes) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *AgentHeartbeatRes) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	dAtA[i] = 0xa
+	i++
+	i = encodeVarintTypes(dAtA, i, uint64(m.Job.Size()))
+	n5, err := m.Job.MarshalTo(dAtA[i:])
+	if err != nil {
+		return 0, err
+	}
+	i += n5
+	return i, nil
+}
+
 func encodeVarintTypes(dAtA []byte, offset int, v uint64) int {
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
@@ -136,10 +215,8 @@ func encodeVarintTypes(dAtA []byte, offset int, v uint64) int {
 func (m *RegisterAgentReq) Size() (n int) {
 	var l int
 	_ = l
-	if m.Node != nil {
-		l = m.Node.Size()
-		n += 1 + l + sovTypes(uint64(l))
-	}
+	l = m.Node.Size()
+	n += 1 + l + sovTypes(uint64(l))
 	return n
 }
 
@@ -153,6 +230,26 @@ func (m *RegisterAgentRes) Size() (n int) {
 	l = m.Node.Size()
 	n += 1 + l + sovTypes(uint64(l))
 	l = m.Central.Size()
+	n += 1 + l + sovTypes(uint64(l))
+	return n
+}
+
+func (m *AgentHeartbeatReq) Size() (n int) {
+	var l int
+	_ = l
+	l = len(m.Id)
+	if l > 0 {
+		n += 1 + l + sovTypes(uint64(l))
+	}
+	l = m.Status.Size()
+	n += 1 + l + sovTypes(uint64(l))
+	return n
+}
+
+func (m *AgentHeartbeatRes) Size() (n int) {
+	var l int
+	_ = l
+	l = m.Job.Size()
 	n += 1 + l + sovTypes(uint64(l))
 	return n
 }
@@ -224,9 +321,6 @@ func (m *RegisterAgentReq) Unmarshal(dAtA []byte) error {
 			postIndex := iNdEx + msglen
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
-			}
-			if m.Node == nil {
-				m.Node = &bhcommon.Node{}
 			}
 			if err := m.Node.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -392,6 +486,195 @@ func (m *RegisterAgentRes) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *AgentHeartbeatReq) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTypes
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: AgentHeartbeatReq: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: AgentHeartbeatReq: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Id = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Status", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.Status.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTypes(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *AgentHeartbeatRes) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTypes
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: AgentHeartbeatRes: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: AgentHeartbeatRes: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Job", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.Job.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTypes(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func skipTypes(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
@@ -500,20 +783,24 @@ var (
 func init() { proto.RegisterFile("types.proto", fileDescriptorTypes) }
 
 var fileDescriptorTypes = []byte{
-	// 235 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2e, 0xa9, 0x2c, 0x48,
-	0x2d, 0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0xe2, 0x4c, 0xca, 0x48, 0x4e, 0xcd, 0x2b, 0x29,
-	0x4a, 0xcc, 0x91, 0xd2, 0x4d, 0xcf, 0x2c, 0xc9, 0x28, 0x4d, 0xd2, 0x4b, 0xce, 0xcf, 0xd5, 0x4f,
-	0xcf, 0x4f, 0xcf, 0xd7, 0x07, 0xab, 0x48, 0x2a, 0x4d, 0x03, 0xf3, 0xc0, 0x1c, 0x30, 0x0b, 0xa2,
-	0x53, 0xca, 0x06, 0x49, 0x79, 0x52, 0x6a, 0x5e, 0x72, 0x46, 0x46, 0x69, 0x12, 0x82, 0x51, 0x90,
-	0x9d, 0xae, 0x9f, 0x9c, 0x9f, 0x9b, 0x9b, 0x9f, 0x07, 0xa5, 0x0a, 0x92, 0xf4, 0x91, 0xec, 0x55,
-	0x32, 0xe3, 0x12, 0x08, 0x4a, 0x4d, 0xcf, 0x2c, 0x2e, 0x49, 0x2d, 0x72, 0x4c, 0x4f, 0xcd, 0x2b,
-	0x09, 0x4a, 0x2d, 0x14, 0x52, 0xe2, 0x62, 0xc9, 0xcb, 0x4f, 0x49, 0x95, 0x60, 0x54, 0x60, 0xd4,
-	0xe0, 0x36, 0xe2, 0xd3, 0x4b, 0xca, 0x80, 0x68, 0xd5, 0xf3, 0xcb, 0x4f, 0x49, 0x0d, 0x02, 0xcb,
-	0x29, 0xd5, 0x60, 0xe8, 0x2b, 0x16, 0xe2, 0xe3, 0x62, 0xca, 0x4c, 0x01, 0xeb, 0xe2, 0x0c, 0x62,
-	0xca, 0x4c, 0x11, 0xd2, 0x80, 0x9a, 0xc3, 0x84, 0xcd, 0x1c, 0x27, 0x96, 0x13, 0xf7, 0xe4, 0x19,
-	0x20, 0xa6, 0x09, 0xe9, 0x71, 0xb1, 0x43, 0x7d, 0x2f, 0xc1, 0x8c, 0x47, 0x31, 0x4c, 0x91, 0x93,
-	0xf4, 0x89, 0x87, 0x72, 0x0c, 0x27, 0x1e, 0xc9, 0x31, 0x5e, 0x78, 0x24, 0xc7, 0xf8, 0xe0, 0x91,
-	0x1c, 0x63, 0x14, 0x27, 0x54, 0xaa, 0x20, 0x29, 0x89, 0x0d, 0xec, 0x33, 0x63, 0x40, 0x00, 0x00,
-	0x00, 0xff, 0xff, 0x7e, 0xb4, 0xcb, 0x13, 0x60, 0x01, 0x00, 0x00,
+	// 294 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x90, 0xc1, 0x4a, 0xc3, 0x40,
+	0x10, 0x86, 0x9b, 0xb6, 0x54, 0xb2, 0xc5, 0xa2, 0xc1, 0x43, 0xa9, 0x10, 0x25, 0x20, 0xf4, 0x62,
+	0x02, 0xf5, 0x26, 0xbd, 0xd8, 0x93, 0x78, 0xf0, 0x10, 0x0f, 0x82, 0xb7, 0x4c, 0x32, 0x6e, 0xa2,
+	0x26, 0x13, 0xb3, 0x9b, 0x83, 0xe0, 0x03, 0xe6, 0xe8, 0x13, 0x88, 0xe6, 0x49, 0xc4, 0xe9, 0x6a,
+	0xab, 0x05, 0x3d, 0xed, 0x0e, 0xf3, 0xfd, 0xdf, 0x0c, 0x23, 0x86, 0xfa, 0xa9, 0x44, 0xe5, 0x97,
+	0x15, 0x69, 0x72, 0x6c, 0x48, 0x63, 0x2c, 0x74, 0x15, 0x3d, 0x4c, 0x8e, 0x65, 0xa6, 0xd3, 0x1a,
+	0xfc, 0x98, 0xf2, 0x40, 0x92, 0xa4, 0x80, 0x09, 0xa8, 0x6f, 0xb9, 0xe2, 0x82, 0x7f, 0xcb, 0xe4,
+	0x64, 0xbe, 0x86, 0x03, 0x16, 0x71, 0x9a, 0xd6, 0xb0, 0xfa, 0x94, 0xf7, 0x32, 0x88, 0x29, 0xcf,
+	0xa9, 0x30, 0x4f, 0x09, 0xc1, 0xda, 0x5c, 0x6f, 0x2e, 0x76, 0x42, 0x94, 0x99, 0xd2, 0x58, 0x9d,
+	0x49, 0x2c, 0x74, 0x88, 0x8f, 0xce, 0x54, 0xf4, 0x0b, 0x4a, 0x70, 0x6c, 0x1d, 0x5a, 0xd3, 0xe1,
+	0x6c, 0xe4, 0x43, 0xba, 0x8c, 0xfa, 0x97, 0x94, 0xe0, 0xa2, 0xdf, 0xbc, 0x1e, 0x74, 0x42, 0x26,
+	0xbc, 0xe7, 0x8d, 0xb4, 0x72, 0x46, 0xa2, 0x9b, 0x25, 0x9c, 0xb5, 0xc3, 0x6e, 0x96, 0x7c, 0xdb,
+	0xba, 0xff, 0xd9, 0x1c, 0x5f, 0x6c, 0x99, 0x1b, 0x8c, 0x7b, 0x7f, 0xc0, 0x5f, 0x90, 0x77, 0x2d,
+	0x76, 0x79, 0xea, 0x39, 0x46, 0x95, 0x06, 0x8c, 0x78, 0xf9, 0xdf, 0xe3, 0x67, 0x62, 0xa0, 0x74,
+	0xa4, 0x6b, 0x65, 0x16, 0xd8, 0xfb, 0xe9, 0xbc, 0xe2, 0x9e, 0x31, 0x1b, 0xd2, 0x3b, 0xdd, 0x14,
+	0x2b, 0xe7, 0x48, 0xf4, 0xee, 0x08, 0xcc, 0x51, 0xb6, 0x57, 0x96, 0x0b, 0x02, 0x13, 0xff, 0xec,
+	0x2f, 0xf6, 0x9b, 0x77, 0xb7, 0xd3, 0xb4, 0xae, 0xf5, 0xd2, 0xba, 0xd6, 0x5b, 0xeb, 0x5a, 0x37,
+	0xb6, 0xd9, 0xb7, 0x04, 0x18, 0xf0, 0xd1, 0x4f, 0x3e, 0x02, 0x00, 0x00, 0xff, 0xff, 0xcd, 0x85,
+	0x17, 0x23, 0xfb, 0x01, 0x00, 0x00,
 }

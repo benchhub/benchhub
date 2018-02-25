@@ -27,3 +27,15 @@ func (mgr *Manager) GetLogger() *dlog.Logger {
 func (mgr *Manager) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
 	return justCallMe()
 }
+
+func (b *Beater) SetLogger(logger *dlog.Logger) {
+	b.log = logger
+}
+
+func (b *Beater) GetLogger() *dlog.Logger {
+	return b.log
+}
+
+func (b *Beater) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
+	return justCallMe()
+}
