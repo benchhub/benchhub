@@ -11,7 +11,7 @@
     "ice/transport/http",
     "ice/util/logutil"
   ]
-  revision = "95c64b48ce7f42503e549a801e363aa3b0e65f90"
+  revision = "f8221af2fd715c4c5d07cc1bbb1481873f25c867"
 
 [[projects]]
   name = "github.com/davecgh/go-spew"

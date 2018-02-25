@@ -3,11 +3,12 @@ package server
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/dyweb/gommon/errors"
 
-	myhttp "github.com/benchhub/benchhub/pkg/agent/transport/http"
+	ihttp "github.com/at15/go.ice/ice/transport/http"
 	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
 )
 
@@ -28,8 +29,16 @@ func (srv *HttpServer) Ping(ctx context.Context, ping *pbc.Ping) (*pbc.Pong, err
 	}
 }
 
-func (srv *HttpServer) HandlerRegister(mux *myhttp.Mux) {
-	mux.AddHandler("/ping", func() interface{} {
+func (srv *HttpServer) Handler() http.Handler {
+	mux := http.NewServeMux()
+	jMux := ihttp.NewJsonHandlerMux()
+	srv.RegisterHandler(jMux)
+	jMux.MountToStd(mux)
+	return mux
+}
+
+func (srv *HttpServer) RegisterHandler(mux *ihttp.JsonHandlerMux) {
+	mux.AddHandlerFunc("/ping", func() interface{} {
 		return &pbc.Ping{}
 	}, func(ctx context.Context, req interface{}) (res interface{}, err error) {
 		if ping, ok := req.(*pbc.Ping); !ok {

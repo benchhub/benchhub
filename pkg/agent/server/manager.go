@@ -12,7 +12,6 @@ import (
 	ihttp "github.com/at15/go.ice/ice/transport/http"
 	"github.com/benchhub/benchhub/pkg/agent/config"
 	mygrpc "github.com/benchhub/benchhub/pkg/agent/transport/grpc"
-	myhttp "github.com/benchhub/benchhub/pkg/agent/transport/http"
 )
 
 type Manager struct {
@@ -41,8 +40,7 @@ func NewManager(cfg config.ServerConfig) (*Manager, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create http server")
 	}
-	httpHandler := myhttp.NewHttpHandler(httpSrv.HandlerRegister)
-	httpTransport, err := ihttp.NewServer(cfg.Http, httpHandler, nil)
+	httpTransport, err := ihttp.NewServer(cfg.Http, httpSrv.Handler(), nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create http transport")
 	}
