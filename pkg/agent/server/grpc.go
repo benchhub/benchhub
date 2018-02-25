@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/dyweb/gommon/errors"
 	dlog "github.com/dyweb/gommon/log"
-	"github.com/pkg/errors"
 
 	rpc "github.com/benchhub/benchhub/pkg/agent/transport/grpc"
 	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"

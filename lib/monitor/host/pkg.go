@@ -6,8 +6,9 @@ import (
 	"io/ioutil"
 	"strconv"
 
+	"github.com/dyweb/gommon/errors"
+
 	"github.com/benchhub/benchhub/lib/monitor/util/logutil"
-	"github.com/pkg/errors"
 )
 
 var log = logutil.NewPackageLogger()

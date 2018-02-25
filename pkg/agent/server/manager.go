@@ -4,8 +4,8 @@ import (
 	"context"
 	"sync"
 
+	"github.com/dyweb/gommon/errors"
 	dlog "github.com/dyweb/gommon/log"
-	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 
 	igrpc "github.com/at15/go.ice/ice/transport/grpc"
@@ -29,22 +29,22 @@ func NewManager(cfg config.ServerConfig) (*Manager, error) {
 	log.Info("creating benchhub agent manager")
 	grpcSrv, err := NewGrpcServer()
 	if err != nil {
-		return nil, errors.WithMessage(err, "manager can't create grpc server")
+		return nil, errors.Wrap(err, "manager can't create grpc server")
 	}
 	grpcTransport, err := igrpc.NewServer(cfg.Grpc, func(s *grpc.Server) {
 		mygrpc.RegisterBenchHubAgentServer(s, grpcSrv)
 	})
 	if err != nil {
-		return nil, errors.WithMessage(err, "manager can't create grpc transport")
+		return nil, errors.Wrap(err, "manager can't create grpc transport")
 	}
 	httpSrv, err := NewHttpServer()
 	if err != nil {
-		return nil, errors.WithMessage(err, "manager can't create http server")
+		return nil, errors.Wrap(err, "manager can't create http server")
 	}
 	httpHandler := myhttp.NewHttpHandler(httpSrv.HandlerRegister)
 	httpTransport, err := ihttp.NewServer(cfg.Http, httpHandler, nil)
 	if err != nil {
-		return nil, errors.WithMessage(err, "manager can't create http transport")
+		return nil, errors.Wrap(err, "manager can't create http transport")
 	}
 	mgr := &Manager{
 		cfg:           cfg,

@@ -3,7 +3,7 @@ package host
 import (
 	"syscall"
 
-	"github.com/pkg/errors"
+	"github.com/dyweb/gommon/errors"
 )
 
 const (

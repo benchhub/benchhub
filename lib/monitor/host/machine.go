@@ -4,7 +4,7 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/pkg/errors"
+	"github.com/dyweb/gommon/errors"
 )
 
 // TODO: release information from lsb-release and os-release, saw it in gopsutil
@@ -38,13 +38,13 @@ func (s *Machine) Update() error {
 	}
 	s.HostName = hostname
 	if err := s.mem.Update(); err != nil {
-		return errors.WithMessage(err, "can't get host memory")
+		return errors.Wrap(err, "can't get host memory")
 	}
 	s.MemTotal = s.mem.MemTotal
 	s.MemFree = s.mem.MemFree
 	s.MemAvail = s.mem.MemAvailable
 	if err := s.fs.Update(); err != nil {
-		return errors.WithMessage(err, "can't get host disk space")
+		return errors.Wrap(err, "can't get host disk space")
 	}
 	s.DiskSpaceTotal = s.fs.BlockSize * s.fs.Blocks
 	// NOTE: we use BlocksAvail instead of BlocksFree because it's 'Free blocks available to unprivileged user'

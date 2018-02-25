@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/pkg/errors"
+	"github.com/dyweb/gommon/errors"
 
 	myhttp "github.com/benchhub/benchhub/pkg/agent/transport/http"
 	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"

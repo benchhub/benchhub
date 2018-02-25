@@ -11,7 +11,7 @@
     "ice/transport/http",
     "ice/util/logutil"
   ]
-  revision = "7e798fcdc8e077861025c34bde79ccdb15474799"
+  revision = "95c64b48ce7f42503e549a801e363aa3b0e65f90"
 
 [[projects]]
   name = "github.com/davecgh/go-spew"
@@ -25,6 +25,7 @@
   packages = [
     "cast",
     "config",
+    "errors",
     "log",
     "log/handlers/cli",
     "structure",
@@ -34,7 +35,7 @@
     "util/logutil",
     "util/runtimeutil"
   ]
-  revision = "7a8a931fc45eb397331e39ecd011017e6454e815"
+  revision = "b950eeb909a37aa06f0820dcdc414a1c53a2f7cf"
 
 [[projects]]
   name = "github.com/gogo/protobuf"
@@ -74,12 +75,6 @@
   ]
   revision = "1949ddbfd147afd4d964a9f00b24eb291e0e7c38"
   version = "v1.0.2"
-
-[[projects]]
-  name = "github.com/pkg/errors"
-  packages = ["."]
-  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
-  version = "v0.8.0"
 
 [[projects]]
   name = "github.com/pmezard/go-difflib"
@@ -187,6 +182,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "81eea3cec97cbe9c933eba5f7a66f8c477998546b1c7adee2c6d50a994ef111d"
+  inputs-digest = "442090b2c839202eac233e06c34ba56a05af5288911127e474c0abaf613e7411"
   solver-name = "gps-cdcl"
   solver-version = 1
