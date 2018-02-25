@@ -46,6 +46,9 @@ func (b *Beater) Register() error {
 		},
 	}
 	res, err := c.RegisterAgent(ctx, req)
+	if err != nil {
+		return errors.Wrap(err, "register failed")
+	}
 	b.log.Infof("register res id is %s", res.Id)
-	return errors.Wrap(err, "register failed")
+	return nil
 }

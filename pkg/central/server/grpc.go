@@ -46,9 +46,11 @@ func (srv *GrpcServer) RegisterAgent(ctx context.Context, req *pb.RegisterAgentR
 	// - check if the node is already registered
 	// - assign it id
 	// - return information about itself
-	return nil, nil
+	srv.log.Infof("got register from %s", req.Node.Host)
+	// TODO: use grpc/codes and grpc.Errorf https://groups.google.com/forum/#!topic/golang-nuts/NZX1sOYosRs
+	return nil, errors.New("not implemented")
 }
 
 func (srv *GrpcServer) AgentHeartbeat(ctx context.Context, req *pb.AgentHeartbeatReq) (*pb.AgentHeartbeatRes, error) {
-	return nil, nil
+	return nil, errors.New("not implemented")
 }
