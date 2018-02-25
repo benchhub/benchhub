@@ -10,9 +10,11 @@
 	It has these top-level messages:
 		Ping
 		Pong
+		NodeStatus
 		Node
 		NodeCapacity
 		NodeProvider
+		NodeRole
 */
 package commonpb
 
@@ -33,6 +35,50 @@ var _ = math.Inf
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+
+// node state, used in
+//
+// heartbeat with central
+// http api for UI
+// tag monitoring data
+type NodeState int32
+
+const (
+	NodeState_UNKNOWN_STATE        NodeState = 0
+	NodeState_FINDING_CENTRAL      NodeState = 1
+	NodeState_WAITING_JOB          NodeState = 2
+	NodeState_PROVISIONING_JOB_ENV NodeState = 3
+	NodeState_RUNNING_JOB          NodeState = 4
+	NodeState_WAITING_PEERS        NodeState = 5
+	NodeState_SENDING_METRICS      NodeState = 6
+	NodeState_CLEANUP_JOB_ENV      NodeState = 7
+)
+
+var NodeState_name = map[int32]string{
+	0: "UNKNOWN_STATE",
+	1: "FINDING_CENTRAL",
+	2: "WAITING_JOB",
+	3: "PROVISIONING_JOB_ENV",
+	4: "RUNNING_JOB",
+	5: "WAITING_PEERS",
+	6: "SENDING_METRICS",
+	7: "CLEANUP_JOB_ENV",
+}
+var NodeState_value = map[string]int32{
+	"UNKNOWN_STATE":        0,
+	"FINDING_CENTRAL":      1,
+	"WAITING_JOB":          2,
+	"PROVISIONING_JOB_ENV": 3,
+	"RUNNING_JOB":          4,
+	"WAITING_PEERS":        5,
+	"SENDING_METRICS":      6,
+	"CLEANUP_JOB_ENV":      7,
+}
+
+func (x NodeState) String() string {
+	return proto.EnumName(NodeState_name, int32(x))
+}
+func (NodeState) EnumDescriptor() ([]byte, []int) { return fileDescriptorTypes, []int{0} }
 
 type Region int32
 
@@ -64,7 +110,7 @@ var Region_value = map[string]int32{
 func (x Region) String() string {
 	return proto.EnumName(Region_name, int32(x))
 }
-func (Region) EnumDescriptor() ([]byte, []int) { return fileDescriptorTypes, []int{0} }
+func (Region) EnumDescriptor() ([]byte, []int) { return fileDescriptorTypes, []int{1} }
 
 type Provider int32
 
@@ -103,7 +149,34 @@ var Provider_value = map[string]int32{
 func (x Provider) String() string {
 	return proto.EnumName(Provider_name, int32(x))
 }
-func (Provider) EnumDescriptor() ([]byte, []int) { return fileDescriptorTypes, []int{1} }
+func (Provider) EnumDescriptor() ([]byte, []int) { return fileDescriptorTypes, []int{2} }
+
+type Role int32
+
+const (
+	Role_UNKNOWN_ROLE       Role = 0
+	Role_ANY_ROLE           Role = 1
+	Role_WORKLOAD_GENERATOR Role = 2
+	Role_DATABASE_RUNNER    Role = 3
+)
+
+var Role_name = map[int32]string{
+	0: "UNKNOWN_ROLE",
+	1: "ANY_ROLE",
+	2: "WORKLOAD_GENERATOR",
+	3: "DATABASE_RUNNER",
+}
+var Role_value = map[string]int32{
+	"UNKNOWN_ROLE":       0,
+	"ANY_ROLE":           1,
+	"WORKLOAD_GENERATOR": 2,
+	"DATABASE_RUNNER":    3,
+}
+
+func (x Role) String() string {
+	return proto.EnumName(Role_name, int32(x))
+}
+func (Role) EnumDescriptor() ([]byte, []int) { return fileDescriptorTypes, []int{3} }
 
 type Ping struct {
 	Message string `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
@@ -123,6 +196,17 @@ func (m *Pong) String() string            { return proto.CompactTextString(m) }
 func (*Pong) ProtoMessage()               {}
 func (*Pong) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{1} }
 
+type NodeStatus struct {
+	State    NodeState    `protobuf:"varint,1,opt,name=state,proto3,enum=bhcommon.NodeState" json:"state,omitempty"`
+	Capacity NodeCapacity `protobuf:"bytes,2,opt,name=capacity" json:"capacity"`
+}
+
+func (m *NodeStatus) Reset()                    { *m = NodeStatus{} }
+func (m *NodeStatus) String() string            { return proto.CompactTextString(m) }
+func (*NodeStatus) ProtoMessage()               {}
+func (*NodeStatus) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{2} }
+
+// used for register
 type Node struct {
 	// addr should be ip:port
 	Addr string `protobuf:"bytes,1,opt,name=addr,proto3" json:"addr,omitempty"`
@@ -136,26 +220,31 @@ type Node struct {
 	StartTime int64        `protobuf:"varint,6,opt,name=startTime,proto3" json:"startTime,omitempty"`
 	Capacity  NodeCapacity `protobuf:"bytes,7,opt,name=capacity" json:"capacity"`
 	Provider  NodeProvider `protobuf:"bytes,8,opt,name=provider" json:"provider"`
+	Role      NodeRole     `protobuf:"bytes,9,opt,name=role" json:"role"`
 }
 
 func (m *Node) Reset()                    { *m = Node{} }
 func (m *Node) String() string            { return proto.CompactTextString(m) }
 func (*Node) ProtoMessage()               {}
-func (*Node) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{2} }
+func (*Node) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{3} }
 
 type NodeCapacity struct {
 	// number of cpu cores
 	Cores int32 `protobuf:"varint,1,opt,name=cores,proto3" json:"cores,omitempty"`
-	// memory in MB
-	Memory int32 `protobuf:"varint,2,opt,name=memory,proto3" json:"memory,omitempty"`
-	// disk space in GB
-	Disk int32 `protobuf:"varint,3,opt,name=disk,proto3" json:"disk,omitempty"`
+	// free memory in MB
+	MemoryFree int32 `protobuf:"varint,2,opt,name=memoryFree,proto3" json:"memoryFree,omitempty"`
+	// total memory in MB
+	MemoryTotal int32 `protobuf:"varint,3,opt,name=memoryTotal,proto3" json:"memoryTotal,omitempty"`
+	// free disk space in GB
+	DiskFree int32 `protobuf:"varint,4,opt,name=diskFree,proto3" json:"diskFree,omitempty"`
+	// total disk space in GB
+	DiskTotal int32 `protobuf:"varint,5,opt,name=diskTotal,proto3" json:"diskTotal,omitempty"`
 }
 
 func (m *NodeCapacity) Reset()                    { *m = NodeCapacity{} }
 func (m *NodeCapacity) String() string            { return proto.CompactTextString(m) }
 func (*NodeCapacity) ProtoMessage()               {}
-func (*NodeCapacity) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{3} }
+func (*NodeCapacity) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{4} }
 
 type NodeProvider struct {
 	Code       Provider `protobuf:"varint,1,opt,name=code,proto3,enum=bhcommon.Provider" json:"code,omitempty"`
@@ -167,16 +256,31 @@ type NodeProvider struct {
 func (m *NodeProvider) Reset()                    { *m = NodeProvider{} }
 func (m *NodeProvider) String() string            { return proto.CompactTextString(m) }
 func (*NodeProvider) ProtoMessage()               {}
-func (*NodeProvider) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{4} }
+func (*NodeProvider) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{5} }
+
+type NodeRole struct {
+	Preferred Role `protobuf:"varint,1,opt,name=preferred,proto3,enum=bhcommon.Role" json:"preferred,omitempty"`
+	Current   Role `protobuf:"varint,2,opt,name=current,proto3,enum=bhcommon.Role" json:"current,omitempty"`
+	Previous  Role `protobuf:"varint,3,opt,name=previous,proto3,enum=bhcommon.Role" json:"previous,omitempty"`
+}
+
+func (m *NodeRole) Reset()                    { *m = NodeRole{} }
+func (m *NodeRole) String() string            { return proto.CompactTextString(m) }
+func (*NodeRole) ProtoMessage()               {}
+func (*NodeRole) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{6} }
 
 func init() {
 	proto.RegisterType((*Ping)(nil), "bhcommon.Ping")
 	proto.RegisterType((*Pong)(nil), "bhcommon.Pong")
+	proto.RegisterType((*NodeStatus)(nil), "bhcommon.NodeStatus")
 	proto.RegisterType((*Node)(nil), "bhcommon.Node")
 	proto.RegisterType((*NodeCapacity)(nil), "bhcommon.NodeCapacity")
 	proto.RegisterType((*NodeProvider)(nil), "bhcommon.NodeProvider")
+	proto.RegisterType((*NodeRole)(nil), "bhcommon.NodeRole")
+	proto.RegisterEnum("bhcommon.NodeState", NodeState_name, NodeState_value)
 	proto.RegisterEnum("bhcommon.Region", Region_name, Region_value)
 	proto.RegisterEnum("bhcommon.Provider", Provider_name, Provider_value)
+	proto.RegisterEnum("bhcommon.Role", Role_name, Role_value)
 }
 func (m *Ping) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
@@ -223,6 +327,37 @@ func (m *Pong) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintTypes(dAtA, i, uint64(len(m.Message)))
 		i += copy(dAtA[i:], m.Message)
 	}
+	return i, nil
+}
+
+func (m *NodeStatus) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *NodeStatus) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.State != 0 {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintTypes(dAtA, i, uint64(m.State))
+	}
+	dAtA[i] = 0x12
+	i++
+	i = encodeVarintTypes(dAtA, i, uint64(m.Capacity.Size()))
+	n1, err := m.Capacity.MarshalTo(dAtA[i:])
+	if err != nil {
+		return 0, err
+	}
+	i += n1
 	return i, nil
 }
 
@@ -277,19 +412,27 @@ func (m *Node) MarshalTo(dAtA []byte) (int, error) {
 	dAtA[i] = 0x3a
 	i++
 	i = encodeVarintTypes(dAtA, i, uint64(m.Capacity.Size()))
-	n1, err := m.Capacity.MarshalTo(dAtA[i:])
-	if err != nil {
-		return 0, err
-	}
-	i += n1
-	dAtA[i] = 0x42
-	i++
-	i = encodeVarintTypes(dAtA, i, uint64(m.Provider.Size()))
-	n2, err := m.Provider.MarshalTo(dAtA[i:])
+	n2, err := m.Capacity.MarshalTo(dAtA[i:])
 	if err != nil {
 		return 0, err
 	}
 	i += n2
+	dAtA[i] = 0x42
+	i++
+	i = encodeVarintTypes(dAtA, i, uint64(m.Provider.Size()))
+	n3, err := m.Provider.MarshalTo(dAtA[i:])
+	if err != nil {
+		return 0, err
+	}
+	i += n3
+	dAtA[i] = 0x4a
+	i++
+	i = encodeVarintTypes(dAtA, i, uint64(m.Role.Size()))
+	n4, err := m.Role.MarshalTo(dAtA[i:])
+	if err != nil {
+		return 0, err
+	}
+	i += n4
 	return i, nil
 }
 
@@ -313,15 +456,25 @@ func (m *NodeCapacity) MarshalTo(dAtA []byte) (int, error) {
 		i++
 		i = encodeVarintTypes(dAtA, i, uint64(m.Cores))
 	}
-	if m.Memory != 0 {
+	if m.MemoryFree != 0 {
 		dAtA[i] = 0x10
 		i++
-		i = encodeVarintTypes(dAtA, i, uint64(m.Memory))
+		i = encodeVarintTypes(dAtA, i, uint64(m.MemoryFree))
 	}
-	if m.Disk != 0 {
+	if m.MemoryTotal != 0 {
 		dAtA[i] = 0x18
 		i++
-		i = encodeVarintTypes(dAtA, i, uint64(m.Disk))
+		i = encodeVarintTypes(dAtA, i, uint64(m.MemoryTotal))
+	}
+	if m.DiskFree != 0 {
+		dAtA[i] = 0x20
+		i++
+		i = encodeVarintTypes(dAtA, i, uint64(m.DiskFree))
+	}
+	if m.DiskTotal != 0 {
+		dAtA[i] = 0x28
+		i++
+		i = encodeVarintTypes(dAtA, i, uint64(m.DiskTotal))
 	}
 	return i, nil
 }
@@ -366,6 +519,39 @@ func (m *NodeProvider) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
+func (m *NodeRole) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *NodeRole) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Preferred != 0 {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintTypes(dAtA, i, uint64(m.Preferred))
+	}
+	if m.Current != 0 {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintTypes(dAtA, i, uint64(m.Current))
+	}
+	if m.Previous != 0 {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintTypes(dAtA, i, uint64(m.Previous))
+	}
+	return i, nil
+}
+
 func encodeVarintTypes(dAtA []byte, offset int, v uint64) int {
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
@@ -392,6 +578,17 @@ func (m *Pong) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTypes(uint64(l))
 	}
+	return n
+}
+
+func (m *NodeStatus) Size() (n int) {
+	var l int
+	_ = l
+	if m.State != 0 {
+		n += 1 + sovTypes(uint64(m.State))
+	}
+	l = m.Capacity.Size()
+	n += 1 + l + sovTypes(uint64(l))
 	return n
 }
 
@@ -423,6 +620,8 @@ func (m *Node) Size() (n int) {
 	n += 1 + l + sovTypes(uint64(l))
 	l = m.Provider.Size()
 	n += 1 + l + sovTypes(uint64(l))
+	l = m.Role.Size()
+	n += 1 + l + sovTypes(uint64(l))
 	return n
 }
 
@@ -432,11 +631,17 @@ func (m *NodeCapacity) Size() (n int) {
 	if m.Cores != 0 {
 		n += 1 + sovTypes(uint64(m.Cores))
 	}
-	if m.Memory != 0 {
-		n += 1 + sovTypes(uint64(m.Memory))
+	if m.MemoryFree != 0 {
+		n += 1 + sovTypes(uint64(m.MemoryFree))
 	}
-	if m.Disk != 0 {
-		n += 1 + sovTypes(uint64(m.Disk))
+	if m.MemoryTotal != 0 {
+		n += 1 + sovTypes(uint64(m.MemoryTotal))
+	}
+	if m.DiskFree != 0 {
+		n += 1 + sovTypes(uint64(m.DiskFree))
+	}
+	if m.DiskTotal != 0 {
+		n += 1 + sovTypes(uint64(m.DiskTotal))
 	}
 	return n
 }
@@ -457,6 +662,21 @@ func (m *NodeProvider) Size() (n int) {
 	l = len(m.Region)
 	if l > 0 {
 		n += 1 + l + sovTypes(uint64(l))
+	}
+	return n
+}
+
+func (m *NodeRole) Size() (n int) {
+	var l int
+	_ = l
+	if m.Preferred != 0 {
+		n += 1 + sovTypes(uint64(m.Preferred))
+	}
+	if m.Current != 0 {
+		n += 1 + sovTypes(uint64(m.Current))
+	}
+	if m.Previous != 0 {
+		n += 1 + sovTypes(uint64(m.Previous))
 	}
 	return n
 }
@@ -610,6 +830,105 @@ func (m *Pong) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Message = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTypes(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *NodeStatus) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTypes
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: NodeStatus: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: NodeStatus: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field State", wireType)
+			}
+			m.State = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.State |= (NodeState(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Capacity", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.Capacity.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -865,6 +1184,36 @@ func (m *Node) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Role", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.Role.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTypes(dAtA[iNdEx:])
@@ -936,9 +1285,9 @@ func (m *NodeCapacity) Unmarshal(dAtA []byte) error {
 			}
 		case 2:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Memory", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field MemoryFree", wireType)
 			}
-			m.Memory = 0
+			m.MemoryFree = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTypes
@@ -948,16 +1297,16 @@ func (m *NodeCapacity) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Memory |= (int32(b) & 0x7F) << shift
+				m.MemoryFree |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
 		case 3:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Disk", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field MemoryTotal", wireType)
 			}
-			m.Disk = 0
+			m.MemoryTotal = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTypes
@@ -967,7 +1316,45 @@ func (m *NodeCapacity) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Disk |= (int32(b) & 0x7F) << shift
+				m.MemoryTotal |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DiskFree", wireType)
+			}
+			m.DiskFree = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.DiskFree |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DiskTotal", wireType)
+			}
+			m.DiskTotal = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.DiskTotal |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1139,6 +1526,113 @@ func (m *NodeProvider) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *NodeRole) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTypes
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: NodeRole: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: NodeRole: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Preferred", wireType)
+			}
+			m.Preferred = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Preferred |= (Role(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Current", wireType)
+			}
+			m.Current = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Current |= (Role(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Previous", wireType)
+			}
+			m.Previous = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Previous |= (Role(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTypes(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func skipTypes(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1247,38 +1741,57 @@ var (
 func init() { proto.RegisterFile("types.proto", fileDescriptorTypes) }
 
 var fileDescriptorTypes = []byte{
-	// 525 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x93, 0xc1, 0x6a, 0xdb, 0x40,
-	0x10, 0x86, 0xbd, 0xb2, 0xe4, 0xd8, 0x93, 0x34, 0x15, 0xdb, 0x10, 0x44, 0x28, 0xae, 0xf1, 0xa1,
-	0x98, 0x40, 0x9d, 0x92, 0x5e, 0x7a, 0x55, 0x54, 0x61, 0x4c, 0x8c, 0x2c, 0xd6, 0x4e, 0x0c, 0xb9,
-	0x04, 0x59, 0xda, 0xca, 0xa2, 0xc8, 0x2b, 0x24, 0xb9, 0xe0, 0xf7, 0xe8, 0x4b, 0xf4, 0x4d, 0x7c,
-	0xec, 0x13, 0x94, 0xd6, 0x0f, 0xd1, 0x73, 0xd9, 0x91, 0x64, 0xf9, 0x50, 0x7a, 0x9b, 0xf9, 0xe7,
-	0x9b, 0x7f, 0x66, 0x47, 0x08, 0x4e, 0xf3, 0x6d, 0xc2, 0xb3, 0x61, 0x92, 0x8a, 0x5c, 0xd0, 0xf6,
-	0x72, 0xe5, 0x8b, 0x38, 0x16, 0xeb, 0xab, 0x77, 0x61, 0x94, 0xaf, 0x36, 0xcb, 0xa1, 0x2f, 0xe2,
-	0x9b, 0x50, 0x84, 0xe2, 0x06, 0x81, 0xe5, 0xe6, 0x33, 0x66, 0x98, 0x60, 0x54, 0x34, 0xf6, 0x7b,
-	0xa0, 0xba, 0xd1, 0x3a, 0xa4, 0x06, 0x9c, 0xc4, 0x3c, 0xcb, 0xbc, 0x90, 0x1b, 0xa4, 0x47, 0x06,
-	0x1d, 0x56, 0xa5, 0x48, 0x88, 0xff, 0x12, 0x7f, 0x08, 0xa8, 0x8e, 0x08, 0x38, 0xa5, 0xa0, 0x7a,
-	0x41, 0x90, 0x96, 0x75, 0x8c, 0xe9, 0x39, 0x28, 0x51, 0x62, 0x28, 0xa8, 0x28, 0x51, 0x22, 0x99,
-	0x44, 0xa4, 0xb9, 0xd1, 0xec, 0x91, 0x41, 0x93, 0x61, 0x4c, 0x75, 0x68, 0x6e, 0xa2, 0xc0, 0x50,
-	0x51, 0x92, 0xa1, 0xa4, 0x56, 0x22, 0xcb, 0x0d, 0xad, 0x70, 0x92, 0x31, 0x7d, 0x0d, 0x9d, 0x2c,
-	0xf7, 0xd2, 0x7c, 0x1e, 0xc5, 0xdc, 0x68, 0x21, 0x5b, 0x0b, 0xf4, 0x23, 0xb4, 0x7d, 0x2f, 0xf1,
-	0xfc, 0x28, 0xdf, 0x1a, 0x27, 0x3d, 0x32, 0x38, 0xbd, 0xbd, 0x1c, 0x56, 0x47, 0x19, 0xca, 0xed,
-	0xac, 0xb2, 0x7a, 0xa7, 0xee, 0x7e, 0xbe, 0x69, 0xb0, 0x03, 0x2d, 0x3b, 0x93, 0x54, 0x7c, 0x8d,
-	0x02, 0x9e, 0x1a, 0xed, 0x7f, 0x75, 0xba, 0x65, 0xb5, 0xea, 0xac, 0xe8, 0xbe, 0x0b, 0x67, 0xc7,
-	0xce, 0xf4, 0x02, 0x34, 0x5f, 0xa4, 0x3c, 0xc3, 0x03, 0x68, 0xac, 0x48, 0xe8, 0x25, 0xb4, 0x62,
-	0x1e, 0x8b, 0x74, 0x8b, 0x57, 0xd0, 0x58, 0x99, 0xc9, 0x37, 0x06, 0x51, 0xf6, 0x05, 0x2f, 0xa1,
-	0x31, 0x8c, 0xfb, 0xdf, 0x48, 0x61, 0x59, 0x8d, 0xa4, 0x6f, 0x41, 0xf5, 0x45, 0x50, 0x9c, 0xfc,
-	0xfc, 0x96, 0xd6, 0x8b, 0x55, 0x04, 0xc3, 0x3a, 0x7d, 0x0f, 0x90, 0xf2, 0x30, 0x12, 0x6b, 0x4b,
-	0xd2, 0x0a, 0xd2, 0x7a, 0x4d, 0x33, 0xac, 0xb1, 0x23, 0x46, 0x8e, 0x5f, 0x7b, 0x31, 0xc7, 0xf1,
-	0x1d, 0x86, 0xb1, 0x5c, 0xb5, 0x20, 0xf0, 0x5b, 0x74, 0x58, 0x99, 0x5d, 0x73, 0x68, 0x15, 0x0e,
-	0x94, 0xc2, 0xf9, 0x83, 0x73, 0xef, 0x4c, 0x17, 0xce, 0x33, 0xb3, 0x47, 0xe3, 0xa9, 0xa3, 0x37,
-	0xa8, 0x0e, 0x67, 0x93, 0xa9, 0x65, 0x4e, 0x2a, 0x85, 0x20, 0x35, 0x7b, 0xb6, 0xcd, 0xd9, 0xbc,
-	0xd2, 0x94, 0x52, 0x5b, 0xd8, 0xb5, 0xd6, 0xa4, 0x2f, 0xa0, 0x63, 0x1d, 0x8c, 0xd4, 0xeb, 0xef,
-	0x04, 0xda, 0x87, 0x97, 0x5f, 0x80, 0x5e, 0x4d, 0x72, 0xd9, 0xf4, 0x71, 0xfc, 0xc9, 0x66, 0x7a,
-	0x43, 0xba, 0x14, 0xb3, 0x0e, 0x1a, 0x91, 0xe4, 0xa3, 0x39, 0x62, 0xa6, 0x33, 0xaf, 0x55, 0x45,
-	0x6e, 0x65, 0x4e, 0xc6, 0xb5, 0xd2, 0x44, 0x65, 0x31, 0xab, 0x15, 0x55, 0xba, 0x99, 0x4f, 0x0f,
-	0xcc, 0xae, 0x35, 0x4d, 0x52, 0x23, 0xcb, 0xad, 0x95, 0x16, 0x7d, 0x05, 0x2f, 0x5d, 0xd3, 0xba,
-	0xb7, 0x8f, 0xec, 0x4f, 0xee, 0xae, 0x76, 0xbf, 0xbb, 0x8d, 0xdd, 0xbe, 0x4b, 0x7e, 0xec, 0xbb,
-	0xe4, 0xd7, 0xbe, 0x4b, 0x9e, 0xda, 0xc5, 0xad, 0x93, 0xe5, 0xb2, 0x85, 0xff, 0xd6, 0x87, 0xbf,
-	0x01, 0x00, 0x00, 0xff, 0xff, 0x32, 0xcb, 0xc5, 0xdc, 0xa3, 0x03, 0x00, 0x00,
+	// 817 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x94, 0xc1, 0x6e, 0xeb, 0x44,
+	0x14, 0x86, 0xe3, 0xc4, 0x4e, 0xe2, 0xd3, 0xde, 0xd6, 0x4c, 0xab, 0xca, 0xaa, 0x50, 0x88, 0xb2,
+	0x40, 0x25, 0xba, 0xf4, 0xa2, 0xcb, 0x86, 0xed, 0xd4, 0x9d, 0x1b, 0x85, 0x06, 0x3b, 0x1a, 0xbb,
+	0x8d, 0xb8, 0x9b, 0xc8, 0x49, 0xe6, 0xa6, 0x16, 0x71, 0xc6, 0xd8, 0x4e, 0xa5, 0xbe, 0x04, 0x2b,
+	0x1e, 0x80, 0x05, 0x1b, 0x24, 0x1e, 0xa4, 0x4b, 0x9e, 0x00, 0x41, 0x9f, 0x04, 0xcd, 0xd8, 0x63,
+	0xa7, 0x80, 0x90, 0xd8, 0x9d, 0xf3, 0x9f, 0xef, 0x9c, 0xf9, 0x7d, 0x66, 0x12, 0x38, 0xc8, 0x1f,
+	0x13, 0x96, 0x5d, 0x26, 0x29, 0xcf, 0x39, 0xea, 0x2e, 0xee, 0x97, 0x3c, 0x8e, 0xf9, 0xf6, 0xfc,
+	0xf3, 0x75, 0x94, 0xdf, 0xef, 0x16, 0x97, 0x4b, 0x1e, 0xbf, 0x59, 0xf3, 0x35, 0x7f, 0x23, 0x81,
+	0xc5, 0xee, 0x83, 0xcc, 0x64, 0x22, 0xa3, 0xa2, 0x71, 0xd0, 0x07, 0x7d, 0x1a, 0x6d, 0xd7, 0xc8,
+	0x86, 0x4e, 0xcc, 0xb2, 0x2c, 0x5c, 0x33, 0x5b, 0xeb, 0x6b, 0x17, 0x26, 0x55, 0xa9, 0x24, 0xf8,
+	0x7f, 0x12, 0xdf, 0x03, 0xb8, 0x7c, 0xc5, 0xfc, 0x3c, 0xcc, 0x77, 0x19, 0xfa, 0x0c, 0x8c, 0x2c,
+	0x0f, 0xf3, 0x82, 0x3a, 0x7a, 0x7b, 0x72, 0xa9, 0xac, 0x5d, 0x2a, 0x88, 0xd1, 0x82, 0x40, 0x5f,
+	0x41, 0x77, 0x19, 0x26, 0xe1, 0x32, 0xca, 0x1f, 0xed, 0x66, 0x5f, 0xbb, 0x38, 0x78, 0x7b, 0xf6,
+	0x92, 0x76, 0xca, 0xea, 0x95, 0xfe, 0xf4, 0xfb, 0x27, 0x0d, 0x5a, 0xd1, 0x83, 0x9f, 0x9b, 0xa0,
+	0x0b, 0x00, 0x21, 0xd0, 0xc3, 0xd5, 0x2a, 0x2d, 0x2d, 0xc9, 0x18, 0x1d, 0x41, 0x33, 0x4a, 0xe4,
+	0x40, 0x93, 0x36, 0xa3, 0x44, 0x30, 0x09, 0x4f, 0x73, 0xbb, 0xd5, 0xd7, 0x2e, 0x5a, 0x54, 0xc6,
+	0xc8, 0x82, 0xd6, 0x2e, 0x5a, 0xd9, 0xba, 0x94, 0x44, 0x28, 0xa8, 0x7b, 0x9e, 0xe5, 0xb6, 0x51,
+	0x4c, 0x12, 0x31, 0xfa, 0x18, 0xcc, 0x2c, 0x0f, 0xd3, 0x3c, 0x88, 0x62, 0x66, 0xb7, 0x25, 0x5b,
+	0x0b, 0x2f, 0xec, 0x77, 0xfe, 0x8f, 0x7d, 0xd1, 0x99, 0xa4, 0xfc, 0x21, 0x5a, 0xb1, 0xd4, 0xee,
+	0xfe, 0x5b, 0xe7, 0xb4, 0xac, 0xaa, 0x4e, 0x45, 0xa3, 0xd7, 0xa0, 0xa7, 0x7c, 0xc3, 0x6c, 0x53,
+	0x76, 0xa1, 0x97, 0x5d, 0x94, 0x6f, 0x58, 0xd9, 0x21, 0xa9, 0xc1, 0x4f, 0x1a, 0x1c, 0xee, 0x1b,
+	0x41, 0xa7, 0x60, 0x2c, 0x79, 0xca, 0x32, 0xb9, 0x2f, 0x83, 0x16, 0x09, 0xea, 0x01, 0xc4, 0x2c,
+	0xe6, 0xe9, 0xe3, 0xbb, 0x94, 0x31, 0xb9, 0x38, 0x83, 0xee, 0x29, 0xa8, 0x0f, 0x07, 0x45, 0x16,
+	0xf0, 0x3c, 0xdc, 0xc8, 0x3d, 0x1a, 0x74, 0x5f, 0x42, 0xe7, 0xd0, 0x5d, 0x45, 0xd9, 0x77, 0xb2,
+	0x5f, 0x97, 0xe5, 0x2a, 0x17, 0x4b, 0x14, 0x71, 0xd1, 0x6b, 0xc8, 0x62, 0x2d, 0x0c, 0x7e, 0x2c,
+	0x2d, 0xaa, 0x2f, 0x46, 0x9f, 0x82, 0xbe, 0xe4, 0x2b, 0xf5, 0x7c, 0xf6, 0xbe, 0x50, 0x11, 0x54,
+	0xd6, 0xd1, 0x17, 0x00, 0x29, 0x5b, 0x47, 0x7c, 0xeb, 0x08, 0xba, 0x29, 0x69, 0xab, 0xa6, 0xa9,
+	0xac, 0xd1, 0x3d, 0x46, 0xdc, 0xf0, 0x36, 0x8c, 0x99, 0xf4, 0x6f, 0x52, 0x19, 0xa3, 0x33, 0x68,
+	0x17, 0x84, 0xb4, 0x6d, 0xd2, 0x32, 0x1b, 0xfc, 0xa0, 0x41, 0x57, 0xad, 0x14, 0xbd, 0x06, 0x33,
+	0x49, 0xd9, 0x07, 0x96, 0xa6, 0x6c, 0x55, 0xfa, 0x3a, 0xda, 0x3b, 0x89, 0x6f, 0x18, 0xad, 0x01,
+	0x74, 0x01, 0x9d, 0xe5, 0x2e, 0x4d, 0xd9, 0x36, 0x2f, 0x5d, 0xfd, 0x9d, 0x55, 0x65, 0x34, 0x14,
+	0xcf, 0x80, 0x3d, 0x44, 0x7c, 0x97, 0x49, 0x53, 0xff, 0x44, 0xab, 0xfa, 0xf0, 0x57, 0x0d, 0xcc,
+	0xea, 0x07, 0x84, 0x3e, 0x82, 0x57, 0xb7, 0xee, 0x8d, 0xeb, 0xcd, 0xdc, 0xb9, 0x1f, 0xe0, 0x80,
+	0x58, 0x0d, 0x74, 0x02, 0xc7, 0xef, 0xc6, 0xee, 0xf5, 0xd8, 0x1d, 0xcd, 0x1d, 0xe2, 0x06, 0x14,
+	0x4f, 0x2c, 0x0d, 0x1d, 0xc3, 0xc1, 0x0c, 0x8f, 0x03, 0x21, 0x7e, 0xed, 0x5d, 0x59, 0x4d, 0x64,
+	0xc3, 0xe9, 0x94, 0x7a, 0x77, 0x63, 0x7f, 0xec, 0xb9, 0xa5, 0x3a, 0x27, 0xee, 0x9d, 0xd5, 0x12,
+	0x28, 0xbd, 0x75, 0x95, 0x68, 0xe9, 0xe2, 0x0c, 0xd5, 0x3b, 0x25, 0x84, 0xfa, 0x96, 0x21, 0xce,
+	0xf0, 0x49, 0x71, 0xc6, 0x37, 0x24, 0xa0, 0x63, 0xc7, 0xb7, 0xda, 0x42, 0x74, 0x26, 0x04, 0xbb,
+	0xb7, 0xd3, 0x6a, 0x5a, 0x67, 0xc8, 0xa0, 0x5d, 0xdc, 0x00, 0x42, 0x70, 0xa4, 0xac, 0x52, 0x32,
+	0x1a, 0x7b, 0xae, 0xd5, 0x40, 0x16, 0x1c, 0x4e, 0x3c, 0x07, 0x4f, 0x94, 0xa2, 0x49, 0xca, 0x9f,
+	0x13, 0xec, 0x07, 0x4a, 0x6b, 0x96, 0xda, 0x8c, 0xd4, 0x5a, 0x0b, 0xbd, 0x02, 0xd3, 0xa9, 0x06,
+	0xe9, 0xc3, 0x5f, 0x34, 0xe8, 0x56, 0x2f, 0xe7, 0x14, 0x2c, 0x75, 0x92, 0xfc, 0xc6, 0x6b, 0x42,
+	0xad, 0x86, 0x98, 0x52, 0x9c, 0x55, 0x69, 0x9a, 0x20, 0xef, 0xf0, 0x88, 0x62, 0x37, 0xa8, 0xd5,
+	0xa6, 0x70, 0x85, 0x27, 0xe3, 0x5a, 0x69, 0x49, 0x65, 0xe6, 0xd7, 0x8a, 0x2e, 0xa6, 0xe1, 0xf7,
+	0xb7, 0x94, 0xd4, 0x9a, 0x21, 0xa8, 0x91, 0x33, 0xad, 0x15, 0xb9, 0x92, 0x29, 0x76, 0x6e, 0xc8,
+	0xde, 0xf8, 0xce, 0xd0, 0x07, 0x5d, 0xbe, 0x26, 0x0b, 0x0e, 0xab, 0x85, 0x78, 0x13, 0x71, 0x75,
+	0x87, 0xd0, 0xc5, 0xee, 0xb7, 0x45, 0xa6, 0xa1, 0x33, 0x40, 0x33, 0x8f, 0xde, 0x4c, 0x3c, 0x7c,
+	0x3d, 0x1f, 0x11, 0x97, 0x50, 0x1c, 0x78, 0xc2, 0xde, 0x09, 0x1c, 0x5f, 0xe3, 0x00, 0x5f, 0x61,
+	0x9f, 0xcc, 0xc5, 0x4d, 0x09, 0x87, 0x57, 0xe7, 0x4f, 0x7f, 0xf6, 0x1a, 0x4f, 0xcf, 0x3d, 0xed,
+	0xb7, 0xe7, 0x9e, 0xf6, 0xc7, 0x73, 0x4f, 0x7b, 0xdf, 0x2d, 0xde, 0x4f, 0xb2, 0x58, 0xb4, 0xe5,
+	0x5f, 0xfc, 0x97, 0x7f, 0x05, 0x00, 0x00, 0xff, 0xff, 0x31, 0x19, 0x4f, 0x96, 0x2a, 0x06, 0x00,
+	0x00,
 }

@@ -19,6 +19,30 @@ message Pong {
     string message = 1;
 }
 
+// ----- start of node -------------
+
+// node state, used in
+//
+// heartbeat with central
+// http api for UI
+// tag monitoring data
+enum NodeState {
+    UNKNOWN_STATE = 0;
+    FINDING_CENTRAL = 1;
+    WAITING_JOB = 2;
+    PROVISIONING_JOB_ENV = 3;
+    RUNNING_JOB = 4;
+    WAITING_PEERS = 5;
+    SENDING_METRICS = 6;
+    CLEANUP_JOB_ENV = 7;
+}
+
+message NodeStatus {
+    NodeState state = 1;
+    NodeCapacity capacity = 2 [(gogoproto.nullable) = false];
+}
+
+// used for register
 message Node {
     // addr should be ip:port
     string addr = 1;
@@ -32,15 +56,20 @@ message Node {
     int64 startTime = 6;
     NodeCapacity capacity = 7 [(gogoproto.nullable) = false];
     NodeProvider provider = 8 [(gogoproto.nullable) = false];
+    NodeRole role = 9 [(gogoproto.nullable) = false];
 }
 
 message NodeCapacity {
     // number of cpu cores
     int32 cores = 1;
-    // memory in MB
-    int32 memory = 2;
-    // disk space in GB
-    int32 disk = 3;
+    // free memory in MB
+    int32 memoryFree = 2;
+    // total memory in MB
+    int32 memoryTotal = 3;
+    // free disk space in GB
+    int32 diskFree = 4;
+    // total disk space in GB
+    int32 diskTotal = 5;
 }
 
 enum Region {
@@ -71,4 +100,18 @@ message NodeProvider {
     string region = 4;
 }
 
+enum Role {
+    UNKNOWN_ROLE = 0;
+    ANY_ROLE = 1; // 随便 都行
+    WORKLOAD_GENERATOR = 2;
+    DATABASE_RUNNER = 3;
+}
+
+message NodeRole {
+    Role preferred = 1;
+    Role current = 2;
+    Role previous = 3;
+}
+
 // TODO: node price
+// ----- end of node -------------

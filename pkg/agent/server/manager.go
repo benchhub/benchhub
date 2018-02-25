@@ -4,12 +4,12 @@ import (
 	"context"
 	"sync"
 
+	igrpc "github.com/at15/go.ice/ice/transport/grpc"
+	ihttp "github.com/at15/go.ice/ice/transport/http"
 	"github.com/dyweb/gommon/errors"
 	dlog "github.com/dyweb/gommon/log"
 	"google.golang.org/grpc"
 
-	igrpc "github.com/at15/go.ice/ice/transport/grpc"
-	ihttp "github.com/at15/go.ice/ice/transport/http"
 	"github.com/benchhub/benchhub/pkg/agent/config"
 	mygrpc "github.com/benchhub/benchhub/pkg/agent/transport/grpc"
 )
@@ -72,10 +72,11 @@ func NewManager(cfg config.ServerConfig) (*Manager, error) {
 func (mgr *Manager) Run() error {
 	var (
 		wg      sync.WaitGroup
-		grpcErr error // TODO: multiple error
+		grpcErr error
 		httpErr error
+		merr    = errors.NewMultiErrSafe()
 	)
-	wg.Add(2)
+	wg.Add(2) // grpc + http + TODO: mon + TODO: register + keep alive
 	ctx, cancel := context.WithCancel(context.Background())
 	// grpc server
 	go func() {
@@ -88,6 +89,7 @@ func (mgr *Manager) Run() error {
 		select {
 		case <-ctx.Done():
 			if grpcErr != nil {
+				merr.Append(grpcErr)
 				mgr.log.Errorf("can't run grpc server %v", grpcErr)
 			} else {
 				// other service's fault ...
@@ -108,8 +110,10 @@ func (mgr *Manager) Run() error {
 		select {
 		case <-ctx.Done():
 			if httpErr != nil {
+				merr.Append(httpErr)
 				mgr.log.Errorf("can't run http server %v", httpErr)
 			} else {
+				// other service's fault
 				mgr.log.Warn("TODO: other's fault, need to shutdown http server")
 			}
 			wg.Done()
@@ -117,5 +121,5 @@ func (mgr *Manager) Run() error {
 		}
 	}()
 	wg.Wait()
-	return grpcErr
+	return merr.ErrorOrNil()
 }
