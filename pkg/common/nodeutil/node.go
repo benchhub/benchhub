@@ -35,10 +35,10 @@ func GetNode() (*pb.Node, error) {
 }
 
 func hostname() string {
-	if host, err := os.Hostname(); err != nil {
+	if name, err := os.Hostname(); err != nil {
 		log.Warnf("can't get hostname %v", err)
 		return "unknown"
 	} else {
-		return host
+		return name
 	}
 }
