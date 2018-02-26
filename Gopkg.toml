@@ -28,6 +28,10 @@
   name = "github.com/at15/go.ice"
   branch = "master"
 
+[[constraint]]
+  name = "github.com/rs/xid"
+  branch = "master"
+
 [prune]
   go-tests = true
   unused-packages = true

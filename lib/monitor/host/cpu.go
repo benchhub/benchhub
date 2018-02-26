@@ -1,6 +1,7 @@
 package host
 
 import (
+	"io"
 	"runtime"
 	"strings"
 )
@@ -13,6 +14,8 @@ const (
 	CPUUserHz   = 100
 	cpuStatPath = "/proc/stat"
 )
+
+var _ Stat = (*Cpus)(nil)
 
 type Cpus struct {
 	Total Cpu
@@ -52,9 +55,9 @@ func (s *Cpus) IsStatic() bool {
 	return false
 }
 
-func (s *Cpus) Update() error {
+func (s *Cpus) UpdateFrom(r io.Reader) error {
 	cores := make([]Cpu, 0, s.num)
-	err := readFile(s.Path(), func(line string) (stop bool) {
+	err := readFrom(r, func(line string) (stop bool) {
 		parts := strings.Fields(line)
 		if len(parts) == 0 {
 			return false

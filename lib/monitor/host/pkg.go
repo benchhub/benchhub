@@ -3,11 +3,13 @@ package host
 import (
 	"bufio"
 	"bytes"
+	"io"
 	"io/ioutil"
 	"strconv"
 
+	"github.com/dyweb/gommon/errors"
+
 	"github.com/benchhub/benchhub/lib/monitor/util/logutil"
-	"github.com/pkg/errors"
 )
 
 var log = logutil.NewPackageLogger()
@@ -19,7 +21,10 @@ type ProcFile interface {
 type Stat interface {
 	IsStatic() bool
 	Update() error
+	UpdateFrom(r io.Reader) error
 }
+
+// TODO: Update that accepts a reader (also makes test easier ...), and we can re use opened file like /proc/stat
 
 type lineHandler func(line string) (stop bool)
 
@@ -37,6 +42,19 @@ func readFile(path string, cb lineHandler) error {
 	}
 	if err := scanner.Err(); err != nil {
 		return errors.Wrapf(err, "error when scan file %s", path)
+	}
+	return nil
+}
+
+func readFrom(r io.Reader, cb lineHandler) error {
+	scanner := bufio.NewScanner(r)
+	for scanner.Scan() {
+		if cb(scanner.Text()) {
+			break
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		return errors.Wrap(err, "error when scan io.Reader")
 	}
 	return nil
 }

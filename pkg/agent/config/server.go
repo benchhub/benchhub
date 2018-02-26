@@ -1,12 +1,17 @@
 package config
 
 import (
-	"github.com/at15/go.ice/ice/config"
+	iconfig "github.com/at15/go.ice/ice/config"
+	cconfig "github.com/benchhub/benchhub/pkg/common/config"
 )
 
-type ServerConfig struct {
-	Http config.HttpServerConfig `yaml:"http"`
-	Grpc config.GrpcServerConfig `yaml:"grpc"`
+type CentralConfig struct {
+	Addr string `yaml:"addr"`
+}
 
-	// TODO: it need to know how to reach out to central
+type ServerConfig struct {
+	Http    iconfig.HttpServerConfig `yaml:"http"`
+	Grpc    iconfig.GrpcServerConfig `yaml:"grpc"`
+	Central CentralConfig            `yaml:"central"`
+	Node    cconfig.NodeConfig       `yaml:"node"`
 }

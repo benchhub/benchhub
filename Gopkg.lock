@@ -8,9 +8,10 @@
     "ice/cli",
     "ice/config",
     "ice/transport/grpc",
+    "ice/transport/http",
     "ice/util/logutil"
   ]
-  revision = "7e798fcdc8e077861025c34bde79ccdb15474799"
+  revision = "f8221af2fd715c4c5d07cc1bbb1481873f25c867"
 
 [[projects]]
   name = "github.com/davecgh/go-spew"
@@ -24,6 +25,7 @@
   packages = [
     "cast",
     "config",
+    "errors",
     "log",
     "log/handlers/cli",
     "structure",
@@ -33,7 +35,7 @@
     "util/logutil",
     "util/runtimeutil"
   ]
-  revision = "73605818e0751af6bdcdada4de2d63157a0bf814"
+  revision = "b950eeb909a37aa06f0820dcdc414a1c53a2f7cf"
 
 [[projects]]
   name = "github.com/gogo/protobuf"
@@ -65,16 +67,26 @@
   version = "v1.0"
 
 [[projects]]
-  name = "github.com/pkg/errors"
-  packages = ["."]
-  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
-  version = "v0.8.0"
+  name = "github.com/opentracing/opentracing-go"
+  packages = [
+    ".",
+    "ext",
+    "log"
+  ]
+  revision = "1949ddbfd147afd4d964a9f00b24eb291e0e7c38"
+  version = "v1.0.2"
 
 [[projects]]
   name = "github.com/pmezard/go-difflib"
   packages = ["difflib"]
   revision = "792786c7400a136282c1664665ae0a8db921c6c2"
   version = "v1.0.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/rs/xid"
+  packages = ["."]
+  revision = "d5f201f58a9de462bfe843bca4c65127fbab05cd"
 
 [[projects]]
   name = "github.com/spf13/cobra"
@@ -168,14 +180,14 @@
   version = "v1.10.0"
 
 [[projects]]
-  branch = "v2"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
-  revision = "d670f9405373e636a5a2765eea47fac0c9bc91a4"
+  revision = "7f97868eec74b32b0982dd158a51a446d1da7eb5"
+  version = "v2.1.1"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ba2fe375c42b1e41e831ae649f8b1bcd4de14877d60a426de088c45b6986bc28"
+  inputs-digest = "a9c6d9af24929a7e5c116f6b98ec2151dda2d092fd2e4c6f657e6414ea249c06"
   solver-name = "gps-cdcl"
   solver-version = 1

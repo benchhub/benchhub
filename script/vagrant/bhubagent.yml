@@ -1,0 +1,20 @@
+central:
+  addr: "192.168.32.10:6081"
+grpc:
+  addr: :6082
+  secure: false
+  cert: icehub.crt
+  key: icehub.key
+  enableTracing: false
+http:
+  addr: :6092
+  secure: false
+  cert: icehub.crt
+  key: icehub.key
+  enableTracing: false
+node:
+  role: "any" # workload_*, database_*
+  provider:
+    name: "at15-local-cloud"
+    region: "us-west"
+    instance: "GameBoyAdvance"

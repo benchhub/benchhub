@@ -6,6 +6,7 @@ import (
 	"runtime"
 
 	icli "github.com/at15/go.ice/ice/cli"
+
 	"github.com/benchhub/benchhub/pkg/central/config"
 	"github.com/benchhub/benchhub/pkg/util/logutil"
 )

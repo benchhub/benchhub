@@ -1,6 +1,7 @@
 package host
 
 import (
+	"io"
 	"strings"
 )
 
@@ -34,6 +35,8 @@ const (
 
 // https://github.com/salesforce/LinuxTelemetry/blob/master/plugins/diskstats.py
 // TODO: what are loop device? https://en.wikipedia.org/wiki/Loop_device
+
+var _ Stat = (*BlockDevices)(nil)
 
 type BlockDevices struct {
 	Devices []BlockDevice
@@ -79,9 +82,13 @@ func (s *BlockDevices) Path() string {
 	return s.path
 }
 
-func (s *BlockDevices) Update() error {
+func (s *BlockDevices) IsStatic() bool {
+	return false
+}
+
+func (s *BlockDevices) UpdateFrom(r io.Reader) error {
 	devices := make([]BlockDevice, 0, len(s.Devices))
-	err := readFile(s.Path(), func(line string) (stop bool) {
+	err := readFrom(r, func(line string) (stop bool) {
 		parts := strings.Fields(line)
 		// invalid, but don't stop
 		if len(parts) < 14 {

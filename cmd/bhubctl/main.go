@@ -13,6 +13,7 @@ const (
 	myname = "bhubctl"
 )
 
+// TODO: should put logic in the manager struct in pkg/ctl instead of scatter in cmd
 var log = logutil.Registry
 
 var (

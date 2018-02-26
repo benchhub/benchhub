@@ -6,7 +6,6 @@ import (
 	"os"
 
 	dlog "github.com/dyweb/gommon/log"
-	"github.com/pkg/errors"
 
 	rpc "github.com/benchhub/benchhub/pkg/agent/transport/grpc"
 	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
@@ -18,6 +17,7 @@ type GrpcServer struct {
 	log *dlog.Logger
 }
 
+// TODO: it might need registry
 func NewGrpcServer() (*GrpcServer, error) {
 	srv := &GrpcServer{}
 	dlog.NewStructLogger(log, srv)
@@ -32,10 +32,15 @@ func NewGrpcServer() (*GrpcServer, error) {
 
 func (srv *GrpcServer) Ping(ctx context.Context, ping *pbc.Ping) (*pbc.Pong, error) {
 	srv.log.Infof("got ping, message is %s", ping.Message)
+	res := fmt.Sprintf("pong from agent %s your message is %s", hostname(), ping.Message)
+	return &pbc.Pong{Message: res}, nil
+}
+
+func hostname() string {
 	if host, err := os.Hostname(); err != nil {
-		return &pbc.Pong{Message: "pong from unknown"}, errors.Wrap(err, "can't get hostname")
+		log.Warnf("can't get hostname %v", err)
+		return "unknown"
 	} else {
-		res := fmt.Sprintf("pong from agent %s your message is %s", host, ping.Message)
-		return &pbc.Pong{Message: res}, nil
+		return host
 	}
 }

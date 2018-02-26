@@ -19,39 +19,71 @@ message Pong {
     string message = 1;
 }
 
+// ----- start of node -------------
+
+// node state, used in
+//
+// heartbeat with central
+// http api for UI
+// tag monitoring data
+enum NodeState {
+    UNKNOWN_STATE = 0;
+    FINDING_CENTRAL = 1;
+    WAITING_JOB = 2;
+    PROVISIONING_JOB_ENV = 3;
+    WAITING_PEERS = 4;
+    RUNNING_JOB = 5;
+    SENDING_METRICS = 6;
+    CLEANUP_JOB_ENV = 7;
+}
+
+message NodeStatus {
+    NodeState state = 1;
+    NodeCapacity capacity = 2 [(gogoproto.nullable) = false];
+}
+
+// used for register
 message Node {
-    // addr should be ip:port
-    string addr = 1;
+    // addr that the node's grpc server listens on i.e. :6081
+    string bindAdrr = 1;
+    // TODO: how does one node know its ip? .... https://github.com/benchhub/benchhub/issues/18
     string ip = 2;
     int64 port = 3;
-    // self generated uuid, used through a node agent's lifetime, lost when restart
-    int64 uid = 4;
+    // self generated uid, used through a node agent's lifetime, change after process restart https://github.com/benchhub/benchhub/issues/17
+    string uid = 4;
     // hostname
     string host = 5;
-    // unix timestamp
+    // unix timestamp when process start
     int64 startTime = 6;
-    NodeCapacity capacity = 7 [(gogoproto.nullable) = false];
-    NodeProvider provider = 8 [(gogoproto.nullable) = false];
+    int64 bootTime = 7;
+    NodeCapacity capacity = 8 [(gogoproto.nullable) = false];
+    NodeProvider provider = 9 [(gogoproto.nullable) = false];
+    NodeRole role = 10 [(gogoproto.nullable) = false];
 }
 
 message NodeCapacity {
     // number of cpu cores
     int32 cores = 1;
-    // memory in MB
-    int32 memory = 2;
-    // disk space in GB
-    int32 disk = 3;
+    // free memory in MB
+    int32 memoryFree = 2;
+    // total memory in MB
+    int32 memoryTotal = 3;
+    // free disk space in MB
+    int32 diskFree = 4;
+    // total disk space in MB
+    int32 diskTotal = 5;
 }
 
-enum Region {
-    // NOTE: we add the ugly REGION suffix because name of enum should be uinquie inside whole proto file, not just the
-    // enum that declared it, the generated go would have constant with Region prefix ....
-    UNKNOWN_REGION = 0;
-    LOCAL_REGION = 1; // local dev environment
-    US_EAST_REGION = 2;
-    US_WEST_REGION = 3;
-    CN_REGION = 4;
-}
+// NOTE: we don't need region code now because there is no cross datacenter and cross service provider deployment
+//enum Region {
+//    // NOTE: we add the ugly REGION suffix because name of enum should be uinquie inside whole proto file, not just the
+//    // enum that declared it, the generated go would have constant with Region prefix ....
+//    UNKNOWN_REGION = 0;
+//    LOCAL_REGION = 1; // local dev environment
+//    US_EAST_REGION = 2;
+//    US_WEST_REGION = 3;
+//    CN_REGION = 4;
+//}
 
 enum Provider {
     UNKNOWN_PROVIDER = 0;
@@ -65,10 +97,38 @@ enum Provider {
 }
 
 message NodeProvider {
-    Provider code = 1;
-    Region regionCode = 2;
-    string name = 3;
-    string region = 4;
+    //    Provider code = 1;
+    //    Region regionCode = 2;
+    string name = 1;
+    string region = 2;
+    string instance = 3;
 }
 
-// TODO: node price
+enum Role {
+    UNKNOWN_ROLE = 0;
+    ANY_ROLE = 1; // 随便 都行
+    CENTRAL = 2;
+    WORKLOAD_GENERATOR = 3;
+    DATABASE_RUNNER = 4;
+}
+
+message NodeRole {
+    Role preferred = 1;
+    Role current = 2;
+    Role previous = 3;
+}
+
+message NodePrice {
+    double MachinePerHour = 1;
+    double StoragePerGB = 2;
+    double OutboundPerMB = 3; // TODO: not sure about the network pricing model, though for benchmark, most stuff is inside the datacenter (VPC)
+}
+
+// ----- end of node -------------
+
+// ----- start of job ------
+message Job {
+    // TODO: job should have much more info
+    string id = 1;
+}
+// ----- end of job ------

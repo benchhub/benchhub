@@ -4,3 +4,17 @@ grpc:
   cert: icehub.crt
   key: icehub.key
   enableTracing: false
+http:
+  addr: :6092
+  secure: false
+  cert: icehub.crt
+  key: icehub.key
+  enableTracing: false
+central:
+  addr: "localhost:6081"
+node:
+  role: "any" # workload_*, database_*
+  provider:
+    name: "at15-local-cloud"
+    region: "us-west"
+    instance: "GameBoyAdvance"
