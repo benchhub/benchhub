@@ -1,6 +1,8 @@
 loggers:
   - struct: "*GrpcServer"
     receiver: "srv"
+  - struct: "*HttpServer"
+    receiver: "srv"
   - struct: "*Manager"
     receiver: "mgr"
   - struct: "*Beater"

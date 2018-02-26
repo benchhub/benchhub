@@ -13,7 +13,6 @@ import (
 	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
 )
 
-// HttpServer is mainly used to communicate with browser, routes are mounted in transport http package
 type HttpServer struct {
 	log *dlog.Logger
 }
@@ -28,7 +27,7 @@ func (srv *HttpServer) Ping(ctx context.Context, ping *pbc.Ping) (*pbc.Pong, err
 	if host, err := os.Hostname(); err != nil {
 		return &pbc.Pong{Message: "pong from unknown"}, errors.Wrap(err, "can't get hostname")
 	} else {
-		res := fmt.Sprintf("pong from agent %s your message is %s", host, ping.Message)
+		res := fmt.Sprintf("pong from central %s your message is %s", host, ping.Message)
 		return &pbc.Pong{Message: res}, nil
 	}
 }

@@ -4,5 +4,11 @@ grpc:
   cert: icehub.crt
   key: icehub.key
   enableTracing: false
+http:
+  addr: :6091
+  secure: false
+  cert: icehub.crt
+  key: icehub.key
+  enableTracing: false
 meta:
   provider: mem

@@ -16,6 +16,18 @@ func (srv *GrpcServer) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Id
 	return justCallMe()
 }
 
+func (srv *HttpServer) SetLogger(logger *dlog.Logger) {
+	srv.log = logger
+}
+
+func (srv *HttpServer) GetLogger() *dlog.Logger {
+	return srv.log
+}
+
+func (srv *HttpServer) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
+	return justCallMe()
+}
+
 func (mgr *Manager) SetLogger(logger *dlog.Logger) {
 	mgr.log = logger
 }
