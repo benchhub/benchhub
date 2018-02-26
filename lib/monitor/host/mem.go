@@ -1,10 +1,15 @@
 package host
 
-import "strings"
+import (
+	"strings"
+	"io"
+)
 
 const (
 	memStatPath = "/proc/meminfo"
 )
+
+var _ Stat = (*Mem)(nil)
 
 // TODO: the code for reading mem should be generated, also we can add descriptions
 type Mem struct {
@@ -53,8 +58,12 @@ func (s *Mem) Path() string {
 	return s.path
 }
 
-func (s *Mem) Update() error {
-	err := readFile(s.Path(), func(line string) (stop bool) {
+func (s *Mem) IsStatic() bool {
+	return false
+}
+
+func (s *Mem) UpdateFrom(r io.Reader) error {
+	err := readFrom(r, func(line string) (stop bool) {
 		parts := strings.Fields(line)
 		if len(parts) < 2 {
 			return false

@@ -1,0 +1,9 @@
+gotmpls:
+  - src: stat_generated.go.tmpl
+    dst: stat_generated.go
+    go: true
+    data:
+      update:
+        - Cpus
+        - BlockDevices
+        - Mem

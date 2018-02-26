@@ -2,6 +2,7 @@ package host
 
 import (
 	"syscall"
+	"io"
 
 	"github.com/dyweb/gommon/errors"
 )
@@ -9,6 +10,8 @@ import (
 const (
 	filesystemPath = "/"
 )
+
+var _ Stat = (*Filesystem)(nil)
 
 type Filesystem struct {
 	Type int64
@@ -44,7 +47,15 @@ func (s *Filesystem) Path() string {
 	return s.path
 }
 
+func (s *Filesystem) IsStatic() bool {
+	return false
+}
+
 func (s *Filesystem) Update() error {
+	return s.UpdateFrom(nil)
+}
+
+func (s *Filesystem) UpdateFrom(_ io.Reader) error {
 	fs := syscall.Statfs_t{}
 	// The  statfs() system call returns information about a mounted filesystem.
 	// path is the pathname of any file within the mounted filesystem

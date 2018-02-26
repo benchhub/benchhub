@@ -17,7 +17,8 @@ TODO
 ## Known issues
 
 - machine disk space only consider filesystem mount to `/`
-
+  - this is likely not the case in most cloud service providers, default volume is mainly for os instead of large data
+  
 ## Test data
 
 ````bash
