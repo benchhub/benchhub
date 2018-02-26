@@ -9,7 +9,7 @@ import (
 
 	cpb "github.com/benchhub/benchhub/pkg/central/centralpb"
 	"github.com/benchhub/benchhub/pkg/central/transport/grpc"
-	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
+	"github.com/benchhub/benchhub/pkg/common/nodeutil"
 )
 
 const (
@@ -40,10 +40,13 @@ func (b *Beater) Register() error {
 	c := b.client
 	ctx, cancel := context.WithTimeout(context.Background(), registerTimeout)
 	defer cancel()
+	node, err := nodeutil.GetNode()
+	// TODO: update bindAddr, ip, port, etc.
+	if err != nil {
+		return err
+	}
 	req := &cpb.RegisterAgentReq{
-		Node: pbc.Node{
-			Host: "test",
-		},
+		Node: *node,
 	}
 	res, err := c.RegisterAgent(ctx, req)
 	if err != nil {

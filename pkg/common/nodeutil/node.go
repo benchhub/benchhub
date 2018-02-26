@@ -1,6 +1,8 @@
 package nodeutil
 
 import (
+	"os"
+
 	"github.com/dyweb/gommon/errors"
 
 	"github.com/benchhub/benchhub/lib/monitor/host"
@@ -18,8 +20,9 @@ func GetNode() (*pb.Node, error) {
 	}
 	node := &pb.Node{
 		Uid:       UID(),
+		Host:      hostname(),
 		BootTime:  int64(m.BootTime), // unix ts in second
-		StartTime: startTime.Unix(), // unix ts in second
+		StartTime: startTime.Unix(),  // unix ts in second
 		Capacity: pb.NodeCapacity{
 			Cores:       int32(m.NumCores),
 			MemoryFree:  int32(m.MemFree / 1024),              // KB -> MB
@@ -29,4 +32,13 @@ func GetNode() (*pb.Node, error) {
 		},
 	}
 	return node, nil
+}
+
+func hostname() string {
+	if host, err := os.Hostname(); err != nil {
+		log.Warnf("can't get hostname %v", err)
+		return "unknown"
+	} else {
+		return host
+	}
 }
