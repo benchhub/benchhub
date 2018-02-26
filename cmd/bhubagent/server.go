@@ -14,6 +14,7 @@ var serveCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Infof("node id is %s", nodeutil.UID())
 		mustLoadConfig()
+		log.Infof("node is %s", cfg.Node)
 		mgr, err := server.NewManager(cfg)
 		if err != nil {
 			log.Fatal(err)

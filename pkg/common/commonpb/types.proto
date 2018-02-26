@@ -45,19 +45,20 @@ message NodeStatus {
 // used for register
 message Node {
     // addr that the node's grpc server listens on i.e. :6081
-    string listenAdrr = 1;
-    // TODO: how does one node know its ip? ....
+    string bindAdrr = 1;
+    // TODO: how does one node know its ip? .... https://github.com/benchhub/benchhub/issues/18
     string ip = 2;
     int64 port = 3;
-    // self generated uuid, used through a node agent's lifetime, lost when restart
-    int64 uid = 4;
+    // self generated uid, used through a node agent's lifetime, change after process restart https://github.com/benchhub/benchhub/issues/17
+    string uid = 4;
     // hostname
     string host = 5;
-    // unix timestamp
+    // unix timestamp when process start
     int64 startTime = 6;
-    NodeCapacity capacity = 7 [(gogoproto.nullable) = false];
-    NodeProvider provider = 8 [(gogoproto.nullable) = false];
-    NodeRole role = 9 [(gogoproto.nullable) = false];
+    int64 bootTime = 7;
+    NodeCapacity capacity = 8 [(gogoproto.nullable) = false];
+    NodeProvider provider = 9 [(gogoproto.nullable) = false];
+    NodeRole role = 10 [(gogoproto.nullable) = false];
 }
 
 message NodeCapacity {
@@ -73,15 +74,16 @@ message NodeCapacity {
     int32 diskTotal = 5;
 }
 
-enum Region {
-    // NOTE: we add the ugly REGION suffix because name of enum should be uinquie inside whole proto file, not just the
-    // enum that declared it, the generated go would have constant with Region prefix ....
-    UNKNOWN_REGION = 0;
-    LOCAL_REGION = 1; // local dev environment
-    US_EAST_REGION = 2;
-    US_WEST_REGION = 3;
-    CN_REGION = 4;
-}
+// NOTE: we don't need region code now because there is no cross datacenter and cross service provider deployment
+//enum Region {
+//    // NOTE: we add the ugly REGION suffix because name of enum should be uinquie inside whole proto file, not just the
+//    // enum that declared it, the generated go would have constant with Region prefix ....
+//    UNKNOWN_REGION = 0;
+//    LOCAL_REGION = 1; // local dev environment
+//    US_EAST_REGION = 2;
+//    US_WEST_REGION = 3;
+//    CN_REGION = 4;
+//}
 
 enum Provider {
     UNKNOWN_PROVIDER = 0;
@@ -95,17 +97,19 @@ enum Provider {
 }
 
 message NodeProvider {
-    Provider code = 1;
-    Region regionCode = 2;
-    string name = 3;
-    string region = 4;
+    //    Provider code = 1;
+    //    Region regionCode = 2;
+    string name = 1;
+    string region = 2;
+    string instance = 3;
 }
 
 enum Role {
     UNKNOWN_ROLE = 0;
     ANY_ROLE = 1; // 随便 都行
-    WORKLOAD_GENERATOR = 2;
-    DATABASE_RUNNER = 3;
+    CENTRAL = 2;
+    WORKLOAD_GENERATOR = 3;
+    DATABASE_RUNNER = 4;
 }
 
 message NodeRole {
@@ -114,7 +118,12 @@ message NodeRole {
     Role previous = 3;
 }
 
-// TODO: node price
+message NodePrice {
+    double MachinePerHour = 1;
+    double StoragePerGB = 2;
+    double OutboundPerMB = 3; // TODO: not sure about the network pricing model, though for benchmark, most stuff is inside the datacenter (VPC)
+}
+
 // ----- end of node -------------
 
 // ----- start of job ------
