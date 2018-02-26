@@ -48,6 +48,7 @@ func (srv *GrpcServer) RegisterAgent(ctx context.Context, req *pb.RegisterAgentR
 	// - return information about itself
 	srv.log.Infof("got register from %s", req.Node.Host)
 	// TODO: use grpc/codes and grpc.Errorf https://groups.google.com/forum/#!topic/golang-nuts/NZX1sOYosRs
+	// https://godoc.org/google.golang.org/grpc/status
 	return nil, errors.New("not implemented")
 }
 

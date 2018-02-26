@@ -31,8 +31,8 @@ enum NodeState {
     FINDING_CENTRAL = 1;
     WAITING_JOB = 2;
     PROVISIONING_JOB_ENV = 3;
-    RUNNING_JOB = 4;
-    WAITING_PEERS = 5;
+    WAITING_PEERS = 4;
+    RUNNING_JOB = 5;
     SENDING_METRICS = 6;
     CLEANUP_JOB_ENV = 7;
 }
@@ -44,8 +44,9 @@ message NodeStatus {
 
 // used for register
 message Node {
-    // addr should be ip:port
-    string addr = 1;
+    // addr that the node's grpc server listens on i.e. :6081
+    string listenAdrr = 1;
+    // TODO: how does one node know its ip? ....
     string ip = 2;
     int64 port = 3;
     // self generated uuid, used through a node agent's lifetime, lost when restart

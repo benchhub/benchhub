@@ -1,0 +1,3 @@
+loggers:
+  - struct: "*MetaStore"
+    receiver: "s"
