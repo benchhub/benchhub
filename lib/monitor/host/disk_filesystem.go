@@ -1,8 +1,8 @@
 package host
 
 import (
-	"syscall"
 	"io"
+	"syscall"
 
 	"github.com/dyweb/gommon/errors"
 )

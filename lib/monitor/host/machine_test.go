@@ -16,4 +16,5 @@ func TestMachineStat_Update(t *testing.T) {
 	t.Logf("disk space free %d bytes", m.DiskSpaceFree)
 	t.Logf("disk inode total %d", m.DiskInodeTotal)
 	t.Logf("disk inode freee %d", m.DiskInodeFree)
+	t.Logf("boot time %d", m.BootTime)
 }

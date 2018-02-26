@@ -1,9 +1,9 @@
 package host
 
 import (
+	"io"
 	"runtime"
 	"strings"
-	"io"
 )
 
 // TODO: /proc/stat has more than just cpu

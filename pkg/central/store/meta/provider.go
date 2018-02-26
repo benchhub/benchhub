@@ -14,7 +14,7 @@ var (
 	providerFactories = make(map[string]ProviderFactory)
 )
 
-type Provider interface {
+type NodeProvider interface {
 	// read
 	NumNodes() (int, error)
 	// TODO: special error for not found?
@@ -28,6 +28,10 @@ type Provider interface {
 
 	// delete
 	RemoveNode(id string) error
+}
+
+type Provider interface {
+	NodeProvider
 }
 
 // TODO: factory should accept config, this is needed for rdbms

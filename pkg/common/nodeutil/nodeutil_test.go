@@ -16,3 +16,16 @@ func TestNewUID(t *testing.T) {
 	t.Log(id.Time())
 	// TODO: print pid, it's uint64 in big endian
 }
+
+func TestGetNode(t *testing.T) {
+	assert := asst.New(t)
+	n, err := GetNode()
+	assert.Nil(err)
+	t.Logf("start time %d", n.StartTime)
+	t.Logf("boot  time %d", n.BootTime)
+	t.Logf("cores %d", n.Capacity.Cores)
+	t.Logf("disk total %d MB", n.Capacity.DiskTotal)
+	t.Logf("disk free %d MB", n.Capacity.DiskFree)
+	t.Logf("mem total %d MB", n.Capacity.MemoryTotal)
+	t.Logf("mem free %d MB", n.Capacity.MemoryFree)
+}

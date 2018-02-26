@@ -1,8 +1,8 @@
 package host
 
 import (
-	"strings"
 	"io"
+	"strings"
 )
 
 const (

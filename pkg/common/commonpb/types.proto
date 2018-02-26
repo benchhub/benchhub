@@ -68,9 +68,9 @@ message NodeCapacity {
     int32 memoryFree = 2;
     // total memory in MB
     int32 memoryTotal = 3;
-    // free disk space in GB
+    // free disk space in MB
     int32 diskFree = 4;
-    // total disk space in GB
+    // total disk space in MB
     int32 diskTotal = 5;
 }
 
