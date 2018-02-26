@@ -10,15 +10,19 @@ import (
 	"github.com/dyweb/gommon/errors"
 	dlog "github.com/dyweb/gommon/log"
 
+	"github.com/benchhub/benchhub/pkg/central/store/meta"
 	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
 )
 
 type HttpServer struct {
-	log *dlog.Logger
+	meta meta.Provider
+	log  *dlog.Logger
 }
 
-func NewHttpServer() (*HttpServer, error) {
-	s := &HttpServer{}
+func NewHttpServer(meta meta.Provider) (*HttpServer, error) {
+	s := &HttpServer{
+		meta: meta,
+	}
 	dlog.NewStructLogger(log, s)
 	return s, nil
 }

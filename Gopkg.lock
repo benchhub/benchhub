@@ -83,6 +83,12 @@
   version = "v1.0.0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/rs/xid"
+  packages = ["."]
+  revision = "d5f201f58a9de462bfe843bca4c65127fbab05cd"
+
+[[projects]]
   name = "github.com/spf13/cobra"
   packages = ["."]
   revision = "7b2c5ac9fc04fc5efafb60700713d4fa609b777b"
@@ -182,6 +188,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "442090b2c839202eac233e06c34ba56a05af5288911127e474c0abaf613e7411"
+  inputs-digest = "a9c6d9af24929a7e5c116f6b98ec2151dda2d092fd2e4c6f657e6414ea249c06"
   solver-name = "gps-cdcl"
   solver-version = 1
