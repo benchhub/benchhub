@@ -93,6 +93,7 @@ func (mgr *Manager) Run() error {
 	)
 	wg.Add(3) // grpc + http + TODO: mon
 	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// grpc server
 	go func() {
 		go func() {

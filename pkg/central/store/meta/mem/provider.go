@@ -28,6 +28,8 @@ func NewMetaStore() *MetaStore {
 	return s
 }
 
+// -- start of read --
+
 func (s *MetaStore) NumNodes() (int, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
@@ -54,3 +56,43 @@ func (s *MetaStore) ListNodes() ([]pbc.Node, error) {
 	}
 	return nodes, nil
 }
+
+// -- end of read--
+
+// -- start of write --
+
+func (s *MetaStore) AddNode(id string, node pbc.Node) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if _, ok := s.nodes[id]; ok {
+		return errors.Errorf("node %s already exists", id)
+	}
+	s.nodes[id] = node
+	return nil
+}
+
+func (s *MetaStore) UpdateNode(id string, node pbc.Node) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if _, ok := s.nodes[id]; !ok {
+		return errors.Errorf("node %s does not exists", id)
+	}
+	s.nodes[id] = node
+	return nil
+}
+
+// -- end of write --
+
+// -- start of delete --
+
+func (s *MetaStore) RemoveNode(id string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if _, ok := s.nodes[id]; !ok {
+		return errors.Errorf("node %s does not exists", id)
+	}
+	delete(s.nodes, id)
+	return nil
+}
+
+// -- end of delete --

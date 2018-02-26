@@ -1,12 +1,12 @@
 package meta
 
 import (
+	"sort"
 	"sync"
 
 	"github.com/dyweb/gommon/errors"
 
 	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
-	"sort"
 )
 
 var (
@@ -15,11 +15,19 @@ var (
 )
 
 type Provider interface {
+	// read
 	NumNodes() (int, error)
 	// TODO: special error for not found?
 	// NOTE: we always return by value to avoid (my) common mistake of pointer pointing to last element in for .. range
 	FindNodeById(id string) (pbc.Node, error)
 	ListNodes() ([]pbc.Node, error)
+
+	// write
+	AddNode(id string, node pbc.Node) error
+	UpdateNode(id string, node pbc.Node) error
+
+	// delete
+	RemoveNode(id string) error
 }
 
 // TODO: factory should accept config, this is needed for rdbms
@@ -42,6 +50,9 @@ func RegisterProviderFactory(name string, factory ProviderFactory) {
 	if _, dup := providerFactories[name]; dup {
 		log.Panicf("RegisterProviderFactory is called twice for %s", name)
 	}
+	providerFactories[name] = factory
+	// FIXME: this logger never showed up ...
+	log.Debugf("register provider factory %s", name)
 }
 
 func Providers() []string {

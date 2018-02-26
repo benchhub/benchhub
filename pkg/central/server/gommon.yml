@@ -1,3 +1,5 @@
 loggers:
   - struct: "*GrpcServer"
     receiver: "srv"
+  - struct: "*Manager"
+    receiver: "mgr"
