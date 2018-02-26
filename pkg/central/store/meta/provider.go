@@ -51,7 +51,7 @@ func RegisterProviderFactory(name string, factory ProviderFactory) {
 		log.Panicf("RegisterProviderFactory is called twice for %s", name)
 	}
 	providerFactories[name] = factory
-	// FIXME: this logger never showed up ...
+	// FIXED: this logger never showed up ... because this function is called before the cli application set the
 	log.Debugf("register provider factory %s", name)
 }
 

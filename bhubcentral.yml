@@ -4,3 +4,5 @@ grpc:
   cert: icehub.crt
   key: icehub.key
   enableTracing: false
+meta:
+  provider: mem

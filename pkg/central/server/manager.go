@@ -1,26 +1,35 @@
 package server
 
 import (
+	"context"
+	"sync"
+
 	igrpc "github.com/at15/go.ice/ice/transport/grpc"
 	"github.com/dyweb/gommon/errors"
 	dlog "github.com/dyweb/gommon/log"
 	"google.golang.org/grpc"
 
-	"context"
 	"github.com/benchhub/benchhub/pkg/central/config"
+	"github.com/benchhub/benchhub/pkg/central/store/meta"
 	mygrpc "github.com/benchhub/benchhub/pkg/central/transport/grpc"
-	"sync"
 )
 
 type Manager struct {
-	cfg           config.ServerConfig
+	cfg config.ServerConfig
+
+	meta          meta.Provider
 	grpcSrv       *GrpcServer
 	grpcTransport *igrpc.Server
-	log           *dlog.Logger
+
+	log *dlog.Logger
 }
 
 func NewManager(cfg config.ServerConfig) (*Manager, error) {
 	log.Infof("creating benchhub central manager")
+	metaStore, err := meta.GetProvider(cfg.Meta.Provider)
+	if err != nil {
+		return nil, errors.Wrap(err, "manager can't create meta store")
+	}
 	grpcSrv, err := NewGrpcServer()
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create grpc server")
@@ -33,6 +42,7 @@ func NewManager(cfg config.ServerConfig) (*Manager, error) {
 	}
 	mgr := &Manager{
 		cfg:           cfg,
+		meta:          metaStore,
 		grpcSrv:       grpcSrv,
 		grpcTransport: grpcTransport,
 	}
