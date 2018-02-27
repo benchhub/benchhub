@@ -5,7 +5,7 @@
 
 <h1 align="center">
 	<br>
-	<img width="400" src="https://avatars3.githubusercontent.com/u/32344687" alt="benchhub">
+	<img width="200" src="https://avatars3.githubusercontent.com/u/32344687" alt="benchhub">
 	<br>
 	<br>
 	<br>
