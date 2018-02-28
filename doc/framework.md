@@ -31,3 +31,6 @@ loader {
 database {
   stop_when loader.finished == true
 }
+
+- prepare
+  - loader

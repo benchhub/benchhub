@@ -47,3 +47,66 @@ nodes:
   - type: database
     ???  
 ````
+
+pseudo config, we would be using go file to get it type check ...
+
+- [ ] how to register config? generate a go file and run it? sounds good ...
+
+````text
+loader {
+    stage prepare {
+        shell {
+            command bhagent install jdk
+        }
+    }
+    stage ping {
+        type: shell
+        command: ab ping --remote=${central}
+    }
+    stage load {
+        type: shell
+        command: ab load --remote=${central}
+    }
+    stage teardown {
+        // nothing
+    }
+}
+
+database {
+    stage setup {
+        shell {
+            command bhutil install jdk
+        }
+        shell {
+            command bhutil ?
+            failable true
+        }
+        shell {
+            name xephonserve
+            command xephonk serve
+            type long running
+        }
+    }
+    stage teardown {
+        shell {
+            kill xephonserve
+        }
+        shell {
+            command rm -rf /var/lib/xephonk/data
+        }
+    }
+}
+````
+
+generic framework
+
+- setup
+  - loader install software (i.e. jdk)
+  - database start
+- ping
+  - all loader ping database
+  - one loader do the initial loading if needed
+  - after ack from all loader
+- run
+  - loader run until finish
+- teardown
