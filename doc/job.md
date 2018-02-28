@@ -4,6 +4,7 @@ A job describes requirements of a benchmark and how it should be run
 
 - spec https://github.com/benchhub/benchhub/issues/12
 - [ ] TODO: multi file? allow specify framework specific stuff?
+- [ ] might just use go file to create task config, install go environment on server
 
 ````yaml
 owner: at15
@@ -32,7 +33,7 @@ nodespec:
         size: 20
       services:
         - name: docker
-          version: 17.12 
+          version: 17.12
      count: 1
 nodes:
   - type: loader
