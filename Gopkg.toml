@@ -24,6 +24,10 @@
 #   go-tests = true
 #   unused-packages = true
 
+ignored = [
+    "github.com/benchhub/benchhub/example/*"
+]
+
 [[constraint]]
   name = "github.com/at15/go.ice"
   branch = "master"

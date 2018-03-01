@@ -1,0 +1,119 @@
+# example spec
+name: xephonk-kariosdb
+reason: example
+framework: xephon-b
+workload: constant
+database: kairosdb
+nodes:
+  - name: db
+    type: database
+  - name: loader1
+    type: loader
+  - name: loader2
+    type: loader
+stages:
+  - name: install_xephon_b
+    selectors:
+      - type: loader
+    tasks:
+      - driver: shell
+        shell:
+          command: "wget https://github.com/xephonhq/xephon-b/releases/download/v0.0.1/xb-0.0.1.zip"
+      - driver: shell
+        shell:
+          command: "unzip xb-0.0.1.zip"
+      - driver: shell
+        shell:
+          command: "./xb version --verbose"
+  - name: install_cassandra
+    selectors:
+      - type: database
+    tasks:
+      - driver: shell
+        shell:
+          command: "docker version"
+      - driver: docker
+        docker:
+          image: cassandra:3.11
+          action: pull
+      - driver: shell
+        shell:
+          command: "docker image list"
+  - name: build_kairosdb
+    selectors:
+      - type: database
+    tasks:
+      - driver: shell
+        shell:
+          command: "git clone https://github.com/benchhub/cookbook.git"
+      - driver: docker
+        docker:
+          image: benchhub/kairosdb:latest
+          action: build
+      - driver: shell
+        shell:
+          command: "docker image list"
+  - name: start_cassandra
+    background: true
+    selectors:
+      - type: database
+    tasks:
+      - background: true
+        driver: docker
+        docker:
+          image: cassandra:3.11
+          action: run
+          ports:
+            - guest: 9042
+              host: 9042
+        ready:
+          - driver: shell
+            shell:
+              # TODO: use wait for it to listen on tcp port
+              command: "sleep 40"
+  - name: start_kairosdb
+    background: true
+    selectors:
+      - type: database
+    tasks:
+      - background: true
+        driver: docker
+        docker:
+          image: benchhub/kairosdb:latest
+          action: run
+          ports:
+            - guest: 8080
+              host: 8080
+        ready:
+          - driver: shell
+            shell:
+              # TODO: might just ping kairosdb
+              command: "sleep 5"
+  - name: ping_kairosdb
+    selectors:
+      - type: loader
+    tasks:
+      - driver: shell
+        shell:
+          # TODO: we need to change gommon/config's behavior, or just create a new config lib for now ...
+          command: "libtsdb ping --addr={{.Node.db.Ip}}:8080"
+  - name: load
+    selectors:
+      - type: loader
+    tasks:
+      - driver: shell
+        shell:
+          command: "xb load --type=kairosdb --target={{.Node.db.Ip}}:8080"
+pipelines:
+  - stages:
+    - install_xephon_b
+    - install_cassandra
+    - build_kairosdb
+  - stages:
+    - start_cassandra
+  - stages:
+    - start_kairosdb
+  - stages:
+    - ping_kairosdb
+  - stages:
+    - load

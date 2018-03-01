@@ -1,0 +1,6 @@
+http:
+  addr: :8080
+  secure: false
+  cert: icehub.crt
+  key: icehub.key
+  enableTracing: false
