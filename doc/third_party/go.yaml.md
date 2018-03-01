@@ -2,6 +2,8 @@
 
 https://godoc.org/gopkg.in/yaml.v2#Unmarshaler
 
+- don't call unmarshal function on itself, it will loop forever
+  - use an alias struct, or another struct ...
 
 ````go
 type Unmarshaler interface {
