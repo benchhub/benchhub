@@ -33,3 +33,7 @@ Week 5
 Week 6
 
 - should have something for result in write up
+
+Week 8
+
+- this is week 8 (2018/03/01) ... and we finally settled what job spec should be 
