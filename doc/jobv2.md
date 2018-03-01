@@ -14,7 +14,7 @@
 - each stage can contains several tasks
   - two type of tasks, run and finish (install, load), and long running (database)
   - run and finish should all success otherwise the stage fails
-  - long running should be stopped later
+  - long running (background, daemon) should be stopped later
   
 A complex example of benchmark KairosDB using Xephon-B, it is complex because
 
@@ -24,18 +24,37 @@ A complex example of benchmark KairosDB using Xephon-B, it is complex because
 TODO
 
 - [ ] how to assign nodes when job start
+  - https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
 
 ````text
 name xephon-b-v0.1-kairosdb-1.2.0
 reason triggered by ci
-workload xephon-b
+framework xephon-b
 database kairosdb
+
+nodes {
+    node {
+        name db
+        type database
+        resource {}
+    }
+    node {
+        name loader1
+        type loader
+        resource {}
+    }
+    node {
+        name loader2
+        type loader
+        resource {}
+    }
+}
 
 stage {
     name install Xephon-B
-    nodes {
-        type = loader
-    }
+    selectors [
+        { type = loader }
+    ]
     tasks {
         task {
             driver shell
@@ -50,9 +69,9 @@ stage {
 
 stage {
     name install Cassandra
-    nodes {
-        type = database
-    }
+    selectors [
+        { type = database }
+    ]
     tasks {
         task {
             driver shell
@@ -67,9 +86,9 @@ stage {
 
 stage {
     name build KairosDB
-    nodes {
-        type = database
-    }
+    selectors [
+        { type = database }
+    ]
     tasks {
         task {
             driver shell
@@ -87,15 +106,15 @@ stage {
 
 stage {
     name start Cassandra
-    nodes {
-        type = database
-    }
-    type long
+    selectors [
+        { type = database }
+    ]
+    background true
     tasks {
         task {
             driver docker
             docker start cassandra:3.1 cassandra
-            type long 
+            background true 
             ready {
                 checkhostport localhost:9042 
             }
@@ -108,15 +127,15 @@ stage {
 
 stage {
     name start KairosDB
-    nodes {
+    selectors {
         type = database
     }
-    type long 
+    background true 
     tasks {
         task {
             driver docker
             docker start benchhub/kairosdb:lastest kairosdb
-            type long
+            background true
             ready {
                 checkhostport localhost:8080
             }
@@ -130,9 +149,9 @@ stage {
 
 stage {
     name all ping
-    nodes {
-        type = loader
-    }
+    selectors [
+        { type = loader }
+    ]
     tasks {
         task {
             driver shell
@@ -144,9 +163,9 @@ stage {
 
 stage {
     name load
-    nodes {
-        type = loader
-    }
+    selectors [
+        { type = loader }
+    ]
     tasks {
         task {
             driver shell
@@ -159,6 +178,7 @@ pipeline = [
     [install Xephon-B, install Cassandra, install KairosDB],
     [start Cassandra],
     [start KairosDB],
+    [all ping],
     [load]
 ]
 ````

@@ -20,7 +20,6 @@
   version = "v1.1.0"
 
 [[projects]]
-  branch = "master"
   name = "github.com/dyweb/gommon"
   packages = [
     "cast",
@@ -33,9 +32,11 @@
     "util/color",
     "util/hashutil",
     "util/logutil",
-    "util/runtimeutil"
+    "util/runtimeutil",
+    "util/testutil"
   ]
   revision = "b950eeb909a37aa06f0820dcdc414a1c53a2f7cf"
+  version = "0.0.5"
 
 [[projects]]
   name = "github.com/gogo/protobuf"
@@ -145,7 +146,7 @@
   branch = "master"
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
-  revision = "2b5a72b8730b0b16380010cfe5286c42108d88e7"
+  revision = "2d9486acae19cf9bd0c093d7dc236a323726a9e4"
 
 [[projects]]
   name = "google.golang.org/grpc"
@@ -188,6 +189,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a9c6d9af24929a7e5c116f6b98ec2151dda2d092fd2e4c6f657e6414ea249c06"
+  inputs-digest = "48653d52464ec427e9cfa7a9816692c9bbcfe39438ede235c998654409fd1d10"
   solver-name = "gps-cdcl"
   solver-version = 1
