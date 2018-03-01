@@ -110,3 +110,74 @@ generic framework
 - run
   - loader run until finish
 - teardown
+
+TODO: some database like KairosDB relies on Cassandra
+
+task is like https://www.nomadproject.io/docs/drivers/docker.html
+
+a job is made of several stages, some can be run in parallel, some should keep running until the end
+
+````text
+stage {
+    name pull_docker_image
+    name build_image ?
+    // ...
+}
+
+stage {
+    name start cassandra
+    type long running
+    node type=database
+    command {
+        driver docker
+        image cassandra:3.1
+        ports:
+            guest:9042
+            host:9042
+    }
+    ready {
+        // TODO: someway to test cassandra is ready, i.e. wait for it https://github.com/benchhub/benchhub/issues/20
+        // https://github.com/jwilder/dockerize
+    }
+    shutdown {
+        docker stop cassandra
+    }
+}
+
+stage {
+    name start kairosdb
+    type long running
+    node type=database
+    command {
+        driver docker
+        image ?
+    }
+    shutdown {
+        docker stop kairosdb
+    }
+}
+
+stage {
+    name ping
+    type short
+    node type=worker
+    command {
+        libtsdb ping kairosdb --host=${central:port}
+    }
+}
+
+stage {
+    name load
+    type short
+    node type=worker
+}
+
+pipeline {
+    pull_docker_image, 
+    start_cassandra
+    start_kairosdb
+    ping
+    load
+    ....
+}
+````
