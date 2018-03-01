@@ -15,6 +15,12 @@ func TestJob_Parse(t *testing.T) {
 	data := testutil.ReadFixture(t, "xephonb-kairosdb.yml")
 	var job Job
 	err := yaml.Unmarshal(data, &job)
+
+	assert.Nil(err)
+	err = job.Validate()
+	if err != nil {
+		t.Log(err.Error())
+	}
 	assert.Nil(err)
 	// TODO: need to handle config of task, is using interface ...
 	spew.Dump(job)
