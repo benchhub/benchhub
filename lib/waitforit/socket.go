@@ -83,6 +83,7 @@ func waitRaw(schema string, addr string, timeout time.Duration) (time.Duration, 
 }
 
 // TODO: allow insecure
+// TODO: allow certain status code, sometimes we just want to make sure the server is up
 func waitHttp(u url.URL, timeout time.Duration) (time.Duration, error) {
 	start := time.Now()
 	c := http.Client{

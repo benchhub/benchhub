@@ -17,7 +17,7 @@
     "ice/transport/http",
     "ice/util/logutil"
   ]
-  revision = "f8221af2fd715c4c5d07cc1bbb1481873f25c867"
+  revision = "ea737b43402c84f6d0f6737619ccf5f5d64f7774"
 
 [[projects]]
   name = "github.com/davecgh/go-spew"
@@ -74,6 +74,7 @@
   version = "v0.3.2"
 
 [[projects]]
+  branch = "master"
   name = "github.com/dyweb/gommon"
   packages = [
     "cast",
@@ -89,8 +90,7 @@
     "util/runtimeutil",
     "util/testutil"
   ]
-  revision = "b950eeb909a37aa06f0820dcdc414a1c53a2f7cf"
-  version = "0.0.5"
+  revision = "d632fd1aaf250a19eae06f57ced7692be168b6f7"
 
 [[projects]]
   name = "github.com/gogo/protobuf"
@@ -187,7 +187,7 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["windows"]
-  revision = "f6cff0780e542efa0c8e864dc8fa522808f6a598"
+  revision = "dd2ff4accc098aceecb86b36eaa7829b2a17b1c9"
 
 [[projects]]
   name = "golang.org/x/text"
