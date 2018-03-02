@@ -1,5 +1,6 @@
 # Container stat
 
+- https://docs.docker.com/config/containers/runmetrics/#tips-for-high-performance-metric-collection
 - containers/{id}/stats?stream={0|1}
   - returned result is one line json
 
