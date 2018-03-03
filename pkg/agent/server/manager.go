@@ -62,7 +62,7 @@ func NewManager(cfg config.ServerConfig) (*Manager, error) {
 	}
 	//log.Fatalf("interval is %s %d", beatInterval, beatInterval)
 	client := crpc.NewClient(conn)
-	beater := NewBeater(client, beatInterval)
+	beater := NewBeater(client, beatInterval, cfg)
 	mgr := &Manager{
 		cfg:           cfg,
 		grpcSrv:       grpcSrv,

@@ -12,3 +12,9 @@ http:
   enableTracing: false
 meta:
   provider: mem
+node:
+  role: "central" # workload_*, database_*
+  provider:
+    name: "at15-local-cloud"
+    region: "us-west"
+    instance: "GameBoyAdvance"

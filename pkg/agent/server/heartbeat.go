@@ -2,14 +2,17 @@ package server
 
 import (
 	"context"
-	"time"
-
 	"github.com/dyweb/gommon/errors"
 	dlog "github.com/dyweb/gommon/log"
+	"time"
 
+	"github.com/benchhub/benchhub/pkg/agent/config"
 	cpb "github.com/benchhub/benchhub/pkg/central/centralpb"
 	"github.com/benchhub/benchhub/pkg/central/transport/grpc"
+	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
 	"github.com/benchhub/benchhub/pkg/common/nodeutil"
+	"net"
+	"strconv"
 )
 
 const (
@@ -20,16 +23,18 @@ const (
 
 // Beater keep posting the server about agent state and retrieve job status
 type Beater struct {
-	client     grpc.BenchHubCentralClient
-	interval   time.Duration
-	registered bool
-	log        *dlog.Logger
+	client       grpc.BenchHubCentralClient
+	interval     time.Duration
+	globalConfig config.ServerConfig
+	registered   bool
+	log          *dlog.Logger
 }
 
-func NewBeater(client grpc.BenchHubCentralClient, interval time.Duration) *Beater {
+func NewBeater(client grpc.BenchHubCentralClient, interval time.Duration, cfg config.ServerConfig) *Beater {
 	b := &Beater{
-		client:   client,
-		interval: interval,
+		client:       client,
+		interval:     interval,
+		globalConfig: cfg,
 	}
 	dlog.NewStructLogger(log, b)
 	return b
@@ -51,6 +56,7 @@ func (b *Beater) RunWithContext(ctx context.Context) error {
 				} else {
 					b.log.Infof("register success")
 					b.registered = true
+					// TODO: publish event inside process? need a place to know node's state
 				}
 			} else {
 				// TODO: real heart beat logic
@@ -67,8 +73,13 @@ func (b *Beater) Register() error {
 	ctx, cancel := context.WithTimeout(context.Background(), registerTimeout)
 	defer cancel()
 	node, err := nodeutil.GetNode()
-	// TODO: update bindAddr, ip, port, etc.
-	// TODO: update provider etc.
+	node.BindAdrr = b.globalConfig.Grpc.Addr
+	node.BindIp, node.BindPort = splitHostPort(node.BindAdrr)
+	node.Provider = pbc.NodeProvider{
+		Name:     b.globalConfig.Node.Provider.Name,
+		Region:   b.globalConfig.Node.Provider.Region,
+		Instance: b.globalConfig.Node.Provider.Instance,
+	}
 	if err != nil {
 		return err
 	}
@@ -81,4 +92,19 @@ func (b *Beater) Register() error {
 	}
 	b.log.Infof("register res id is %s", res.Id)
 	return nil
+}
+
+// FIXME: exact duplicated code in central and agent, this should go to go.ice
+func splitHostPort(addr string) (string, int64) {
+	_, ps, err := net.SplitHostPort(addr)
+	if err != nil {
+		log.Warnf("failed to split host port %s %v", addr, err)
+		return "", 0
+	}
+	p, err := strconv.Atoi(ps)
+	if err != nil {
+		log.Warnf("failed to convert port number %s to int %v", ps, err)
+		return ps, int64(p)
+	}
+	return ps, int64(p)
 }
