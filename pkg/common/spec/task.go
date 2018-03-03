@@ -35,6 +35,11 @@ type Shell struct {
 	XXX     map[string]interface{} `yaml:",inline"`
 }
 
+const (
+	DockerPull = "pull"
+	DockerRun  = "run"
+)
+
 // Docker run using docker
 type Docker struct {
 	Image string `yaml:"image"`

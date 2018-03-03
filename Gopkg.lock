@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  name = "github.com/Microsoft/go-winio"
+  packages = ["."]
+  revision = "7da180ee92d8bd8bb8c37fc560e673e6557c392f"
+  version = "v0.4.7"
+
+[[projects]]
   branch = "master"
   name = "github.com/at15/go.ice"
   packages = [
@@ -11,7 +17,7 @@
     "ice/transport/http",
     "ice/util/logutil"
   ]
-  revision = "f8221af2fd715c4c5d07cc1bbb1481873f25c867"
+  revision = "ea737b43402c84f6d0f6737619ccf5f5d64f7774"
 
 [[projects]]
   name = "github.com/davecgh/go-spew"
@@ -20,6 +26,55 @@
   version = "v1.1.0"
 
 [[projects]]
+  name = "github.com/docker/distribution"
+  packages = [
+    "digest",
+    "reference"
+  ]
+  revision = "48294d928ced5dd9b378f7fd7c6f5da3ff3f2c89"
+  version = "v2.6.2"
+
+[[projects]]
+  name = "github.com/docker/docker"
+  packages = [
+    "api/types",
+    "api/types/blkiodev",
+    "api/types/container",
+    "api/types/events",
+    "api/types/filters",
+    "api/types/mount",
+    "api/types/network",
+    "api/types/reference",
+    "api/types/registry",
+    "api/types/strslice",
+    "api/types/swarm",
+    "api/types/time",
+    "api/types/versions",
+    "api/types/volume",
+    "client",
+    "pkg/tlsconfig"
+  ]
+  revision = "092cba3727bb9b4a2f0e922cd6c0f93ea270e363"
+  version = "v1.13.1"
+
+[[projects]]
+  name = "github.com/docker/go-connections"
+  packages = [
+    "nat",
+    "sockets",
+    "tlsconfig"
+  ]
+  revision = "3ede32e2033de7505e6500d6c868c2b9ed9f169d"
+  version = "v0.3.0"
+
+[[projects]]
+  name = "github.com/docker/go-units"
+  packages = ["."]
+  revision = "0dadbb0345b35ec7ef35e228dabb8de89a65bf52"
+  version = "v0.3.2"
+
+[[projects]]
+  branch = "master"
   name = "github.com/dyweb/gommon"
   packages = [
     "cast",
@@ -35,8 +90,7 @@
     "util/runtimeutil",
     "util/testutil"
   ]
-  revision = "b950eeb909a37aa06f0820dcdc414a1c53a2f7cf"
-  version = "0.0.5"
+  revision = "d632fd1aaf250a19eae06f57ced7692be168b6f7"
 
 [[projects]]
   name = "github.com/gogo/protobuf"
@@ -78,6 +132,12 @@
   version = "v1.0.2"
 
 [[projects]]
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
+  version = "v0.8.0"
+
+[[projects]]
   name = "github.com/pmezard/go-difflib"
   packages = ["difflib"]
   revision = "792786c7400a136282c1664665ae0a8db921c6c2"
@@ -112,14 +172,22 @@
   name = "golang.org/x/net"
   packages = [
     "context",
+    "context/ctxhttp",
     "http2",
     "http2/hpack",
     "idna",
     "internal/timeseries",
     "lex/httplex",
+    "proxy",
     "trace"
   ]
-  revision = "cbe0f9307d0156177f9dd5dc85da1a31abc5f2fb"
+  revision = "22ae77b79946ea320088417e4d50825671d82d57"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/sys"
+  packages = ["windows"]
+  revision = "dd2ff4accc098aceecb86b36eaa7829b2a17b1c9"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -146,7 +214,7 @@
   branch = "master"
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
-  revision = "2d9486acae19cf9bd0c093d7dc236a323726a9e4"
+  revision = "2c5e7ac708aaa719366570dd82bda44541ca2a63"
 
 [[projects]]
   name = "google.golang.org/grpc"
@@ -189,6 +257,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "48653d52464ec427e9cfa7a9816692c9bbcfe39438ede235c998654409fd1d10"
+  inputs-digest = "f17c2632e39bec6f29d44980c691951bf36c0183b2a1369a09a39b386221e319"
   solver-name = "gps-cdcl"
   solver-version = 1

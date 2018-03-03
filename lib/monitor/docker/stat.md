@@ -1,0 +1,320 @@
+# Container stat
+
+- https://docs.docker.com/config/containers/runmetrics/#tips-for-high-performance-metric-collection
+- containers/{id}/stats?stream={0|1}
+  - returned result is one line json
+
+````json
+{
+	"read": "2018-03-02T01:23:49.721903275Z",
+	"preread": "2018-03-02T01:23:48.721734232Z",
+	"pids_stats": {
+		"current": 71
+	},
+	"blkio_stats": {
+		"io_service_bytes_recursive": [{
+			"major": 8,
+			"minor": 0,
+			"op": "Read",
+			"value": 44883968
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Write",
+			"value": 61440
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Sync",
+			"value": 44883968
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Async",
+			"value": 61440
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Total",
+			"value": 44945408
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Read",
+			"value": 44883968
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Write",
+			"value": 61440
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Sync",
+			"value": 44883968
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Async",
+			"value": 61440
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Total",
+			"value": 44945408
+		}],
+		"io_serviced_recursive": [{
+			"major": 8,
+			"minor": 0,
+			"op": "Read",
+			"value": 2465
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Write",
+			"value": 1
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Sync",
+			"value": 2465
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Async",
+			"value": 1
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Total",
+			"value": 2466
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Read",
+			"value": 2465
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Write",
+			"value": 1
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Sync",
+			"value": 2465
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Async",
+			"value": 1
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Total",
+			"value": 2466
+		}],
+		"io_queue_recursive": [{
+			"major": 8,
+			"minor": 0,
+			"op": "Read",
+			"value": 0
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Write",
+			"value": 0
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Sync",
+			"value": 0
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Async",
+			"value": 0
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Total",
+			"value": 0
+		}],
+		"io_service_time_recursive": [{
+			"major": 8,
+			"minor": 0,
+			"op": "Read",
+			"value": 336693148
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Write",
+			"value": 130234
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Sync",
+			"value": 336693148
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Async",
+			"value": 130234
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Total",
+			"value": 336823382
+		}],
+		"io_wait_time_recursive": [{
+			"major": 8,
+			"minor": 0,
+			"op": "Read",
+			"value": 10960088
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Write",
+			"value": 6672
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Sync",
+			"value": 10960088
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Async",
+			"value": 6672
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Total",
+			"value": 10966760
+		}],
+		"io_merged_recursive": [{
+			"major": 8,
+			"minor": 0,
+			"op": "Read",
+			"value": 0
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Write",
+			"value": 0
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Sync",
+			"value": 0
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Async",
+			"value": 0
+		}, {
+			"major": 8,
+			"minor": 0,
+			"op": "Total",
+			"value": 0
+		}],
+		"io_time_recursive": [{
+			"major": 8,
+			"minor": 0,
+			"op": "",
+			"value": 2462288039
+		}],
+		"sectors_recursive": [{
+			"major": 8,
+			"minor": 0,
+			"op": "",
+			"value": 87784
+		}]
+	},
+	"num_procs": 0,
+	"storage_stats": {},
+	"cpu_stats": {
+		"cpu_usage": {
+			"total_usage": 11056117449,
+			"percpu_usage": [1461274851, 1186704854, 1528345830, 1374219463, 896099618, 2251717834, 1150482871, 1207272128],
+			"usage_in_kernelmode": 1980000000,
+			"usage_in_usermode": 10020000000
+		},
+		"system_cpu_usage": 67078590000000,
+		"online_cpus": 8,
+		"throttling_data": {
+			"periods": 0,
+			"throttled_periods": 0,
+			"throttled_time": 0
+		}
+	},
+	"precpu_stats": {
+		"cpu_usage": {
+			"total_usage": 11051062401,
+			"percpu_usage": [1460748652, 1186024006, 1527857831, 1373156038, 895763797, 2250291333, 1150146050, 1207074694],
+			"usage_in_kernelmode": 1980000000,
+			"usage_in_usermode": 10020000000
+		},
+		"system_cpu_usage": 67070540000000,
+		"online_cpus": 8,
+		"throttling_data": {
+			"periods": 0,
+			"throttled_periods": 0,
+			"throttled_time": 0
+		}
+	},
+	"memory_stats": {
+		"usage": 302297088,
+		"max_usage": 326565888,
+		"stats": {
+			"active_anon": 250511360,
+			"active_file": 14155776,
+			"cache": 45314048,
+			"dirty": 12288,
+			"hierarchical_memory_limit": 9223372036854771712,
+			"hierarchical_memsw_limit": 0,
+			"inactive_anon": 0,
+			"inactive_file": 31158272,
+			"mapped_file": 13262848,
+			"pgfault": 124924,
+			"pgmajfault": 154,
+			"pgpgin": 128309,
+			"pgpgout": 56086,
+			"rss": 250511360,
+			"rss_huge": 0,
+			"total_active_anon": 250511360,
+			"total_active_file": 14155776,
+			"total_cache": 45314048,
+			"total_dirty": 12288,
+			"total_inactive_anon": 0,
+			"total_inactive_file": 31158272,
+			"total_mapped_file": 13262848,
+			"total_pgfault": 124924,
+			"total_pgmajfault": 154,
+			"total_pgpgin": 128309,
+			"total_pgpgout": 56086,
+			"total_rss": 250511360,
+			"total_rss_huge": 0,
+			"total_unevictable": 0,
+			"total_writeback": 0,
+			"unevictable": 0,
+			"writeback": 0
+		},
+		"limit": 33642393600
+	},
+	"name": "/kairosdb_kaiorsdb_1",
+	"id": "538484766da2109d445563ee2f99e882412d42c9fdd68eaf220044645de33502",
+	"networks": {
+		"eth0": {
+			"rx_bytes": 110706,
+			"rx_packets": 723,
+			"rx_errors": 0,
+			"rx_dropped": 0,
+			"tx_bytes": 59787,
+			"tx_packets": 518,
+			"tx_errors": 0,
+			"tx_dropped": 0
+		}
+	}
+}
+````

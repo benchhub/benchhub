@@ -107,3 +107,51 @@ func gatherWithTimeout(
 	}
 }
 ````
+
+## Docker
+
+inputs/docker/docker.go  does not use stream
+
+````go
+func (d *Docker) gatherContainer(container types.Container,	acc telegraf.Accumulator) error {
+	var v *types.StatsJSON
+	tags := map[string]string{
+  		"engine_host":       d.engine_host,
+  		"container_name":    cname,
+  		"container_image":   imageName,
+  		"container_version": imageVersion,
+  	}
+  
+  	if !d.containerFilter.Match(cname) {
+  		return nil
+  	}
+  
+  	ctx, cancel := context.WithTimeout(context.Background(), d.Timeout.Duration)
+  	defer cancel()
+  	r, err := d.client.ContainerStats(ctx, container.ID, false)
+  	if err != nil {
+  		return fmt.Errorf("Error getting docker stats: %s", err.Error())
+  	}
+  	defer r.Body.Close()
+  	dec := json.NewDecoder(r.Body)
+  	if err = dec.Decode(&v); err != nil {
+  		if err == io.EOF {
+  			return nil
+  		}
+  		return fmt.Errorf("Error decoding: %s", err.Error())
+  	}
+  	daemonOSType := r.OSType
+  
+  	// Add labels to tags
+  	for k, label := range container.Labels {
+  		if d.labelFilter.Match(k) {
+  			tags[k] = label
+  		}
+  	}
+  
+  	info, err := d.client.ContainerInspect(ctx, container.ID)
+  	if err != nil {
+  		return fmt.Errorf("Error inspecting docker container: %s", err.Error())
+  	}
+}
+````
