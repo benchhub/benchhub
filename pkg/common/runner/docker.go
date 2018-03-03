@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 	"github.com/dyweb/gommon/errors"
 
@@ -34,8 +35,26 @@ func (d *Docker) Run(ctx context.Context) error {
 	switch d.spec.Action {
 	case spec.DockerPull:
 		return d.Pull(ctx)
+	case spec.DockerRun:
+		return d.Start(ctx)
 	}
 	return errors.New("unknown docker action")
+}
+
+// Start starts the container in background, like docker run -d
+func (d *Docker) Start(ctx context.Context) error {
+	res, err := d.c.ContainerCreate(ctx, &container.Config{
+		Image: d.spec.Image,
+		// TODO: cmd, tty etc.
+	}, nil, nil, "")
+	if err != nil {
+		return errors.Wrap(err, "failed to create container")
+	}
+	if err := d.c.ContainerStart(ctx, res.ID, types.ContainerStartOptions{}); err != nil {
+		return errors.Wrap(err, "failed to start container")
+	}
+	// TODO: keep the container id somewhere
+	return nil
 }
 
 func (d *Docker) Pull(ctx context.Context) error {
