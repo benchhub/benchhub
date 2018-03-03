@@ -20,19 +20,45 @@ const (
 
 // Beater keep posting the server about agent state and retrieve job status
 type Beater struct {
-	client grpc.BenchHubCentralClient
-	log    *dlog.Logger
+	client     grpc.BenchHubCentralClient
+	interval   time.Duration
+	registered bool
+	log        *dlog.Logger
 }
 
-func NewBeater(client grpc.BenchHubCentralClient) *Beater {
-	b := &Beater{client: client}
+func NewBeater(client grpc.BenchHubCentralClient, interval time.Duration) *Beater {
+	b := &Beater{
+		client:   client,
+		interval: interval,
+	}
 	dlog.NewStructLogger(log, b)
 	return b
 }
 
 func (b *Beater) RunWithContext(ctx context.Context) error {
-	// TODO: based on agent state, either register or heartbeat
-	b.log.Warn(b.Register())
+	for {
+		select {
+		case <-ctx.Done():
+			// TODO: should we return nil or return context error?
+			b.log.Infof("beater stop due to context finished, its error is %v", ctx.Err())
+			return nil
+		default:
+			// TODO: based on agent state, either register or heartbeat
+			if !b.registered {
+				err := b.Register()
+				if err != nil {
+					b.log.Warnf("register failed %s, retry in %s", err.Error(), b.interval)
+				} else {
+					b.log.Infof("register success")
+					b.registered = true
+				}
+			} else {
+				// TODO: real heart beat logic
+				b.log.Infof("TODO: heartbeat")
+			}
+			time.Sleep(b.interval)
+		}
+	}
 	return nil
 }
 
@@ -42,6 +68,7 @@ func (b *Beater) Register() error {
 	defer cancel()
 	node, err := nodeutil.GetNode()
 	// TODO: update bindAddr, ip, port, etc.
+	// TODO: update provider etc.
 	if err != nil {
 		return err
 	}

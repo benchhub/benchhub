@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"sync"
+	"time"
 
 	igrpc "github.com/at15/go.ice/ice/transport/grpc"
 	ihttp "github.com/at15/go.ice/ice/transport/http"
@@ -55,8 +56,13 @@ func NewManager(cfg config.ServerConfig) (*Manager, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "can't dial central server")
 	}
+	beatInterval, err := time.ParseDuration(cfg.Heartbeat.Interval)
+	if err != nil || beatInterval <= 0 {
+		return nil, errors.Wrapf(err, "invalid heartbeat interval config %d", beatInterval)
+	}
+	//log.Fatalf("interval is %s %d", beatInterval, beatInterval)
 	client := crpc.NewClient(conn)
-	beater := NewBeater(client)
+	beater := NewBeater(client, beatInterval)
 	mgr := &Manager{
 		cfg:           cfg,
 		grpcSrv:       grpcSrv,
@@ -136,9 +142,7 @@ func (mgr *Manager) Run() error {
 			return
 		}
 	}()
-	// create client for central server
-	//if conn, err := grpc.Dial(cfg)
-	// register + heartbeat, client for central
+	// heartbeat with server
 	go func() {
 		// TODO: logic here might be incorrect, beater can exit if ctx is canceled by other go routine, i.e. grpc, http server
 		if err := mgr.beater.RunWithContext(ctx); err != nil {

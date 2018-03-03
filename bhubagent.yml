@@ -12,6 +12,8 @@ http:
   enableTracing: false
 central:
   addr: "localhost:6081"
+heartbeat:
+  interval: "1s"
 node:
   role: "any" # workload_*, database_*
   provider:
