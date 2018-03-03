@@ -19,6 +19,7 @@ type Exec struct {
 }
 
 // NewExec use os.Stdout and os.Stderr as default redirect
+// TODO: should return error and creates the cmd here, for shell, split shell quote is also needed
 func NewExec(s spec.Exec) *Exec {
 	return &Exec{spec: s, stdout: os.Stdout, stderr: os.Stderr}
 }

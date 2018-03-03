@@ -10,6 +10,9 @@ import (
 )
 
 func TestExec_Run(t *testing.T) {
+	if testing.Short() {
+		t.Skipf("skip runner test in short tests")
+	}
 	t.Run("echo", func(t *testing.T) {
 		assert := asst.New(t)
 
