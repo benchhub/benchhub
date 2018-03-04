@@ -2,8 +2,6 @@ package server
 
 import (
 	"context"
-	"net"
-	"strconv"
 	"time"
 
 	"github.com/dyweb/gommon/errors"
@@ -12,8 +10,6 @@ import (
 	"github.com/benchhub/benchhub/pkg/agent/config"
 	cpb "github.com/benchhub/benchhub/pkg/central/centralpb"
 	"github.com/benchhub/benchhub/pkg/central/transport/grpc"
-	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
-	"github.com/benchhub/benchhub/pkg/common/nodeutil"
 )
 
 const (
@@ -73,19 +69,7 @@ func (b *Beater) Register() error {
 	c := b.client
 	ctx, cancel := context.WithTimeout(context.Background(), registerTimeout)
 	defer cancel()
-	node, err := nodeutil.GetNode()
-	node.BindAdrr = b.globalConfig.Grpc.Addr
-	node.BindIp, node.BindPort = splitHostPort(node.BindAdrr)
-	node.Provider = pbc.NodeProvider{
-		Name:     b.globalConfig.Node.Provider.Name,
-		Region:   b.globalConfig.Node.Provider.Region,
-		Instance: b.globalConfig.Node.Provider.Instance,
-	}
-	node.Role = pbc.NodeRole{
-		// TODO: better way to use enumerate
-		Preferred: pbc.Role(pbc.Role_value[b.globalConfig.Node.Role]),
-		// TODO: need to know previous and current role ....
-	}
+	node, err := Node(b.globalConfig)
 	if err != nil {
 		return err
 	}
@@ -98,23 +82,4 @@ func (b *Beater) Register() error {
 	}
 	b.log.Infof("register res id is %s", res.Id)
 	return nil
-}
-
-// FIXME: exact duplicated code in central and agent, this should go to go.ice
-func splitHostPort(addr string) (string, int64) {
-	host, ps, err := net.SplitHostPort(addr)
-	if err != nil {
-		log.Warnf("failed to split host port %s %v", addr, err)
-		return host, 0
-	}
-	// TODO: protobuf generated struct has omit empty ... which would leave bind ip as blank ...
-	if host == "" {
-		host = "0.0.0.0"
-	}
-	p, err := strconv.Atoi(ps)
-	if err != nil {
-		log.Warnf("failed to convert port number %s to int %v", ps, err)
-		return host, int64(p)
-	}
-	return host, int64(p)
 }

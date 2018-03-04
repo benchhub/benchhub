@@ -3,10 +3,13 @@ package server
 import (
 	"context"
 	"fmt"
-	"os"
 
+	igrpc "github.com/at15/go.ice/ice/transport/grpc"
 	dlog "github.com/dyweb/gommon/log"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
+	"github.com/benchhub/benchhub/pkg/agent/config"
 	rpc "github.com/benchhub/benchhub/pkg/agent/transport/grpc"
 	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
 )
@@ -14,33 +17,32 @@ import (
 var _ rpc.BenchHubAgentServer = (*GrpcServer)(nil)
 
 type GrpcServer struct {
-	log *dlog.Logger
+	globalConfig config.ServerConfig
+	log          *dlog.Logger
 }
 
 // TODO: it might need registry
-func NewGrpcServer() (*GrpcServer, error) {
-	srv := &GrpcServer{}
+func NewGrpcServer(cfg config.ServerConfig) (*GrpcServer, error) {
+	srv := &GrpcServer{
+		globalConfig: cfg,
+	}
 	dlog.NewStructLogger(log, srv)
 	return srv, nil
 }
 
-// TODO: get peer information
-// TODO: https://groups.google.com/forum/#!topic/grpc-io/UodEY4N78Sk
-// tell the agent what its address in central's perspective,
-//peer, err := peer.FromContext(ctx)
-//peer.Addr
-
 func (srv *GrpcServer) Ping(ctx context.Context, ping *pbc.Ping) (*pbc.Pong, error) {
 	srv.log.Infof("got ping, message is %s", ping.Message)
-	res := fmt.Sprintf("pong from agent %s your message is %s", hostname(), ping.Message)
+	res := fmt.Sprintf("pong from agent %s your message is %s", igrpc.Hostname(), ping.Message)
 	return &pbc.Pong{Message: res}, nil
 }
 
-func hostname() string {
-	if host, err := os.Hostname(); err != nil {
-		log.Warnf("can't get hostname %v", err)
-		return "unknown"
-	} else {
-		return host
+func (srv *GrpcServer) NodeInfo(ctx context.Context, _ *pbc.NodeInfoReq) (*pbc.NodeInfoRes, error) {
+	node, err := Node(srv.globalConfig)
+	if err != nil {
+		log.Warnf("failed to get central node info %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to get central node info %v", err)
 	}
+	return &pbc.NodeInfoRes{
+		Node: node,
+	}, nil
 }

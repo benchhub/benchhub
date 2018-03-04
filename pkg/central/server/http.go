@@ -11,13 +11,15 @@ import (
 	dlog "github.com/dyweb/gommon/log"
 
 	pb "github.com/benchhub/benchhub/pkg/central/centralpb"
+	"github.com/benchhub/benchhub/pkg/central/config"
 	"github.com/benchhub/benchhub/pkg/central/store/meta"
 	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
 )
 
 type HttpServer struct {
-	meta meta.Provider
-	log  *dlog.Logger
+	meta         meta.Provider
+	globalConfig config.ServerConfig
+	log          *dlog.Logger
 }
 
 func NewHttpServer(meta meta.Provider) (*HttpServer, error) {
@@ -35,6 +37,17 @@ func (srv *HttpServer) Ping(ctx context.Context, ping *pbc.Ping) (*pbc.Pong, err
 		res := fmt.Sprintf("pong from central %s your message is %s", host, ping.Message)
 		return &pbc.Pong{Message: res}, nil
 	}
+}
+
+func (srv *HttpServer) NodeInfo(ctx context.Context) (*pbc.NodeInfoRes, error) {
+	node, err := Node(srv.globalConfig)
+	if err != nil {
+		log.Warnf("failed to get central node info %v", err)
+		return nil, err
+	}
+	return &pbc.NodeInfoRes{
+		Node: node,
+	}, nil
 }
 
 func (srv *HttpServer) ListAgent(ctx context.Context) (*pb.ListAgentRes, error) {
@@ -64,6 +77,9 @@ func (srv *HttpServer) RegisterHandler(mux *ihttp.JsonHandlerMux) {
 		} else {
 			return srv.Ping(ctx, ping)
 		}
+	})
+	mux.AddHandlerFunc("/node", nil, func(ctx context.Context, req interface{}) (res interface{}, err error) {
+		return srv.NodeInfo(ctx)
 	})
 	mux.AddHandlerFunc("/agent/list", nil, func(ctx context.Context, req interface{}) (res interface{}, err error) {
 		return srv.ListAgent(ctx)

@@ -129,6 +129,12 @@ message NodePrice {
     double OutboundPerMB = 3; // TODO: not sure about the network pricing model, though for benchmark, most stuff is inside the datacenter (VPC)
 }
 
+message NodeInfoReq {
+}
+
+message NodeInfoRes {
+    Node node = 1;
+}
 // ----- end of node -------------
 
 // ----- start of job ------

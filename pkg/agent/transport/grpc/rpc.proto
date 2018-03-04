@@ -18,4 +18,7 @@ option (gogoproto.goproto_getters_all) = false;
 service BenchHubAgent {
     rpc Ping (bhcommon.Ping) returns (bhcommon.Pong) {
     }
+    rpc NodeInfo (bhcommon.NodeInfoReq) returns (bhcommon.NodeInfoRes) {
+    }
+
 }

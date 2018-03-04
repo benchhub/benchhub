@@ -33,7 +33,7 @@ type Manager struct {
 
 func NewManager(cfg config.ServerConfig) (*Manager, error) {
 	log.Info("creating benchhub agent manager")
-	grpcSrv, err := NewGrpcServer()
+	grpcSrv, err := NewGrpcServer(cfg)
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create grpc server")
 	}
@@ -43,7 +43,7 @@ func NewManager(cfg config.ServerConfig) (*Manager, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create grpc transport")
 	}
-	httpSrv, err := NewHttpServer()
+	httpSrv, err := NewHttpServer(cfg)
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create http server")
 	}
