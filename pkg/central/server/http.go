@@ -22,9 +22,10 @@ type HttpServer struct {
 	log          *dlog.Logger
 }
 
-func NewHttpServer(meta meta.Provider) (*HttpServer, error) {
+func NewHttpServer(meta meta.Provider, cfg config.ServerConfig) (*HttpServer, error) {
 	s := &HttpServer{
-		meta: meta,
+		meta:         meta,
+		globalConfig: cfg,
 	}
 	dlog.NewStructLogger(log, s)
 	return s, nil
