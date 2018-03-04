@@ -90,7 +90,7 @@
     "util/runtimeutil",
     "util/testutil"
   ]
-  revision = "d632fd1aaf250a19eae06f57ced7692be168b6f7"
+  revision = "c0f7331c33649a3cd611468c902bff8509c6b45c"
 
 [[projects]]
   name = "github.com/gogo/protobuf"

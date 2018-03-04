@@ -10,6 +10,8 @@ install:
 	go install -ldflags "$(FLAGS)" ./cmd/bhubcentral
 	go install -ldflags "$(FLAGS)" ./cmd/bhubctl
 # go install -ldflags "$(FLAGS)" ./cmd/bhubdoctor
+	go install ./cmd/pingserver
+	go install ./cmd/pingclient
 
 .PHONY: clean
 clean:

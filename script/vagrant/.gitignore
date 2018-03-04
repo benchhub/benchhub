@@ -3,5 +3,7 @@
 bhubagent
 bhubcentral
 bhubctl
+pingclient
+pingserver
 
 *.deb
