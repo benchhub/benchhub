@@ -7,3 +7,5 @@ loggers:
     receiver: "mgr"
   - struct: "*Beater"
     receiver: "b"
+  - struct: "*StateMachine"
+    receiver: "s"

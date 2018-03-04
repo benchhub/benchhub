@@ -30,15 +30,15 @@ enum NodeState {
     UNKNOWN_STATE = 0;
     FINDING_CENTRAL = 1;
     IDLE = 2;
-    JOB_WAITING_PEERS = 4;
-    JOB_RUNNING = 5;
+    JOB_RUNNING = 3;
+    JOB_WAITING_PEERS = 5;
     JOB_REPORTING = 6;
     JOB_CLEANUP = 7;
 }
 
 message NodeStatus {
     NodeState state = 1;
-    NodeCapacity capacity = 2 [(gogoproto.nullable) = false];
+    // TODO: need to include job information
 }
 
 // used for register
