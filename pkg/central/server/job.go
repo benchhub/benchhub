@@ -17,6 +17,11 @@ type JobController struct {
 	log      *dlog.Logger
 }
 
+type AssignResult struct {
+	Spec spec.Node
+	Node pbc.Node
+}
+
 func NewJobController(r *Registry) (*JobController, error) {
 	j := &JobController{
 		registry: r,
@@ -48,9 +53,13 @@ func (j *JobController) RunWithContext(ctx context.Context) error {
 					log.Warnf("can't list nodes %s", err.Error())
 				}
 				// TODO: acquire node resource based on node selector
-				err = j.AcquireNodes(nodes, job.Nodes)
+				results, err := j.AcquireNodes(nodes, job.Nodes)
 				if err != nil {
 					log.Warnf("can't acquire nodes %s", err.Error())
+				}
+				for _, r := range results {
+					// TODO: print it or? ...
+					log.Infof("result is %v", r)
 				}
 				log.Infof("TODO: process job %s", job.Name)
 			}
@@ -60,9 +69,9 @@ func (j *JobController) RunWithContext(ctx context.Context) error {
 	}
 }
 
-func (j *JobController) AcquireNodes(nodes []pbc.Node, specs []spec.Node) error {
+func (j *JobController) AcquireNodes(nodes []pbc.Node, specs []spec.Node) ([]AssignResult, error) {
 	if len(nodes) == 0 {
-		return errors.New("0 agent no node to acquire")
+		return nil, errors.New("0 agent no node to acquire")
 	}
 	if len(nodes) < len(specs) {
 		j.log.Warnf("only %d agents but want %d nodes", len(nodes), len(specs))
@@ -109,14 +118,17 @@ func (j *JobController) AcquireNodes(nodes []pbc.Node, specs []spec.Node) error 
 	}
 	// all spec assigned to nodes?
 	merr := errors.NewMultiErr()
+	results := make([]AssignResult, 0, len(specs))
 	for i, spc := range specs {
 		if acquired[i] > 0 {
 			j.log.Infof("plan: assign %s %s to node %s", spc.Name, spc.Type, nodes[acquired[i]-1].Uid)
+			results = append(results, AssignResult{
+				Spec: spc,
+				Node: nodes[acquired[i]-1],
+			})
 		} else {
 			merr.Append(errors.Errorf("spec %s %s has no node", spc.Name, spc.Type))
 		}
 	}
-
-	// TODO: return acquire result
-	return merr.ErrorOrNil()
+	return results, merr.ErrorOrNil()
 }

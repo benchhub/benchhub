@@ -32,10 +32,11 @@ func TestJobController_AcquireNodes(t *testing.T) {
 	t.Run("two agent two nodes", func(t *testing.T) {
 		// FIXME: hardcoded value
 		job := readJob(t, "/home/at15/workspace/src/github.com/benchhub/benchhub/pkg/common/spec/pingpong.yml")
-		err := j.AcquireNodes(twoNodes, job.Nodes)
+		res, err := j.AcquireNodes(twoNodes, job.Nodes)
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Log(res)
 	})
 }
 
