@@ -15,4 +15,7 @@ export class NodeService {
     return this.http.get(centralUrl + '/node')
   }
 
+  getAgents() {
+    return this.http.get(centralUrl + '/agent/list')
+  }
 }

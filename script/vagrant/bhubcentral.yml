@@ -12,3 +12,9 @@ http:
   enableTracing: false
 meta:
   provider: mem
+node:
+  role: "CENTRAL" # CENTRAL, LOADER, DATABASE
+  provider:
+    name: "at15-local-vm"
+    region: "us-west"
+    instance: "GameBoyAdvance"
