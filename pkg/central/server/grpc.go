@@ -53,6 +53,7 @@ func (srv *GrpcServer) RegisterAgent(ctx context.Context, req *pb.RegisterAgentR
 	remoteAddr := igrpc.RemoteAddr(ctx)
 	srv.log.Infof("register agent req from %s %s", remoteAddr, req.Node.Host)
 	req.Node.RemoteAddr = remoteAddr
+	req.Node.Ip, _ = igrpc.SplitHostPort(remoteAddr)
 
 	err := srv.meta.AddNode(req.Node.Uid, req.Node)
 	if err != nil {
@@ -89,4 +90,8 @@ func (srv *GrpcServer) ListAgent(ctx context.Context, req *pb.ListAgentReq) (*pb
 	return &pb.ListAgentRes{
 		Agents: node,
 	}, nil
+}
+
+func (srv *GrpcServer) SubmitJob(ctx context.Context, req *pb.SubmitJobReq) (*pb.SubmitJobRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "submit job is not implemented")
 }

@@ -49,21 +49,22 @@ message Node {
     string bindIp = 2;
     // port grpc server listens on, addr without the ip part
     int64 bindPort = 3;
+    // TODO: how does one node know its ip without call external service .... https://github.com/benchhub/benchhub/issues/18
     // remoteAddr that server sees when this node act as client, the ip is accurate, but the port is random, not the listen port
     string remoteAddr = 4;
-    // TODO: how does one node know its ip without call external service .... https://github.com/benchhub/benchhub/issues/18
+    string ip = 5;
 
     // self generated uid, used through a node agent's lifetime, change after process restart https://github.com/benchhub/benchhub/issues/17
-    string uid = 5;
+    string uid = 6;
     // hostname
-    string host = 6;
+    string host = 7;
     // unix timestamp when process start
-    int64 startTime = 7;
-    int64 bootTime = 8;
+    int64 startTime = 8;
+    int64 bootTime = 9;
 
-    NodeCapacity capacity = 9 [(gogoproto.nullable) = false];
-    NodeProvider provider = 10 [(gogoproto.nullable) = false];
-    NodeRole role = 11 [(gogoproto.nullable) = false];
+    NodeCapacity capacity = 10 [(gogoproto.nullable) = false];
+    NodeProvider provider = 11 [(gogoproto.nullable) = false];
+    NodeRole role = 12 [(gogoproto.nullable) = false];
 }
 
 message NodeCapacity {

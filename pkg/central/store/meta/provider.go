@@ -7,6 +7,7 @@ import (
 	"github.com/dyweb/gommon/errors"
 
 	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
+	"github.com/benchhub/benchhub/pkg/common/spec"
 )
 
 var (
@@ -30,6 +31,13 @@ type NodeProvider interface {
 
 	// delete
 	RemoveNode(id string) error
+}
+
+// TODO: maintain a queue for job
+type JobProvider interface {
+	// TODO: should return both spec and job status ...
+	GetJob(id string) error
+	AddJob(id string, job spec.Job) error
 }
 
 type Provider interface {

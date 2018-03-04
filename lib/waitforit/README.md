@@ -3,22 +3,21 @@
 - https://github.com/benchhub/benchhub/issues/20
 - https://github.com/jwilder/dockerize
 
-````go
-func waitForSocket(scheme, addr string, timeout time.Duration) {
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		for {
-			conn, err := net.DialTimeout(scheme, addr, waitTimeoutFlag)
-			if err != nil {
-				log.Printf("Problem with dial: %v. Sleeping %s\n", err.Error(), waitRetryInterval)
-				time.Sleep(waitRetryInterval)
-			}
-			if conn != nil {
-				log.Printf("Connected to %s://%s\n", scheme, addr)
-				return
-			}
-		}
-	}()
-}
+````text
+Usage of waitforit:
+  -h	display help
+  -host value
+    	hosts to wait
+  -r int
+    	number of retries for each host, negative for infinite retry (default 5)
+  -t duration
+    	time out for each connect (default 10s)
+  -tt duration
+    	total time out (default 1m0s)
+  -w value
+    	(alias of host) hosts to wait
+
+Example:
+  - Wait for two server using default config, return 0 when both of them can be connected
+    waitforit -w tcp://localhost:9042 -w http://localhost:8080
 ````

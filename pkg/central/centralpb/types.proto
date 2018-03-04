@@ -39,3 +39,14 @@ message AgentHeartbeatRes {
     //    bhcommon.Job job = 1 [(gogoproto.nullable) = false];
 }
 
+message SubmitJobReq {
+    string spec = 1;
+}
+
+message SubmitJobRes {
+    string id = 1;
+}
+
+message JobStatusReq {
+
+}

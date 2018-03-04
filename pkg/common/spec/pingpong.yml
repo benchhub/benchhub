@@ -1,0 +1,31 @@
+# start a server, wait for it, ping it
+name: pingpong
+reason: pingpong
+framework: na
+workload: na
+database: na
+nodes:
+  - name: srv
+    type: database
+  - name: cli
+    type: loader
+stages:
+  - name: start_server
+    selectors:
+      - name: srv
+    tasks:
+      - background: true
+        driver: shell
+        shell:
+          command: "pingserver 8080"
+        ready:
+          - driver: shell
+            shell:
+              command: "waitforit -w http://localhost:8080/ping"
+  - name: ping_server
+    selectors:
+      - name: cli
+    tasks:
+      - driver: shell
+        shell:
+          command: "pingclient {{.Nodes.srv.Ip}}:8080"

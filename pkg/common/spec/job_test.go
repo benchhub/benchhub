@@ -10,19 +10,29 @@ import (
 )
 
 func TestJob_Parse(t *testing.T) {
-	assert := asst.New(t)
 
-	data := tu.ReadFixture(t, "xephonb-kairosdb.yml")
-	var job Job
-	err := yaml.Unmarshal(data, &job)
+	files := []string{
+		"pingpong.yml",
+		"xephonb-kairosdb.yml",
+	}
 
-	assert.Nil(err)
-	err = job.Validate()
-	if err != nil {
-		t.Log(err.Error())
+	for _, f := range files {
+		t.Run(f, func(t *testing.T) {
+			assert := asst.New(t)
+			data := tu.ReadFixture(t, f)
+			var job Job
+			err := yaml.Unmarshal(data, &job)
+
+			assert.Nil(err)
+			err = job.Validate()
+			if err != nil {
+				t.Log(err.Error())
+			}
+			assert.Nil(err)
+			if tu.Dump().B() {
+				spew.Dump(job)
+			}
+		})
 	}
-	assert.Nil(err)
-	if tu.Dump().B() {
-		spew.Dump(job)
-	}
+
 }
