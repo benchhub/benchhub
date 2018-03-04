@@ -75,8 +75,20 @@ func (srv *GrpcServer) RegisterAgent(ctx context.Context, req *pb.RegisterAgentR
 	return res, nil
 }
 
+// TODO: implement agent heartbeat
+// - store need to allow store status
 func (srv *GrpcServer) AgentHeartbeat(ctx context.Context, req *pb.AgentHeartbeatReq) (*pb.AgentHeartbeatRes, error) {
 	return nil, status.Error(codes.Unimplemented, "heartbeat is under construction")
+}
+
+func (srv *GrpcServer) ListAgent(ctx context.Context, req *pb.ListAgentReq) (*pb.ListAgentRes, error) {
+	node, err := srv.meta.ListNodes()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to list nodes %s", err.Error())
+	}
+	return &pb.ListAgentRes{
+		Agents: node,
+	}, nil
 }
 
 func hostname() string {
@@ -90,15 +102,19 @@ func hostname() string {
 
 // FIXME: exact duplicated code in central and agent, this should go to go.ice
 func splitHostPort(addr string) (string, int64) {
-	_, ps, err := net.SplitHostPort(addr)
+	host, ps, err := net.SplitHostPort(addr)
 	if err != nil {
 		log.Warnf("failed to split host port %s %v", addr, err)
-		return "", 0
+		return host, 0
+	}
+	// TODO: protobuf generated struct has omit empty ... which would leave bind ip as blank ...
+	if host == "" {
+		host = "0.0.0.0"
 	}
 	p, err := strconv.Atoi(ps)
 	if err != nil {
 		log.Warnf("failed to convert port number %s to int %v", ps, err)
-		return ps, int64(p)
+		return host, int64(p)
 	}
-	return ps, int64(p)
+	return host, int64(p)
 }

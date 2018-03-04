@@ -34,6 +34,7 @@ func main() {
 		icli.Description("BenchHub node agent"),
 		icli.Version(buildInfo),
 		icli.LogRegistry(log),
+		icli.IsServer(),
 	)
 	root := cli.Command()
 	root.AddCommand(serveCmd)

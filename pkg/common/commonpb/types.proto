@@ -111,7 +111,7 @@ message NodeProvider {
 
 enum Role {
     UNKNOWN_ROLE = 0;
-    ANY_ROLE = 1; // 随便 都行
+    ANY = 1; // 随便 都行
     CENTRAL = 2;
     LOADER = 3;
     DATABASE = 4;

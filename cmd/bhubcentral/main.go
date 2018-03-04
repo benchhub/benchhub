@@ -35,6 +35,7 @@ func main() {
 		icli.Description("BenchHub central"),
 		icli.Version(buildInfo),
 		icli.LogRegistry(log),
+		icli.IsServer(),
 	)
 	root := cli.Command()
 	root.AddCommand(serveCmd)

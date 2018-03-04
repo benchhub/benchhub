@@ -22,4 +22,6 @@ service BenchHubCentral {
     }
     rpc AgentHeartbeat (bhcentral.AgentHeartbeatReq) returns (bhcentral.AgentHeartbeatRes) {
     }
+    rpc ListAgent (bhcentral.ListAgentReq) returns (bhcentral.ListAgentRes) {
+    }
 }

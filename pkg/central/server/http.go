@@ -10,6 +10,7 @@ import (
 	"github.com/dyweb/gommon/errors"
 	dlog "github.com/dyweb/gommon/log"
 
+	pb "github.com/benchhub/benchhub/pkg/central/centralpb"
 	"github.com/benchhub/benchhub/pkg/central/store/meta"
 	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
 )
@@ -36,6 +37,16 @@ func (srv *HttpServer) Ping(ctx context.Context, ping *pbc.Ping) (*pbc.Pong, err
 	}
 }
 
+func (srv *HttpServer) ListAgent(ctx context.Context) (*pb.ListAgentRes, error) {
+	node, err := srv.meta.ListNodes()
+	if err != nil {
+		return nil, err
+	}
+	return &pb.ListAgentRes{
+		Agents: node,
+	}, nil
+}
+
 func (srv *HttpServer) Handler() http.Handler {
 	mux := http.NewServeMux()
 	jMux := ihttp.NewJsonHandlerMux()
@@ -53,5 +64,8 @@ func (srv *HttpServer) RegisterHandler(mux *ihttp.JsonHandlerMux) {
 		} else {
 			return srv.Ping(ctx, ping)
 		}
+	})
+	mux.AddHandlerFunc("/agent/list", nil, func(ctx context.Context, req interface{}) (res interface{}, err error) {
+		return srv.ListAgent(ctx)
 	})
 }

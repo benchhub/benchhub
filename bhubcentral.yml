@@ -13,7 +13,7 @@ http:
 meta:
   provider: mem
 node:
-  role: "central" # workload_*, database_*
+  role: "CENTRAL" # CENTRAL, LOADER, DATABASE
   provider:
     name: "at15-local-cloud"
     region: "us-west"
