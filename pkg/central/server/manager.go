@@ -21,6 +21,7 @@ type Manager struct {
 	registry *Registry
 
 	meta          meta.Provider
+	job           *JobController
 	grpcSrv       *GrpcServer
 	grpcTransport *igrpc.Server
 	httpSrv       *HttpServer
@@ -39,6 +40,13 @@ func NewManager(cfg config.ServerConfig) (*Manager, error) {
 	// registry
 	r := &Registry{Config: cfg, Meta: metaStore}
 
+	// job controller
+	job, err := NewJobController(r)
+	if err != nil {
+		return nil, errors.Wrap(err, "manager can't create job controller")
+	}
+
+	// grpc http
 	grpcSrv, err := NewGrpcServer(metaStore, r)
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create grpc server")
@@ -61,6 +69,7 @@ func NewManager(cfg config.ServerConfig) (*Manager, error) {
 		cfg:           cfg,
 		registry:      r,
 		meta:          metaStore,
+		job:           job,
 		grpcSrv:       grpcSrv,
 		grpcTransport: grpcTransport,
 		httpSrv:       httpSrv,
@@ -77,7 +86,7 @@ func (mgr *Manager) Run() error {
 		httpErr error
 		merr    = errors.NewMultiErrSafe()
 	)
-	wg.Add(2) // grpc + http
+	wg.Add(3) // grpc + http + job controller
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// grpc server
@@ -120,6 +129,15 @@ func (mgr *Manager) Run() error {
 			wg.Done()
 			return
 		}
+	}()
+	// job controller
+	go func() {
+		if err := mgr.job.RunWithContext(ctx); err != nil {
+			merr.Append(err)
+			mgr.log.Warnf("can't run job controller %v", err)
+			cancel()
+		}
+		wg.Done()
 	}()
 	wg.Wait()
 	return merr.ErrorOrNil()
