@@ -29,12 +29,11 @@ message Pong {
 enum NodeState {
     UNKNOWN_STATE = 0;
     FINDING_CENTRAL = 1;
-    WAITING_JOB = 2;
-    PROVISIONING_JOB_ENV = 3;
-    WAITING_PEERS = 4;
-    RUNNING_JOB = 5;
-    SENDING_METRICS = 6;
-    CLEANUP_JOB_ENV = 7;
+    IDLE = 2;
+    JOB_WAITING_PEERS = 4;
+    JOB_RUNNING = 5;
+    JOB_REPORTING = 6;
+    JOB_CLEANUP = 7;
 }
 
 message NodeStatus {
@@ -44,21 +43,27 @@ message NodeStatus {
 
 // used for register
 message Node {
-    // addr that the node's grpc server listens on i.e. :6081
+    // addr grpc server listens on i.e. :6081
     string bindAdrr = 1;
-    // TODO: how does one node know its ip? .... https://github.com/benchhub/benchhub/issues/18
-    string ip = 2;
-    int64 port = 3;
+    // ip grpc server listens on, sometime it's empty for 0.0.0.0
+    string bindIp = 2;
+    // port grpc server listens on, addr without the ip part
+    int64 bindPort = 3;
+    // remoteAddr that server sees when this node act as client, the ip is accurate, but the port is random, not the listen port
+    string remoteAddr = 4;
+    // TODO: how does one node know its ip without call external service .... https://github.com/benchhub/benchhub/issues/18
+
     // self generated uid, used through a node agent's lifetime, change after process restart https://github.com/benchhub/benchhub/issues/17
-    string uid = 4;
+    string uid = 5;
     // hostname
-    string host = 5;
+    string host = 6;
     // unix timestamp when process start
-    int64 startTime = 6;
-    int64 bootTime = 7;
-    NodeCapacity capacity = 8 [(gogoproto.nullable) = false];
-    NodeProvider provider = 9 [(gogoproto.nullable) = false];
-    NodeRole role = 10 [(gogoproto.nullable) = false];
+    int64 startTime = 7;
+    int64 bootTime = 8;
+
+    NodeCapacity capacity = 9 [(gogoproto.nullable) = false];
+    NodeProvider provider = 10 [(gogoproto.nullable) = false];
+    NodeRole role = 11 [(gogoproto.nullable) = false];
 }
 
 message NodeCapacity {
@@ -106,10 +111,10 @@ message NodeProvider {
 
 enum Role {
     UNKNOWN_ROLE = 0;
-    ANY_ROLE = 1; // 随便 都行
+    ANY = 1; // 随便 都行
     CENTRAL = 2;
-    WORKLOAD_GENERATOR = 3;
-    DATABASE_RUNNER = 4;
+    LOADER = 3;
+    DATABASE = 4;
 }
 
 message NodeRole {
@@ -124,6 +129,12 @@ message NodePrice {
     double OutboundPerMB = 3; // TODO: not sure about the network pricing model, though for benchmark, most stuff is inside the datacenter (VPC)
 }
 
+message NodeInfoReq {
+}
+
+message NodeInfoRes {
+    Node node = 1;
+}
 // ----- end of node -------------
 
 // ----- start of job ------

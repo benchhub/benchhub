@@ -17,7 +17,7 @@
     "ice/transport/http",
     "ice/util/logutil"
   ]
-  revision = "ea737b43402c84f6d0f6737619ccf5f5d64f7774"
+  revision = "c8561aa9ce40b5223941dbc8e87552a574f18694"
 
 [[projects]]
   name = "github.com/davecgh/go-spew"
@@ -257,6 +257,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f17c2632e39bec6f29d44980c691951bf36c0183b2a1369a09a39b386221e319"
+  inputs-digest = "1463035729fdbe6cd942b7369788c0ea5651a90ebee8035d73dc6ffeeaccb084"
   solver-name = "gps-cdcl"
   solver-version = 1

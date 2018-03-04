@@ -7,9 +7,9 @@ import (
 	"github.com/dyweb/gommon/errors"
 	dlog "github.com/dyweb/gommon/log"
 
+	"github.com/benchhub/benchhub/pkg/agent/config"
 	cpb "github.com/benchhub/benchhub/pkg/central/centralpb"
 	"github.com/benchhub/benchhub/pkg/central/transport/grpc"
-	"github.com/benchhub/benchhub/pkg/common/nodeutil"
 )
 
 const (
@@ -20,19 +20,48 @@ const (
 
 // Beater keep posting the server about agent state and retrieve job status
 type Beater struct {
-	client grpc.BenchHubCentralClient
-	log    *dlog.Logger
+	client       grpc.BenchHubCentralClient
+	interval     time.Duration
+	globalConfig config.ServerConfig
+	registered   bool
+	log          *dlog.Logger
 }
 
-func NewBeater(client grpc.BenchHubCentralClient) *Beater {
-	b := &Beater{client: client}
+func NewBeater(client grpc.BenchHubCentralClient, interval time.Duration, cfg config.ServerConfig) *Beater {
+	b := &Beater{
+		client:       client,
+		interval:     interval,
+		globalConfig: cfg,
+	}
 	dlog.NewStructLogger(log, b)
 	return b
 }
 
 func (b *Beater) RunWithContext(ctx context.Context) error {
-	// TODO: based on agent state, either register or heartbeat
-	b.log.Warn(b.Register())
+	for {
+		select {
+		case <-ctx.Done():
+			// TODO: should we return nil or return context error?
+			b.log.Infof("beater stop due to context finished, its error is %v", ctx.Err())
+			return nil
+		default:
+			// TODO: based on agent state, either register or heartbeat
+			if !b.registered {
+				err := b.Register()
+				if err != nil {
+					b.log.Warnf("register failed %s, retry in %s", err.Error(), b.interval)
+				} else {
+					b.log.Infof("register success")
+					b.registered = true
+					// TODO: publish event inside process? need a place to know node's state
+				}
+			} else {
+				// TODO: real heart beat logic
+				b.log.Infof("TODO: heartbeat")
+			}
+			time.Sleep(b.interval)
+		}
+	}
 	return nil
 }
 
@@ -40,8 +69,7 @@ func (b *Beater) Register() error {
 	c := b.client
 	ctx, cancel := context.WithTimeout(context.Background(), registerTimeout)
 	defer cancel()
-	node, err := nodeutil.GetNode()
-	// TODO: update bindAddr, ip, port, etc.
+	node, err := Node(b.globalConfig)
 	if err != nil {
 		return err
 	}

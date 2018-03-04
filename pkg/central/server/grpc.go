@@ -3,60 +3,64 @@ package server
 import (
 	"context"
 	"fmt"
-	"os"
-
+	igrpc "github.com/at15/go.ice/ice/transport/grpc"
 	dlog "github.com/dyweb/gommon/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	pb "github.com/benchhub/benchhub/pkg/central/centralpb"
+	"github.com/benchhub/benchhub/pkg/central/config"
 	"github.com/benchhub/benchhub/pkg/central/store/meta"
 	rpc "github.com/benchhub/benchhub/pkg/central/transport/grpc"
 	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
-	"github.com/benchhub/benchhub/pkg/common/nodeutil"
 )
 
 var _ rpc.BenchHubCentralServer = (*GrpcServer)(nil)
 
 type GrpcServer struct {
-	meta meta.Provider
-	log  *dlog.Logger
+	meta         meta.Provider
+	globalConfig config.ServerConfig
+	log          *dlog.Logger
 }
 
-func NewGrpcServer(meta meta.Provider) (*GrpcServer, error) {
+func NewGrpcServer(meta meta.Provider, cfg config.ServerConfig) (*GrpcServer, error) {
 	srv := &GrpcServer{
-		meta: meta,
+		meta:         meta,
+		globalConfig: cfg,
 	}
 	dlog.NewStructLogger(log, srv)
 	return srv, nil
 }
 
-// TODO: get peer information
-// TODO: https://groups.google.com/forum/#!topic/grpc-io/UodEY4N78Sk
-// tell the agent what its address in central's perspective,
-//peer, err := peer.FromContext(ctx)
-//peer.Addr
-
 func (srv *GrpcServer) Ping(ctx context.Context, ping *pbc.Ping) (*pbc.Pong, error) {
 	srv.log.Infof("got ping, message is %s", ping.Message)
-	res := fmt.Sprintf("pong from central %s your message is %s", hostname(), ping.Message)
+	res := fmt.Sprintf("pong from central %s your message is %s", igrpc.Hostname(), ping.Message)
 	return &pbc.Pong{Message: res}, nil
 }
 
+func (srv *GrpcServer) NodeInfo(ctx context.Context, _ *pbc.NodeInfoReq) (*pbc.NodeInfoRes, error) {
+	node, err := Node(srv.globalConfig)
+	if err != nil {
+		log.Warnf("failed to get central node info %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to get central node info %v", err)
+	}
+	return &pbc.NodeInfoRes{
+		Node: node,
+	}, nil
+}
+
 func (srv *GrpcServer) RegisterAgent(ctx context.Context, req *pb.RegisterAgentReq) (*pb.RegisterAgentRes, error) {
-	// TODO:
-	// - check if the node is already registered
-	// - assign it id
-	// - return information about itself
-	srv.log.Infof("register agent req from %s", req.Node.Host)
+	remoteAddr := igrpc.RemoteAddr(ctx)
+	srv.log.Infof("register agent req from %s %s", remoteAddr, req.Node.Host)
+	req.Node.RemoteAddr = remoteAddr
+
 	err := srv.meta.AddNode(req.Node.Uid, req.Node)
 	if err != nil {
 		log.Warnf("failed to add node %v", err)
 		// TODO: already exists may not be the only cause .... though for in memory, it should be ...
 		return nil, status.Errorf(codes.AlreadyExists, "failed to add node %v", err)
 	}
-	central, err := nodeutil.GetNode()
-	// TODO: update bindAddr, ip, port, etc.
+	node, err := Node(srv.globalConfig)
 	if err != nil {
 		log.Warnf("failed to get central node info %v", err)
 		return nil, status.Errorf(codes.Internal, "failed to get central node info %v", err)
@@ -64,20 +68,23 @@ func (srv *GrpcServer) RegisterAgent(ctx context.Context, req *pb.RegisterAgentR
 	res := &pb.RegisterAgentRes{
 		Id:      req.Node.Uid,
 		Node:    req.Node,
-		Central: *central,
+		Central: *node,
 	}
 	return res, nil
 }
 
+// TODO: implement agent heartbeat
+// - store need to allow store status
 func (srv *GrpcServer) AgentHeartbeat(ctx context.Context, req *pb.AgentHeartbeatReq) (*pb.AgentHeartbeatRes, error) {
 	return nil, status.Error(codes.Unimplemented, "heartbeat is under construction")
 }
 
-func hostname() string {
-	if host, err := os.Hostname(); err != nil {
-		log.Warnf("can't get hostname %v", err)
-		return "unknown"
-	} else {
-		return host
+func (srv *GrpcServer) ListAgent(ctx context.Context, req *pb.ListAgentReq) (*pb.ListAgentRes, error) {
+	node, err := srv.meta.ListNodes()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to list nodes %s", err.Error())
 	}
+	return &pb.ListAgentRes{
+		Agents: node,
+	}, nil
 }

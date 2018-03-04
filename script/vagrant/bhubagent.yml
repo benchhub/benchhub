@@ -1,5 +1,3 @@
-central:
-  addr: "192.168.32.10:6081"
 grpc:
   addr: :6082
   secure: false
@@ -12,9 +10,13 @@ http:
   cert: icehub.crt
   key: icehub.key
   enableTracing: false
+central:
+  addr: "192.168.32.10:6081"
+heartbeat:
+  interval: "1s"
 node:
-  role: "any" # workload_*, database_*
+  role: "ANY" # CENTRAL, LOADER, DATABASE
   provider:
-    name: "at15-local-cloud"
+    name: "at15-local-vm"
     region: "us-west"
     instance: "GameBoyAdvance"

@@ -33,7 +33,7 @@ func NewManager(cfg config.ServerConfig) (*Manager, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create meta store")
 	}
-	grpcSrv, err := NewGrpcServer(metaStore)
+	grpcSrv, err := NewGrpcServer(metaStore, cfg)
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create grpc server")
 	}
@@ -43,7 +43,7 @@ func NewManager(cfg config.ServerConfig) (*Manager, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create grpc transport")
 	}
-	httpSrv, err := NewHttpServer(metaStore)
+	httpSrv, err := NewHttpServer(metaStore, cfg)
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create http server")
 	}

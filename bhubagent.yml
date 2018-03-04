@@ -12,8 +12,10 @@ http:
   enableTracing: false
 central:
   addr: "localhost:6081"
+heartbeat:
+  interval: "1s"
 node:
-  role: "any" # workload_*, database_*
+  role: "ANY" # CENTRAL, LOADER, DATABASE
   provider:
     name: "at15-local-cloud"
     region: "us-west"

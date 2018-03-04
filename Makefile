@@ -9,7 +9,13 @@ install:
 	go install -ldflags "$(FLAGS)" ./cmd/bhubagent
 	go install -ldflags "$(FLAGS)" ./cmd/bhubcentral
 	go install -ldflags "$(FLAGS)" ./cmd/bhubctl
-	go install -ldflags "$(FLAGS)" ./cmd/bhubdoctor
+# go install -ldflags "$(FLAGS)" ./cmd/bhubdoctor
+
+.PHONY: clean
+clean:
+	rm $(shell which bhubagent)
+	rm $(shell which bhubcentral)
+	rm $(shell which bhubctl)
 
 .PHONY: generate
 generate:

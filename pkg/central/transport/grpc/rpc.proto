@@ -18,8 +18,14 @@ option (gogoproto.goproto_getters_all) = false;
 service BenchHubCentral {
     rpc Ping (bhcommon.Ping) returns (bhcommon.Pong) {
     }
+    rpc NodeInfo (bhcommon.NodeInfoReq) returns (bhcommon.NodeInfoRes) {
+    }
+
     rpc RegisterAgent (bhcentral.RegisterAgentReq) returns (bhcentral.RegisterAgentRes) {
     }
     rpc AgentHeartbeat (bhcentral.AgentHeartbeatReq) returns (bhcentral.AgentHeartbeatRes) {
     }
+    rpc ListAgent (bhcentral.ListAgentReq) returns (bhcentral.ListAgentRes) {
+    }
+
 }

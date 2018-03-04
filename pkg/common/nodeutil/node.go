@@ -12,7 +12,7 @@ import (
 // return node info that is needed when register agent and heartbeat
 
 // GetNode returns node id, capacity, start & boot time
-// TODO: addr
+// TODO: addr https://github.com/benchhub/benchhub/issues/18
 func GetNode() (*pb.Node, error) {
 	m := host.NewMachine()
 	if err := m.Update(); err != nil {

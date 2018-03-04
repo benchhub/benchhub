@@ -22,6 +22,14 @@ message RegisterAgentRes {
     bhcommon.Node central = 3 [(gogoproto.nullable) = false]; // all the information about the central
 }
 
+message ListAgentReq {
+
+}
+
+message ListAgentRes {
+    repeated bhcommon.Node agents = 1 [(gogoproto.nullable) = false];
+}
+
 message AgentHeartbeatReq {
     string id = 1;
     bhcommon.NodeStatus status = 2 [(gogoproto.nullable) = false];
@@ -30,3 +38,4 @@ message AgentHeartbeatReq {
 message AgentHeartbeatRes {
     bhcommon.Job job = 1 [(gogoproto.nullable) = false];
 }
+
