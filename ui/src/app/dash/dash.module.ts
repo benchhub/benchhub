@@ -7,6 +7,7 @@ import { DashRoutingModule } from './dash-routing.module';
 import { DashComponent } from './dash.component';
 import { JobComponent } from './job/job.component';
 import { AboutComponent } from './about/about.component';
+import { NodeComponent } from './node/node.component';
 
 @NgModule({
   imports: [
@@ -14,6 +15,6 @@ import { AboutComponent } from './about/about.component';
     DashRoutingModule,
     NgZorroAntdModule
   ],
-  declarations: [DashComponent, JobComponent, AboutComponent]
+  declarations: [DashComponent, JobComponent, AboutComponent, NodeComponent]
 })
 export class DashModule { }

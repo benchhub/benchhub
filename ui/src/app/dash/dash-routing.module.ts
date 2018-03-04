@@ -1,8 +1,9 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { DashComponent } from './dash.component';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
+import {DashComponent} from './dash.component';
 import {JobComponent} from "./job/job.component";
 import {AboutComponent} from "./about/about.component";
+import {NodeComponent} from "./node/node.component";
 
 const routes: Routes = [
   {
@@ -12,6 +13,10 @@ const routes: Routes = [
       {
         path: 'job',
         component: JobComponent
+      },
+      {
+        path: 'node',
+        component: NodeComponent
       },
       {
         path: 'about',
@@ -25,4 +30,5 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class DashRoutingModule { }
+export class DashRoutingModule {
+}

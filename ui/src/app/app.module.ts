@@ -9,6 +9,7 @@ import { AppComponent } from './app.component';
 
 import { AuthModule } from './auth/auth.module';
 import { DashModule } from './dash/dash.module';
+import {HttpClientModule} from "@angular/common/http";
 
 
 @NgModule({
@@ -18,6 +19,7 @@ import { DashModule } from './dash/dash.module';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    HttpClientModule,
     AuthModule,
     DashModule,
     AppRoutingModule,

@@ -30,6 +30,9 @@ cd src/app/dash
 ng generate component dash --module dash --flat
 ng generate component job --module dash
 ng generate component about --module dash
+ng generate component node --module dash
 ````
 
+service
 
+- [ ] TODO: http service to read JSON API ... https://angular.io/guide/http
