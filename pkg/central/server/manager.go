@@ -18,6 +18,8 @@ import (
 type Manager struct {
 	cfg config.ServerConfig
 
+	registry *Registry
+
 	meta          meta.Provider
 	grpcSrv       *GrpcServer
 	grpcTransport *igrpc.Server
@@ -33,7 +35,11 @@ func NewManager(cfg config.ServerConfig) (*Manager, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create meta store")
 	}
-	grpcSrv, err := NewGrpcServer(metaStore, cfg)
+
+	// registry
+	r := &Registry{Config: cfg, Meta: metaStore}
+
+	grpcSrv, err := NewGrpcServer(metaStore, r)
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create grpc server")
 	}
@@ -43,7 +49,7 @@ func NewManager(cfg config.ServerConfig) (*Manager, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create grpc transport")
 	}
-	httpSrv, err := NewHttpServer(metaStore, cfg)
+	httpSrv, err := NewHttpServer(metaStore, r)
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create http server")
 	}
@@ -53,6 +59,7 @@ func NewManager(cfg config.ServerConfig) (*Manager, error) {
 	}
 	mgr := &Manager{
 		cfg:           cfg,
+		registry:      r,
 		meta:          metaStore,
 		grpcSrv:       grpcSrv,
 		grpcTransport: grpcTransport,

@@ -36,12 +36,14 @@ type NodeProvider interface {
 // TODO: maintain a queue for job
 type JobProvider interface {
 	// TODO: should return both spec and job status ...
-	GetJob(id string) error
-	AddJob(id string, job spec.Job) error
+	GetJobSpec(id string) (spec.Job, error)
+	AddJobSpec(id string, job spec.Job) error
+	GetPendingJob() (job spec.Job, empty bool, err error)
 }
 
 type Provider interface {
 	NodeProvider
+	JobProvider
 }
 
 // TODO: factory should accept config, this is needed for rdbms

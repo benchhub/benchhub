@@ -25,15 +25,17 @@ var _ rpc.BenchHubCentralServer = (*GrpcServer)(nil)
 
 type GrpcServer struct {
 	meta         meta.Provider
+	registry     *Registry
 	globalConfig config.ServerConfig
 	c            int64
 	log          *dlog.Logger
 }
 
-func NewGrpcServer(meta meta.Provider, cfg config.ServerConfig) (*GrpcServer, error) {
+func NewGrpcServer(meta meta.Provider, r *Registry) (*GrpcServer, error) {
 	srv := &GrpcServer{
 		meta:         meta,
-		globalConfig: cfg,
+		registry:     r,
+		globalConfig: r.Config,
 	}
 	dlog.NewStructLogger(log, srv)
 	return srv, nil
@@ -111,5 +113,8 @@ func (srv *GrpcServer) SubmitJob(ctx context.Context, req *pb.SubmitJobReq) (*pb
 	atomic.AddInt64(&srv.c, 1)
 	id := fmt.Sprintf("%s-%d", job.Name, atomic.LoadInt64(&srv.c))
 	srv.log.Infof("got job %s id %s", job.Name, id)
+	if err := srv.meta.AddJobSpec(id, job); err != nil {
+		return nil, errors.Wrap(err, "can't add job spec to store")
+	}
 	return &pb.SubmitJobRes{Id: id}, nil
 }

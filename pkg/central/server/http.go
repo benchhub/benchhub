@@ -18,14 +18,16 @@ import (
 
 type HttpServer struct {
 	meta         meta.Provider
+	registry     *Registry
 	globalConfig config.ServerConfig
 	log          *dlog.Logger
 }
 
-func NewHttpServer(meta meta.Provider, cfg config.ServerConfig) (*HttpServer, error) {
+func NewHttpServer(meta meta.Provider, r *Registry) (*HttpServer, error) {
 	s := &HttpServer{
 		meta:         meta,
-		globalConfig: cfg,
+		registry:     r,
+		globalConfig: r.Config,
 	}
 	dlog.NewStructLogger(log, s)
 	return s, nil

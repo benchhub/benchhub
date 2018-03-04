@@ -39,3 +39,15 @@ func (mgr *Manager) GetLogger() *dlog.Logger {
 func (mgr *Manager) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
 	return justCallMe()
 }
+
+func (j *JobController) SetLogger(logger *dlog.Logger) {
+	j.log = logger
+}
+
+func (j *JobController) GetLogger() *dlog.Logger {
+	return j.log
+}
+
+func (j *JobController) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
+	return justCallMe()
+}
