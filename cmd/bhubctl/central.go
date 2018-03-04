@@ -7,8 +7,10 @@ import (
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 
+	cpb "github.com/benchhub/benchhub/pkg/central/centralpb"
 	mygrpc "github.com/benchhub/benchhub/pkg/central/transport/grpc"
 	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
+	"io/ioutil"
 )
 
 const (
@@ -50,6 +52,31 @@ func (c *CentralCommand) PingCmd() *cobra.Command {
 	}
 }
 
+func (c *CentralCommand) SubmitCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "submit",
+		Short: "submit job",
+		Long:  "Submit job for BenchHub to run",
+		Run: func(cmd *cobra.Command, args []string) {
+			c.mustCreateClient()
+			if len(args) < 1 {
+				log.Fatal("didn't provide spec file")
+			}
+			b, err := ioutil.ReadFile(args[0])
+			if err != nil {
+				log.Fatalf("failed to read file %s %v", args[0], err)
+			}
+			if res, err := c.client.SubmitJob(context.Background(), &cpb.SubmitJobReq{
+				Spec: string(b),
+			}); err != nil {
+				log.Fatalf("submit job failed %v", err)
+			} else {
+				log.Infof("job submitted id is %s", res.Id)
+			}
+		},
+	}
+}
+
 func (c *CentralCommand) mustCreateClient() {
 	if c.client != nil {
 		return
@@ -65,5 +92,5 @@ func init() {
 	central := &CentralCommand{
 		addr: localCentralAddr,
 	}
-	centralCmd.AddCommand(central.PingCmd())
+	centralCmd.AddCommand(central.PingCmd(), central.SubmitCmd())
 }
