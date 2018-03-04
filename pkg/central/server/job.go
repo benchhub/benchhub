@@ -70,6 +70,7 @@ func (j *JobController) AcquireNodes(nodes []pbc.Node, specs []spec.Node) error 
 	used := make([]int, len(nodes))
 	acquired := make([]int, len(specs))
 	// first loop, don't reuse any node
+
 	for i, s := range specs {
 		for j, node := range nodes {
 			if used[j] > 0 {
@@ -80,11 +81,12 @@ func (j *JobController) AcquireNodes(nodes []pbc.Node, specs []spec.Node) error 
 				// NOTE: +1 so we can check if the spec has acquired node with > 0
 				acquired[i] = j + 1
 				used[j]++
-				continue
+				break
 			}
 			if node.Role == pbc.Role_ANY {
 				acquired[i] = j + 1
 				used[j]++
+				break
 			}
 		}
 	}
@@ -101,6 +103,7 @@ func (j *JobController) AcquireNodes(nodes []pbc.Node, specs []spec.Node) error 
 				}
 				acquired[i] = j + 1
 				used[j]++
+				break
 			}
 		}
 	}
