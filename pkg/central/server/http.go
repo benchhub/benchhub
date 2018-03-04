@@ -66,11 +66,13 @@ func (srv *HttpServer) Handler() http.Handler {
 	jMux := ihttp.NewJsonHandlerMux()
 	srv.RegisterHandler(jMux)
 	jMux.MountToStd(mux)
+	// FIXME: need to figure out a way to mount api in both / and /api
+	//mux.Handle("/api/", http.StripPrefix("/api/", mux))
 	return mux
 }
 
 func (srv *HttpServer) RegisterHandler(mux *ihttp.JsonHandlerMux) {
-	mux.AddHandlerFunc("/ping", func() interface{} {
+	mux.AddHandlerFunc("/api/ping", func() interface{} {
 		return &pbc.Ping{}
 	}, func(ctx context.Context, req interface{}) (res interface{}, err error) {
 		if ping, ok := req.(*pbc.Ping); !ok {
@@ -79,10 +81,10 @@ func (srv *HttpServer) RegisterHandler(mux *ihttp.JsonHandlerMux) {
 			return srv.Ping(ctx, ping)
 		}
 	})
-	mux.AddHandlerFunc("/node", nil, func(ctx context.Context, req interface{}) (res interface{}, err error) {
+	mux.AddHandlerFunc("/api/node", nil, func(ctx context.Context, req interface{}) (res interface{}, err error) {
 		return srv.NodeInfo(ctx)
 	})
-	mux.AddHandlerFunc("/agent/list", nil, func(ctx context.Context, req interface{}) (res interface{}, err error) {
+	mux.AddHandlerFunc("/api/agent/list", nil, func(ctx context.Context, req interface{}) (res interface{}, err error) {
 		return srv.ListAgent(ctx)
 	})
 }
