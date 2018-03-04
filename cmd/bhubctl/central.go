@@ -11,6 +11,7 @@ import (
 	mygrpc "github.com/benchhub/benchhub/pkg/central/transport/grpc"
 	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
 	"io/ioutil"
+	"os/user"
 )
 
 const (
@@ -67,6 +68,7 @@ func (c *CentralCommand) SubmitCmd() *cobra.Command {
 				log.Fatalf("failed to read file %s %v", args[0], err)
 			}
 			if res, err := c.client.SubmitJob(context.Background(), &cpb.SubmitJobReq{
+				User: username(),
 				Spec: string(b),
 			}); err != nil {
 				log.Fatalf("submit job failed %v", err)
@@ -93,4 +95,12 @@ func init() {
 		addr: localCentralAddr,
 	}
 	centralCmd.AddCommand(central.PingCmd(), central.SubmitCmd())
+}
+
+func username() string {
+	u, err := user.Current()
+	if err != nil {
+		return "unknown"
+	}
+	return u.Name
 }

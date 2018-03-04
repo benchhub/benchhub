@@ -64,7 +64,7 @@ message Node {
 
     NodeCapacity capacity = 10 [(gogoproto.nullable) = false];
     NodeProvider provider = 11 [(gogoproto.nullable) = false];
-    NodeRole role = 12 [(gogoproto.nullable) = false];
+    Role role = 12;
 }
 
 message NodeCapacity {
@@ -118,11 +118,11 @@ enum Role {
     DATABASE = 4;
 }
 
-message NodeRole {
-    Role preferred = 1;
-    Role current = 2;
-    Role previous = 3;
-}
+//message NodeRole {
+//    Role preferred = 1;
+//    Role current = 2;
+//    Role previous = 3;
+//}
 
 message NodePrice {
     double MachinePerHour = 1;
@@ -142,5 +142,19 @@ message NodeInfoRes {
 message Job {
     // TODO: job should have much more info
     string id = 1;
+    string spec = 2;
+    int64 createTime = 3;
+    int64 startTime = 4;
+}
+
+enum JobResult {
+    UNKNOWN_RESULT = 0;
+    SUCCESS = 1;
+    ERROR = 2;
+}
+
+message JobStatus {
+    int64 stage = 1;
+    int64 task = 2;
 }
 // ----- end of job ------

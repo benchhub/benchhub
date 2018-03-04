@@ -40,13 +40,19 @@ message AgentHeartbeatRes {
 }
 
 message SubmitJobReq {
-    string spec = 1;
+    string user = 1;
+    string spec = 2;
 }
 
 message SubmitJobRes {
     string id = 1;
+    int64  pending = 2;
 }
 
 message JobStatusReq {
+    string id = 1;
+}
+
+message JobStatusRes {
 
 }

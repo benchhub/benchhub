@@ -20,10 +20,22 @@ func (c *Job) Validate() error {
 		return errors.Errorf("undefined fields found in job config %v", c.XXX)
 	}
 	merr := errors.NewMultiErr()
+	// check node name dup
+	nodeNames := make(map[string]bool, len(c.Nodes))
 	for i := range c.Nodes {
+		if nodeNames[c.Nodes[i].Name] {
+			merr.Append(errors.Errorf("dup node name %s", c.Nodes[i].Name))
+		}
+		nodeNames[c.Nodes[i].Name] = true
 		merr.Append(c.Nodes[i].Validate())
 	}
+	// check stage name dup
+	stageNames := make(map[string]bool, len(c.Stages))
 	for i := range c.Stages {
+		if stageNames[c.Stages[i].Name] {
+			merr.Append(errors.Errorf("dup stage name %s", c.Stages[i].Name))
+		}
+		stageNames[c.Stages[i].Name] = true
 		merr.Append(c.Stages[i].Validate())
 	}
 	for i := range c.Pipelines {
