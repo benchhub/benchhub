@@ -51,3 +51,15 @@ func (b *Beater) GetLogger() *dlog.Logger {
 func (b *Beater) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
 	return justCallMe()
 }
+
+func (s *StateMachine) SetLogger(logger *dlog.Logger) {
+	s.log = logger
+}
+
+func (s *StateMachine) GetLogger() *dlog.Logger {
+	return s.log
+}
+
+func (s *StateMachine) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
+	return justCallMe()
+}

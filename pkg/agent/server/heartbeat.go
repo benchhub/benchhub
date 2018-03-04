@@ -20,21 +20,29 @@ const (
 
 // Beater keep posting the server about agent state and retrieve job status
 type Beater struct {
-	client       grpc.BenchHubCentralClient
-	interval     time.Duration
+	client     grpc.BenchHubCentralClient
+	interval   time.Duration
+	registered bool
+
+	registry     *Registry
 	globalConfig config.ServerConfig
-	registered   bool
-	log          *dlog.Logger
+
+	log *dlog.Logger
 }
 
-func NewBeater(client grpc.BenchHubCentralClient, interval time.Duration, cfg config.ServerConfig) *Beater {
+func NewBeater(client grpc.BenchHubCentralClient, r *Registry) (*Beater, error) {
+	interval, err := time.ParseDuration(r.Config.Heartbeat.Interval)
+	if err != nil || interval <= 0 {
+		return nil, errors.Errorf("invalid heartbeat interval config %d", interval)
+	}
 	b := &Beater{
 		client:       client,
 		interval:     interval,
-		globalConfig: cfg,
+		registry:     r,
+		globalConfig: r.Config,
 	}
 	dlog.NewStructLogger(log, b)
-	return b
+	return b, nil
 }
 
 func (b *Beater) RunWithContext(ctx context.Context) error {
@@ -45,7 +53,6 @@ func (b *Beater) RunWithContext(ctx context.Context) error {
 			b.log.Infof("beater stop due to context finished, its error is %v", ctx.Err())
 			return nil
 		default:
-			// TODO: based on agent state, either register or heartbeat
 			if !b.registered {
 				err := b.Register()
 				if err != nil {
@@ -53,11 +60,14 @@ func (b *Beater) RunWithContext(ctx context.Context) error {
 				} else {
 					b.log.Infof("register success")
 					b.registered = true
-					// TODO: publish event inside process? need a place to know node's state
+					// TODO: publish event inside process? the state machine now is just a thread safe struct
+					b.registry.State.RegisterSuccess()
 				}
 			} else {
 				// TODO: real heart beat logic
-				b.log.Infof("TODO: heartbeat")
+				// TODO: log every 100 requests (sampled logger), this should be supported by logging library,
+				// keep a counter for it, zap seems to have it
+				b.log.Debugf("TODO: heartbeat")
 			}
 			time.Sleep(b.interval)
 		}

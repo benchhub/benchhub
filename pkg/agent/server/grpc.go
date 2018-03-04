@@ -17,14 +17,15 @@ import (
 var _ rpc.BenchHubAgentServer = (*GrpcServer)(nil)
 
 type GrpcServer struct {
+	registry     *Registry
 	globalConfig config.ServerConfig
 	log          *dlog.Logger
 }
 
-// TODO: it might need registry
-func NewGrpcServer(cfg config.ServerConfig) (*GrpcServer, error) {
+func NewGrpcServer(r *Registry) (*GrpcServer, error) {
 	srv := &GrpcServer{
-		globalConfig: cfg,
+		registry:     r,
+		globalConfig: r.Config,
 	}
 	dlog.NewStructLogger(log, srv)
 	return srv, nil

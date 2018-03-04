@@ -16,13 +16,15 @@ import (
 
 // HttpServer is mainly used to communicate with browser, routes are mounted in transport http package
 type HttpServer struct {
+	registry     *Registry
 	globalConfig config.ServerConfig
 	log          *dlog.Logger
 }
 
-func NewHttpServer(cfg config.ServerConfig) (*HttpServer, error) {
+func NewHttpServer(r *Registry) (*HttpServer, error) {
 	s := &HttpServer{
-		globalConfig: cfg,
+		registry:     r,
+		globalConfig: r.Config,
 	}
 	dlog.NewStructLogger(log, s)
 	return s, nil
