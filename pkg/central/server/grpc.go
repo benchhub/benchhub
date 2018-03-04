@@ -73,10 +73,12 @@ func (srv *GrpcServer) RegisterAgent(ctx context.Context, req *pb.RegisterAgentR
 	return res, nil
 }
 
-// TODO: implement agent heartbeat
-// - store need to allow store status
 func (srv *GrpcServer) AgentHeartbeat(ctx context.Context, req *pb.AgentHeartbeatReq) (*pb.AgentHeartbeatRes, error) {
-	return nil, status.Error(codes.Unimplemented, "heartbeat is under construction")
+	if err := srv.meta.UpdateNodeStatus(req.Id, req.Status); err != nil {
+		log.Warnf("failed to update status for %s %v", req.Id, err)
+		return nil, status.Errorf(codes.Internal, "failed to update status for %s %v", req.Id, err)
+	}
+	return &pb.AgentHeartbeatRes{}, nil
 }
 
 func (srv *GrpcServer) ListAgent(ctx context.Context, req *pb.ListAgentReq) (*pb.ListAgentRes, error) {

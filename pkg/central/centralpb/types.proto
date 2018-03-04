@@ -36,6 +36,6 @@ message AgentHeartbeatReq {
 }
 
 message AgentHeartbeatRes {
-    bhcommon.Job job = 1 [(gogoproto.nullable) = false];
+    //    bhcommon.Job job = 1 [(gogoproto.nullable) = false];
 }
 

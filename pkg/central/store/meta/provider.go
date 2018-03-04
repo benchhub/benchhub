@@ -21,10 +21,12 @@ type NodeProvider interface {
 	// NOTE: we always return by value to avoid (my) common mistake of pointer pointing to last element in for .. range
 	FindNodeById(id string) (pbc.Node, error)
 	ListNodes() ([]pbc.Node, error)
+	ListNodesStatus() ([]pbc.NodeStatus, error)
 
 	// write
 	AddNode(id string, node pbc.Node) error
 	UpdateNode(id string, node pbc.Node) error
+	UpdateNodeStatus(id string, status pbc.NodeStatus) error
 
 	// delete
 	RemoveNode(id string) error

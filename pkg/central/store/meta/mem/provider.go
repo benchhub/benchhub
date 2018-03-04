@@ -16,13 +16,15 @@ var emptyNode = pbc.Node{}
 type MetaStore struct {
 	mu sync.RWMutex
 
-	nodes map[string]pbc.Node
-	log   *dlog.Logger
+	nodes  map[string]pbc.Node
+	status map[string]pbc.NodeStatus
+	log    *dlog.Logger
 }
 
 func NewMetaStore() *MetaStore {
 	s := &MetaStore{
-		nodes: make(map[string]pbc.Node, 10),
+		nodes:  make(map[string]pbc.Node, 10),
+		status: make(map[string]pbc.NodeStatus, 10),
 	}
 	dlog.NewStructLogger(log, s)
 	return s
@@ -57,6 +59,16 @@ func (s *MetaStore) ListNodes() ([]pbc.Node, error) {
 	return nodes, nil
 }
 
+func (s *MetaStore) ListNodesStatus() ([]pbc.NodeStatus, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	status := make([]pbc.NodeStatus, 0, len(s.status))
+	for id := range s.status {
+		status = append(status, s.status[id])
+	}
+	return status, nil
+}
+
 // -- end of read--
 
 // -- start of write --
@@ -78,6 +90,13 @@ func (s *MetaStore) UpdateNode(id string, node pbc.Node) error {
 		return errors.Errorf("node %s does not exists", id)
 	}
 	s.nodes[id] = node
+	return nil
+}
+
+func (s *MetaStore) UpdateNodeStatus(id string, status pbc.NodeStatus) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.status[id] = status
 	return nil
 }
 
