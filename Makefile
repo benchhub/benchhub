@@ -34,3 +34,21 @@ fmt:
 .PHONY: test
 test:
 	go test -v -cover ./lib/... ./pkg/...
+
+.PHONY: package
+package: install
+	cp $(shell which bhubagent) .
+	cp $(shell which bhubcentral) .
+	cp $(shell which bhubctl) .
+	cp $(shell which pingserver) .
+	cp $(shell which pingclient) .
+	zip bhubagent-$(VERSION).zip bhubagent
+	zip bhubcentral-$(VERSION).zip bhubcentral
+	zip bhubctl-$(VERSION).zip bhubctl
+	zip pingserver-$(VERSION).zip pingserver
+	zip pingclient-$(VERSION).zip pingclient
+	rm bhubagent
+	rm bhubcentral
+	rm bhubctl
+	rm pingserver
+	rm pingclient

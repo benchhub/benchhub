@@ -10,6 +10,20 @@ nodes:
   - name: cli
     type: loader
 stages:
+  - name: download_client
+    selectors:
+      - name: cli
+    taks:
+      - driver: shell
+        shell:
+          command: "wget https://github.com/benchhub/benchhub/releases/download/v0.0.1/pingclient-0.0.1.zip && unzip pingclient-0.0.1.zip"
+  - name: download_server
+      selectors:
+        - name: srv
+      taks:
+        - driver: shell
+          shell:
+            command: "wget https://github.com/benchhub/benchhub/releases/download/v0.0.1/pingserver-0.0.1.zip && unzip pingserver-0.0.1.zip"
   - name: start_server
     selectors:
       - name: srv
@@ -29,3 +43,11 @@ stages:
       - driver: shell
         shell:
           command: "pingclient http://{{.Nodes.srv.Ip}}:8080"
+pipelines:
+  - stages:
+    - download_client
+    - download_server
+  - stages:
+    - start_server
+  - stages:
+    - ping_server
