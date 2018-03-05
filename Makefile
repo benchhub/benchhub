@@ -19,6 +19,10 @@ clean:
 	rm $(shell which bhubcentral)
 	rm $(shell which bhubctl)
 
+.PHONY: loc
+loc:
+	cloc --exclude-dir=vendor,.idea,playground,vagrant,node_modules,commonpb,agentpb,centralpb --exclude-list-file=script/cloc_exclude.txt .
+
 .PHONY: generate
 generate:
 	gommon generate -v
