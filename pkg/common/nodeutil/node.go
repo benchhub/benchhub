@@ -6,20 +6,20 @@ import (
 	"github.com/dyweb/gommon/errors"
 
 	"github.com/benchhub/benchhub/lib/monitor/host"
-	pb "github.com/benchhub/benchhub/pkg/common/commonpb"
+	pb "github.com/benchhub/benchhub/pkg/bhpb"
 )
 
 // return node info that is needed when register agent and heartbeat
 
 // GetNode returns node id, capacity, start & boot time
 // TODO: addr https://github.com/benchhub/benchhub/issues/18
-func GetNode() (*pb.Node, error) {
+func GetNodeInfo() (*pb.NodeInfo, error) {
 	m := host.NewMachine()
 	if err := m.Update(); err != nil {
 		return nil, errors.Wrap(err, "can't get node info")
 	}
-	node := &pb.Node{
-		Uid:       UID(),
+	node := &pb.NodeInfo{
+		Id:        UID(),
 		Host:      hostname(),
 		BootTime:  int64(m.BootTime), // unix ts in second
 		StartTime: startTime.Unix(),  // unix ts in second

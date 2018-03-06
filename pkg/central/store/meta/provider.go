@@ -6,7 +6,7 @@ import (
 
 	"github.com/dyweb/gommon/errors"
 
-	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
+	pb "github.com/benchhub/benchhub/pkg/bhpb"
 	"github.com/benchhub/benchhub/pkg/common/spec"
 )
 
@@ -20,14 +20,14 @@ type NodeProvider interface {
 	NumNodes() (int, error)
 	// TODO: special error for not found?
 	// NOTE: we always return by value to avoid (my) common mistake of pointer pointing to last element in for .. range
-	FindNodeById(id string) (pbc.Node, error)
-	ListNodes() ([]pbc.Node, error)
-	ListNodesStatus() ([]pbc.NodeStatus, error)
+	FindNodeById(id string) (pb.Node, error)
+	ListNodes() ([]pb.Node, error)
+	ListNodesStatus() ([]pb.NodeStatus, error)
 
 	// write
-	AddNode(id string, node pbc.Node) error
-	UpdateNode(id string, node pbc.Node) error
-	UpdateNodeStatus(id string, status pbc.NodeStatus) error
+	AddNode(id string, node pb.Node) error
+	UpdateNode(id string, node pb.Node) error
+	UpdateNodeStatus(id string, status pb.NodeStatus) error
 
 	// delete
 	RemoveNode(id string) error

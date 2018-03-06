@@ -11,7 +11,7 @@ import (
 
 	"github.com/benchhub/benchhub/pkg/agent/config"
 	rpc "github.com/benchhub/benchhub/pkg/agent/transport/grpc"
-	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
+	pbc "github.com/benchhub/benchhub/pkg/bhpb"
 )
 
 var _ rpc.BenchHubAgentServer = (*GrpcServer)(nil)
@@ -38,7 +38,7 @@ func (srv *GrpcServer) Ping(ctx context.Context, ping *pbc.Ping) (*pbc.Pong, err
 }
 
 func (srv *GrpcServer) NodeInfo(ctx context.Context, _ *pbc.NodeInfoReq) (*pbc.NodeInfoRes, error) {
-	node, err := Node(srv.globalConfig)
+	node, err := NodeInfo(srv.globalConfig)
 	if err != nil {
 		log.Warnf("failed to get central node info %v", err)
 		return nil, status.Errorf(codes.Internal, "failed to get central node info %v", err)

@@ -11,7 +11,7 @@ import (
 	dlog "github.com/dyweb/gommon/log"
 
 	"github.com/benchhub/benchhub/pkg/agent/config"
-	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
+	pbc "github.com/benchhub/benchhub/pkg/bhpb"
 )
 
 // HttpServer is mainly used to communicate with browser, routes are mounted in transport http package
@@ -37,7 +37,7 @@ func (srv *HttpServer) Ping(ctx context.Context, ping *pbc.Ping) (*pbc.Pong, err
 }
 
 func (srv *HttpServer) NodeInfo(ctx context.Context) (*pbc.NodeInfoRes, error) {
-	node, err := Node(srv.globalConfig)
+	node, err := NodeInfo(srv.globalConfig)
 	if err != nil {
 		log.Warnf("failed to get central node info %v", err)
 		return nil, err

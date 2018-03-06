@@ -6,7 +6,7 @@ import (
 
 	dlog "github.com/dyweb/gommon/log"
 
-	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
+	pb "github.com/benchhub/benchhub/pkg/bhpb"
 
 	"github.com/benchhub/benchhub/pkg/common/spec"
 	"github.com/dyweb/gommon/errors"
@@ -19,7 +19,7 @@ type JobController struct {
 
 type AssignResult struct {
 	Spec spec.Node
-	Node pbc.Node
+	Node pb.Node
 }
 
 func NewJobController(r *Registry) (*JobController, error) {
@@ -69,7 +69,7 @@ func (j *JobController) RunWithContext(ctx context.Context) error {
 	}
 }
 
-func (j *JobController) AcquireNodes(nodes []pbc.Node, specs []spec.Node) ([]AssignResult, error) {
+func (j *JobController) AcquireNodes(nodes []pb.Node, specs []spec.Node) ([]AssignResult, error) {
 	if len(nodes) == 0 {
 		return nil, errors.New("0 agent no node to acquire")
 	}
@@ -85,14 +85,14 @@ func (j *JobController) AcquireNodes(nodes []pbc.Node, specs []spec.Node) ([]Ass
 			if used[j] > 0 {
 				continue
 			}
-			if (s.Type == spec.NodeTypeDatabase && node.Role == pbc.Role_DATABASE) ||
-				(s.Type == spec.NodeTypeLoader && node.Role == pbc.Role_LOADER) {
+			if (s.Type == spec.NodeTypeDatabase && node.Info.Role == pb.Role_DATABASE) ||
+				(s.Type == spec.NodeTypeLoader && node.Info.Role == pb.Role_LOADER) {
 				// NOTE: +1 so we can check if the spec has acquired node with > 0
 				acquired[i] = j + 1
 				used[j]++
 				break
 			}
-			if node.Role == pbc.Role_ANY {
+			if node.Info.Role == pb.Role_ANY {
 				acquired[i] = j + 1
 				used[j]++
 				break
@@ -121,7 +121,7 @@ func (j *JobController) AcquireNodes(nodes []pbc.Node, specs []spec.Node) ([]Ass
 	results := make([]AssignResult, 0, len(specs))
 	for i, spc := range specs {
 		if acquired[i] > 0 {
-			j.log.Infof("plan: assign %s %s to node %s", spc.Name, spc.Type, nodes[acquired[i]-1].Uid)
+			j.log.Infof("plan: assign %s %s to node %s", spc.Name, spc.Type, nodes[acquired[i]-1].Id)
 			results = append(results, AssignResult{
 				Spec: spc,
 				Node: nodes[acquired[i]-1],

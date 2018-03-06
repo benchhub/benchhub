@@ -5,14 +5,14 @@ import (
 
 	asst "github.com/stretchr/testify/assert"
 
-	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
+	pb "github.com/benchhub/benchhub/pkg/bhpb"
 )
 
 func TestMetaStore_AddNode(t *testing.T) {
 	assert := asst.New(t)
 
 	m := NewMetaStore()
-	m.AddNode("1", pbc.Node{Host: "n1"})
+	m.AddNode("1", pb.Node{Host: "n1"})
 	n, err := m.NumNodes()
 	assert.Nil(err)
 	assert.Equal(1, n)

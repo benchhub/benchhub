@@ -5,7 +5,7 @@ import (
 
 	dlog "github.com/dyweb/gommon/log"
 
-	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
+	pbc "github.com/benchhub/benchhub/pkg/bhpb"
 )
 
 // TODO: handle state of server

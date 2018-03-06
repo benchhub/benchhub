@@ -2,15 +2,15 @@ package main
 
 import (
 	"context"
+	"io/ioutil"
 	"os"
+	"os/user"
 
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 
+	pb "github.com/benchhub/benchhub/pkg/bhpb"
 	mygrpc "github.com/benchhub/benchhub/pkg/central/transport/grpc"
-	pb "github.com/benchhub/benchhub/pkg/common/commonpb"
-	"io/ioutil"
-	"os/user"
 )
 
 const (

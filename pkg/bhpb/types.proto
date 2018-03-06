@@ -2,7 +2,7 @@
 syntax = "proto3";
 package bh;
 
-option go_package = "commonpb";
+option go_package = "bhpb";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
@@ -17,6 +17,7 @@ option (gogoproto.goproto_getters_all) = false;
 message Node {
     string id = 1;
     NodeState state = 2;
+    NodeInfo info = 3 [(gogoproto.nullable) = false];
 }
 
 // provided to central when agent register
@@ -25,7 +26,7 @@ message NodeInfo {
     string id = 1;
     // hostname
     string host = 2;
-    Addr addr = 3;
+    Addr addr = 3 [(gogoproto.nullable) = false];
     // unix timestamp when process start
     int64 startTime = 4;
     int64 bootTime = 5;
@@ -159,13 +160,13 @@ message NodeInfoRes {
 //       <node rpc>
 // ---------------------------
 message RegisterAgentReq {
-    Node node = 1 [(gogoproto.nullable) = false];
+    NodeInfo node = 1 [(gogoproto.nullable) = false];
 }
 
 message RegisterAgentRes {
     string id = 1; // uinque id for this agent assigned by central
-    Node node = 2 [(gogoproto.nullable) = false]; // addr, ip, port would be added TODO: node should be able to find this out locally
-    Node central = 3 [(gogoproto.nullable) = false]; // all the information about the central
+    NodeInfo node = 2 [(gogoproto.nullable) = false]; // addr, ip, port would be added TODO: node should be able to find this out locally
+    NodeInfo central = 3 [(gogoproto.nullable) = false]; // all the information about the central
 }
 
 message ListAgentReq {

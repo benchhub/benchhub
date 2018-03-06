@@ -7,7 +7,7 @@ import (
 	"github.com/dyweb/gommon/config"
 	"github.com/dyweb/gommon/util/testutil"
 
-	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
+	pb "github.com/benchhub/benchhub/pkg/bhpb"
 	"github.com/benchhub/benchhub/pkg/common/spec"
 )
 
@@ -19,14 +19,18 @@ func TestJobController_AcquireNodes(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	twoNodes := []pbc.Node{
+	twoNodes := []pb.Node{
 		{
-			Uid:  "a",
-			Role: pbc.Role_ANY,
+			Info: pb.NodeInfo{
+				Id:   "a",
+				Role: pb.Role_ANY,
+			},
 		},
 		{
-			Uid:  "b",
-			Role: pbc.Role_ANY,
+			Info: pb.NodeInfo{
+				Id:   "b",
+				Role: pb.Role_ANY,
+			},
 		},
 	}
 	t.Run("two agent two nodes", func(t *testing.T) {

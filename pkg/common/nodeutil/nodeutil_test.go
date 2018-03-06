@@ -17,9 +17,9 @@ func TestNewUID(t *testing.T) {
 	// TODO: print pid, it's uint64 in big endian
 }
 
-func TestGetNode(t *testing.T) {
+func TestGetNodeInfo(t *testing.T) {
 	assert := asst.New(t)
-	n, err := GetNode()
+	n, err := GetNodeInfo()
 	assert.Nil(err)
 	t.Logf("start time %d", n.StartTime)
 	t.Logf("boot  time %d", n.BootTime)
