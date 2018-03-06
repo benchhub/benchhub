@@ -7,6 +7,7 @@ import (
 	"github.com/dyweb/gommon/errors"
 
 	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
+	"github.com/benchhub/benchhub/pkg/common/spec"
 )
 
 var (
@@ -32,8 +33,17 @@ type NodeProvider interface {
 	RemoveNode(id string) error
 }
 
+// TODO: maintain a queue for job
+type JobProvider interface {
+	// TODO: should return both spec and job status ...
+	GetJobSpec(id string) (spec.Job, error)
+	AddJobSpec(id string, job spec.Job) error
+	GetPendingJob() (job spec.Job, empty bool, err error)
+}
+
 type Provider interface {
 	NodeProvider
+	JobProvider
 }
 
 // TODO: factory should accept config, this is needed for rdbms

@@ -1,9 +1,14 @@
 package server
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"sync/atomic"
+
 	igrpc "github.com/at15/go.ice/ice/transport/grpc"
+	dconfig "github.com/dyweb/gommon/config"
+	"github.com/dyweb/gommon/errors"
 	dlog "github.com/dyweb/gommon/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -13,20 +18,24 @@ import (
 	"github.com/benchhub/benchhub/pkg/central/store/meta"
 	rpc "github.com/benchhub/benchhub/pkg/central/transport/grpc"
 	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
+	"github.com/benchhub/benchhub/pkg/common/spec"
 )
 
 var _ rpc.BenchHubCentralServer = (*GrpcServer)(nil)
 
 type GrpcServer struct {
 	meta         meta.Provider
+	registry     *Registry
 	globalConfig config.ServerConfig
+	c            int64
 	log          *dlog.Logger
 }
 
-func NewGrpcServer(meta meta.Provider, cfg config.ServerConfig) (*GrpcServer, error) {
+func NewGrpcServer(meta meta.Provider, r *Registry) (*GrpcServer, error) {
 	srv := &GrpcServer{
 		meta:         meta,
-		globalConfig: cfg,
+		registry:     r,
+		globalConfig: r.Config,
 	}
 	dlog.NewStructLogger(log, srv)
 	return srv, nil
@@ -53,6 +62,7 @@ func (srv *GrpcServer) RegisterAgent(ctx context.Context, req *pb.RegisterAgentR
 	remoteAddr := igrpc.RemoteAddr(ctx)
 	srv.log.Infof("register agent req from %s %s", remoteAddr, req.Node.Host)
 	req.Node.RemoteAddr = remoteAddr
+	req.Node.Ip, _ = igrpc.SplitHostPort(remoteAddr)
 
 	err := srv.meta.AddNode(req.Node.Uid, req.Node)
 	if err != nil {
@@ -89,4 +99,22 @@ func (srv *GrpcServer) ListAgent(ctx context.Context, req *pb.ListAgentReq) (*pb
 	return &pb.ListAgentRes{
 		Agents: node,
 	}, nil
+}
+
+func (srv *GrpcServer) SubmitJob(ctx context.Context, req *pb.SubmitJobReq) (*pb.SubmitJobRes, error) {
+	var job spec.Job
+	if err := dconfig.LoadYAMLDirectFrom(bytes.NewReader([]byte(req.Spec)), &job); err != nil {
+		return nil, errors.Wrap(err, "can't parse YAML job spec")
+	}
+	if err := job.Validate(); err != nil {
+		return nil, errors.Wrap(err, "invalid job spec")
+	}
+	// FIXME: we are just using project name + a global counter ...
+	atomic.AddInt64(&srv.c, 1)
+	id := fmt.Sprintf("%s-%d", job.Name, atomic.LoadInt64(&srv.c))
+	srv.log.Infof("got job %s id %s", job.Name, id)
+	if err := srv.meta.AddJobSpec(id, job); err != nil {
+		return nil, errors.Wrap(err, "can't add job spec to store")
+	}
+	return &pb.SubmitJobRes{Id: id}, nil
 }

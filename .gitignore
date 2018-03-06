@@ -17,3 +17,6 @@
 vendor
 
 .vagrant
+
+# packages
+*.zip

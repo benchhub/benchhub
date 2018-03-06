@@ -109,7 +109,7 @@ func (mgr *Manager) Run() error {
 		httpErr error
 		merr    = errors.NewMultiErrSafe()
 	)
-	wg.Add(3) // grpc + http + TODO: mon
+	wg.Add(3) // grpc + http + beater TODO: mon
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// grpc server

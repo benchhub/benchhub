@@ -18,11 +18,7 @@ func Node(cfg config.ServerConfig) (*pbc.Node, error) {
 		Region:   cfg.Node.Provider.Region,
 		Instance: cfg.Node.Provider.Instance,
 	}
-	node.Role = pbc.NodeRole{
-		// TODO: better way to use enumerate
-		Preferred: pbc.Role(pbc.Role_value[cfg.Node.Role]),
-		// TODO: need to know previous and current role ....
-	}
+	node.Role = pbc.Role(pbc.Role_value[cfg.Node.Role])
 	if err != nil {
 		return node, err
 	}

@@ -48,6 +48,7 @@ func NewBeater(client grpc.BenchHubCentralClient, r *Registry) (*Beater, error) 
 }
 
 func (b *Beater) RunWithContext(ctx context.Context) error {
+	b.log.Info("start beater")
 	for {
 		select {
 		case <-ctx.Done():

@@ -1,10 +1,7 @@
 package mem
 
 import (
-	"sync"
-
 	"github.com/dyweb/gommon/errors"
-	dlog "github.com/dyweb/gommon/log"
 
 	"github.com/benchhub/benchhub/pkg/central/store/meta"
 	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
@@ -12,23 +9,6 @@ import (
 
 var _ meta.Provider = (*MetaStore)(nil)
 var emptyNode = pbc.Node{}
-
-type MetaStore struct {
-	mu sync.RWMutex
-
-	nodes  map[string]pbc.Node
-	status map[string]pbc.NodeStatus
-	log    *dlog.Logger
-}
-
-func NewMetaStore() *MetaStore {
-	s := &MetaStore{
-		nodes:  make(map[string]pbc.Node, 10),
-		status: make(map[string]pbc.NodeStatus, 10),
-	}
-	dlog.NewStructLogger(log, s)
-	return s
-}
 
 // -- start of read --
 

@@ -2,6 +2,11 @@ package spec
 
 import "github.com/dyweb/gommon/errors"
 
+const (
+	NodeTypeDatabase = "database"
+	NodeTypeLoader   = "loader"
+)
+
 // Node describes requirement for different types of nodes and individual nodes
 type Node struct {
 	// Name is used in config to refer specific node, it should be unique in job

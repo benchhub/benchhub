@@ -7,6 +7,8 @@ copy-bin:
 	cp $(shell which bhubagent) .
 	cp $(shell which bhubcentral) .
 	cp $(shell which bhubctl) .
+	cp $(shell which pingserver) .
+	cp $(shell which pingclient) .
 
 .PHONY: copy-config
 copy-config:

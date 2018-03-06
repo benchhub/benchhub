@@ -27,5 +27,6 @@ service BenchHubCentral {
     }
     rpc ListAgent (bhcentral.ListAgentReq) returns (bhcentral.ListAgentRes) {
     }
-
+    rpc SubmitJob (bhcentral.SubmitJobReq) returns (bhcentral.SubmitJobRes) {
+    }
 }
