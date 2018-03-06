@@ -12,6 +12,7 @@ install:
 # go install -ldflags "$(FLAGS)" ./cmd/bhubdoctor
 	go install ./cmd/pingserver
 	go install ./cmd/pingclient
+	go install ./lib/waitforit/cmd/waitforit
 
 .PHONY: clean
 clean:
@@ -42,13 +43,16 @@ package: install
 	cp $(shell which bhubctl) .
 	cp $(shell which pingserver) .
 	cp $(shell which pingclient) .
+	cp $(shell which waitforit) .
 	zip bhubagent-$(VERSION).zip bhubagent
 	zip bhubcentral-$(VERSION).zip bhubcentral
 	zip bhubctl-$(VERSION).zip bhubctl
 	zip pingserver-$(VERSION).zip pingserver
 	zip pingclient-$(VERSION).zip pingclient
+	zip waitforit-$(VERSION).zip waitforit
 	rm bhubagent
 	rm bhubcentral
 	rm bhubctl
 	rm pingserver
 	rm pingclient
+	rm waitforit

@@ -12,3 +12,14 @@
 </h1>
 
 BenchHub is a service for running and storing benchmark result of databases in database.
+
+## Usage
+
+````bash
+make install
+bhubcentral serve
+bhubagent serve
+# on another machine, change bhubagent.yml to point to the right central
+bhubagent serve
+bhubctl c sumbit pingpong.yml
+````
