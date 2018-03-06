@@ -7,7 +7,6 @@ option go_package = "grpc";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "github.com/benchhub/benchhub/pkg/common/commonpb/types.proto";
-import "github.com/benchhub/benchhub/pkg/agent/agentpb/types.proto";
 
 option (gogoproto.sizer_all) = true;
 option (gogoproto.marshaler_all) = true;
