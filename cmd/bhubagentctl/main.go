@@ -10,10 +10,9 @@ import (
 )
 
 const (
-	myname = "bhubctl"
+	myname = "bhubagentctl"
 )
 
-// TODO: should put logic in the manager struct in pkg/ctl instead of scatter in cmd
 var log = logutil.Registry
 
 var (
@@ -29,13 +28,13 @@ var buildInfo = icli.BuildInfo{Version: version, Commit: commit, BuildTime: buil
 func main() {
 	cli := icli.New(
 		icli.Name(myname),
-		icli.Description("BenchHub central client cli"),
+		icli.Description("BenchHub agent client cli"),
 		icli.Version(buildInfo),
 		icli.LogRegistry(log),
 	)
 	root := cli.Command()
-	root.PersistentFlags().StringVar(&central.addr, "host", localCentralAddr, "Host of central server")
-	root.AddCommand(central.PingCmd(), central.SubmitCmd())
+	root.PersistentFlags().StringVar(&agent.addr, "host", localAgentAddr, "Host of agent server")
+	root.AddCommand(agent.PingCmd())
 	if err := root.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)

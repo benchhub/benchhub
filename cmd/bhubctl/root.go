@@ -7,9 +7,8 @@ import (
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 
-	cpb "github.com/benchhub/benchhub/pkg/central/centralpb"
 	mygrpc "github.com/benchhub/benchhub/pkg/central/transport/grpc"
-	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
+	pb "github.com/benchhub/benchhub/pkg/common/commonpb"
 	"io/ioutil"
 	"os/user"
 )
@@ -25,17 +24,6 @@ type CentralCommand struct {
 	client mygrpc.BenchHubCentralClient
 }
 
-var centralCmd = &cobra.Command{
-	Use:     "central",
-	Aliases: []string{"c"},
-	Short:   "benchub central",
-	Long:    "Communicate with BenchHub central",
-	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
-		os.Exit(1)
-	},
-}
-
 func (c *CentralCommand) PingCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "ping",
@@ -44,7 +32,7 @@ func (c *CentralCommand) PingCmd() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			c.mustCreateClient()
 			host, _ := os.Hostname()
-			if res, err := c.client.Ping(context.Background(), &pbc.Ping{Message: "ping from " + host}); err != nil {
+			if res, err := c.client.Ping(context.Background(), &pb.Ping{Message: "ping from " + host}); err != nil {
 				log.Fatal(err)
 			} else {
 				log.Infof("ping finished central response is %s", res.Message)
@@ -55,9 +43,10 @@ func (c *CentralCommand) PingCmd() *cobra.Command {
 
 func (c *CentralCommand) SubmitCmd() *cobra.Command {
 	return &cobra.Command{
-		Use:   "submit",
-		Short: "submit job",
-		Long:  "Submit job for BenchHub to run",
+		Use:     "submit",
+		Short:   "submit job",
+		Aliases: []string{"s"},
+		Long:    "Submit job for BenchHub to run",
 		Run: func(cmd *cobra.Command, args []string) {
 			c.mustCreateClient()
 			if len(args) < 1 {
@@ -67,7 +56,7 @@ func (c *CentralCommand) SubmitCmd() *cobra.Command {
 			if err != nil {
 				log.Fatalf("failed to read file %s %v", args[0], err)
 			}
-			if res, err := c.client.SubmitJob(context.Background(), &cpb.SubmitJobReq{
+			if res, err := c.client.SubmitJob(context.Background(), &pb.SubmitJobReq{
 				User: username(),
 				Spec: string(b),
 			}); err != nil {
@@ -80,6 +69,7 @@ func (c *CentralCommand) SubmitCmd() *cobra.Command {
 }
 
 func (c *CentralCommand) mustCreateClient() {
+	log.Infof("host is %s", c.addr)
 	if c.client != nil {
 		return
 	}
@@ -91,10 +81,9 @@ func (c *CentralCommand) mustCreateClient() {
 }
 
 func init() {
-	central := &CentralCommand{
+	central = &CentralCommand{
 		addr: localCentralAddr,
 	}
-	centralCmd.AddCommand(central.PingCmd(), central.SubmitCmd())
 }
 
 func username() string {
