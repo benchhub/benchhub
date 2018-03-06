@@ -1,0 +1,24 @@
+// proto that are not used, might use in the future
+
+// NOTE: we don't need region code now because there is no cross datacenter and cross service provider deployment
+//enum Region {
+//    // NOTE: we add the ugly REGION suffix because name of enum should be uinquie inside whole proto file, not just the
+//    // enum that declared it, the generated go would have constant with Region prefix ....
+//    UNKNOWN_REGION = 0;
+//    LOCAL_REGION = 1; // local dev environment
+//    US_EAST_REGION = 2;
+//    US_WEST_REGION = 3;
+//    CN_REGION = 4;
+//}
+
+//message NodeRole {
+//    Role preferred = 1;
+//    Role current = 2;
+//    Role previous = 3;
+//}
+
+message NodePrice {
+    double MachinePerHour = 1;
+    double StoragePerGB = 2;
+    double OutboundPerMB = 3; // TODO: not sure about the network pricing model, though for benchmark, most stuff is inside the datacenter (VPC)
+}

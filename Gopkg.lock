@@ -17,7 +17,7 @@
     "ice/transport/http",
     "ice/util/logutil"
   ]
-  revision = "c8561aa9ce40b5223941dbc8e87552a574f18694"
+  revision = "fe22dcbfc9f7e8140853038e1d737853d554b16f"
 
 [[projects]]
   name = "github.com/davecgh/go-spew"
@@ -90,7 +90,7 @@
     "util/runtimeutil",
     "util/testutil"
   ]
-  revision = "53e22d4a2ffeca607462026a8867f90365065f94"
+  revision = "c8e954df8b57315f12078e6217655776ac9d3e24"
 
 [[projects]]
   name = "github.com/gogo/protobuf"
@@ -214,7 +214,7 @@
   branch = "master"
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
-  revision = "2c5e7ac708aaa719366570dd82bda44541ca2a63"
+  revision = "df60624c1e9b9d2973e889c7a1cff73155da81c4"
 
 [[projects]]
   name = "google.golang.org/grpc"
@@ -257,6 +257,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "1463035729fdbe6cd942b7369788c0ea5651a90ebee8035d73dc6ffeeaccb084"
+  inputs-digest = "7dad51a4a8c7891810aa20295356d703edf5b70325216b2589e6982b6d30fad4"
   solver-name = "gps-cdcl"
   solver-version = 1
