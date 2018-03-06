@@ -16,7 +16,6 @@ import fmt "fmt"
 import math "math"
 import _ "github.com/gogo/protobuf/gogoproto"
 import bhcommon "github.com/benchhub/benchhub/pkg/common/commonpb"
-import bhcentral "github.com/benchhub/benchhub/pkg/central/centralpb"
 
 import context "golang.org/x/net/context"
 import grpc1 "google.golang.org/grpc"
@@ -45,10 +44,10 @@ const _ = grpc1.SupportPackageIsVersion4
 type BenchHubCentralClient interface {
 	Ping(ctx context.Context, in *bhcommon.Ping, opts ...grpc1.CallOption) (*bhcommon.Pong, error)
 	NodeInfo(ctx context.Context, in *bhcommon.NodeInfoReq, opts ...grpc1.CallOption) (*bhcommon.NodeInfoRes, error)
-	RegisterAgent(ctx context.Context, in *bhcentral.RegisterAgentReq, opts ...grpc1.CallOption) (*bhcentral.RegisterAgentRes, error)
-	AgentHeartbeat(ctx context.Context, in *bhcentral.AgentHeartbeatReq, opts ...grpc1.CallOption) (*bhcentral.AgentHeartbeatRes, error)
-	ListAgent(ctx context.Context, in *bhcentral.ListAgentReq, opts ...grpc1.CallOption) (*bhcentral.ListAgentRes, error)
-	SubmitJob(ctx context.Context, in *bhcentral.SubmitJobReq, opts ...grpc1.CallOption) (*bhcentral.SubmitJobRes, error)
+	RegisterAgent(ctx context.Context, in *bhcommon.RegisterAgentReq, opts ...grpc1.CallOption) (*bhcommon.RegisterAgentRes, error)
+	AgentHeartbeat(ctx context.Context, in *bhcommon.AgentHeartbeatReq, opts ...grpc1.CallOption) (*bhcommon.AgentHeartbeatRes, error)
+	ListAgent(ctx context.Context, in *bhcommon.ListAgentReq, opts ...grpc1.CallOption) (*bhcommon.ListAgentRes, error)
+	SubmitJob(ctx context.Context, in *bhcommon.SubmitJobReq, opts ...grpc1.CallOption) (*bhcommon.SubmitJobRes, error)
 }
 
 type benchHubCentralClient struct {
@@ -77,8 +76,8 @@ func (c *benchHubCentralClient) NodeInfo(ctx context.Context, in *bhcommon.NodeI
 	return out, nil
 }
 
-func (c *benchHubCentralClient) RegisterAgent(ctx context.Context, in *bhcentral.RegisterAgentReq, opts ...grpc1.CallOption) (*bhcentral.RegisterAgentRes, error) {
-	out := new(bhcentral.RegisterAgentRes)
+func (c *benchHubCentralClient) RegisterAgent(ctx context.Context, in *bhcommon.RegisterAgentReq, opts ...grpc1.CallOption) (*bhcommon.RegisterAgentRes, error) {
+	out := new(bhcommon.RegisterAgentRes)
 	err := grpc1.Invoke(ctx, "/benchubcentralrpc.BenchHubCentral/RegisterAgent", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -86,8 +85,8 @@ func (c *benchHubCentralClient) RegisterAgent(ctx context.Context, in *bhcentral
 	return out, nil
 }
 
-func (c *benchHubCentralClient) AgentHeartbeat(ctx context.Context, in *bhcentral.AgentHeartbeatReq, opts ...grpc1.CallOption) (*bhcentral.AgentHeartbeatRes, error) {
-	out := new(bhcentral.AgentHeartbeatRes)
+func (c *benchHubCentralClient) AgentHeartbeat(ctx context.Context, in *bhcommon.AgentHeartbeatReq, opts ...grpc1.CallOption) (*bhcommon.AgentHeartbeatRes, error) {
+	out := new(bhcommon.AgentHeartbeatRes)
 	err := grpc1.Invoke(ctx, "/benchubcentralrpc.BenchHubCentral/AgentHeartbeat", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -95,8 +94,8 @@ func (c *benchHubCentralClient) AgentHeartbeat(ctx context.Context, in *bhcentra
 	return out, nil
 }
 
-func (c *benchHubCentralClient) ListAgent(ctx context.Context, in *bhcentral.ListAgentReq, opts ...grpc1.CallOption) (*bhcentral.ListAgentRes, error) {
-	out := new(bhcentral.ListAgentRes)
+func (c *benchHubCentralClient) ListAgent(ctx context.Context, in *bhcommon.ListAgentReq, opts ...grpc1.CallOption) (*bhcommon.ListAgentRes, error) {
+	out := new(bhcommon.ListAgentRes)
 	err := grpc1.Invoke(ctx, "/benchubcentralrpc.BenchHubCentral/ListAgent", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -104,8 +103,8 @@ func (c *benchHubCentralClient) ListAgent(ctx context.Context, in *bhcentral.Lis
 	return out, nil
 }
 
-func (c *benchHubCentralClient) SubmitJob(ctx context.Context, in *bhcentral.SubmitJobReq, opts ...grpc1.CallOption) (*bhcentral.SubmitJobRes, error) {
-	out := new(bhcentral.SubmitJobRes)
+func (c *benchHubCentralClient) SubmitJob(ctx context.Context, in *bhcommon.SubmitJobReq, opts ...grpc1.CallOption) (*bhcommon.SubmitJobRes, error) {
+	out := new(bhcommon.SubmitJobRes)
 	err := grpc1.Invoke(ctx, "/benchubcentralrpc.BenchHubCentral/SubmitJob", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -118,10 +117,10 @@ func (c *benchHubCentralClient) SubmitJob(ctx context.Context, in *bhcentral.Sub
 type BenchHubCentralServer interface {
 	Ping(context.Context, *bhcommon.Ping) (*bhcommon.Pong, error)
 	NodeInfo(context.Context, *bhcommon.NodeInfoReq) (*bhcommon.NodeInfoRes, error)
-	RegisterAgent(context.Context, *bhcentral.RegisterAgentReq) (*bhcentral.RegisterAgentRes, error)
-	AgentHeartbeat(context.Context, *bhcentral.AgentHeartbeatReq) (*bhcentral.AgentHeartbeatRes, error)
-	ListAgent(context.Context, *bhcentral.ListAgentReq) (*bhcentral.ListAgentRes, error)
-	SubmitJob(context.Context, *bhcentral.SubmitJobReq) (*bhcentral.SubmitJobRes, error)
+	RegisterAgent(context.Context, *bhcommon.RegisterAgentReq) (*bhcommon.RegisterAgentRes, error)
+	AgentHeartbeat(context.Context, *bhcommon.AgentHeartbeatReq) (*bhcommon.AgentHeartbeatRes, error)
+	ListAgent(context.Context, *bhcommon.ListAgentReq) (*bhcommon.ListAgentRes, error)
+	SubmitJob(context.Context, *bhcommon.SubmitJobReq) (*bhcommon.SubmitJobRes, error)
 }
 
 func RegisterBenchHubCentralServer(s *grpc1.Server, srv BenchHubCentralServer) {
@@ -165,7 +164,7 @@ func _BenchHubCentral_NodeInfo_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _BenchHubCentral_RegisterAgent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc1.UnaryServerInterceptor) (interface{}, error) {
-	in := new(bhcentral.RegisterAgentReq)
+	in := new(bhcommon.RegisterAgentReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -177,13 +176,13 @@ func _BenchHubCentral_RegisterAgent_Handler(srv interface{}, ctx context.Context
 		FullMethod: "/benchubcentralrpc.BenchHubCentral/RegisterAgent",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BenchHubCentralServer).RegisterAgent(ctx, req.(*bhcentral.RegisterAgentReq))
+		return srv.(BenchHubCentralServer).RegisterAgent(ctx, req.(*bhcommon.RegisterAgentReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _BenchHubCentral_AgentHeartbeat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc1.UnaryServerInterceptor) (interface{}, error) {
-	in := new(bhcentral.AgentHeartbeatReq)
+	in := new(bhcommon.AgentHeartbeatReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -195,13 +194,13 @@ func _BenchHubCentral_AgentHeartbeat_Handler(srv interface{}, ctx context.Contex
 		FullMethod: "/benchubcentralrpc.BenchHubCentral/AgentHeartbeat",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BenchHubCentralServer).AgentHeartbeat(ctx, req.(*bhcentral.AgentHeartbeatReq))
+		return srv.(BenchHubCentralServer).AgentHeartbeat(ctx, req.(*bhcommon.AgentHeartbeatReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _BenchHubCentral_ListAgent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc1.UnaryServerInterceptor) (interface{}, error) {
-	in := new(bhcentral.ListAgentReq)
+	in := new(bhcommon.ListAgentReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -213,13 +212,13 @@ func _BenchHubCentral_ListAgent_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: "/benchubcentralrpc.BenchHubCentral/ListAgent",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BenchHubCentralServer).ListAgent(ctx, req.(*bhcentral.ListAgentReq))
+		return srv.(BenchHubCentralServer).ListAgent(ctx, req.(*bhcommon.ListAgentReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _BenchHubCentral_SubmitJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc1.UnaryServerInterceptor) (interface{}, error) {
-	in := new(bhcentral.SubmitJobReq)
+	in := new(bhcommon.SubmitJobReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -231,7 +230,7 @@ func _BenchHubCentral_SubmitJob_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: "/benchubcentralrpc.BenchHubCentral/SubmitJob",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BenchHubCentralServer).SubmitJob(ctx, req.(*bhcentral.SubmitJobReq))
+		return srv.(BenchHubCentralServer).SubmitJob(ctx, req.(*bhcommon.SubmitJobReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -272,25 +271,24 @@ var _BenchHubCentral_serviceDesc = grpc1.ServiceDesc{
 func init() { proto.RegisterFile("rpc.proto", fileDescriptorRpc) }
 
 var fileDescriptorRpc = []byte{
-	// 316 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x91, 0x4f, 0x4b, 0xc3, 0x30,
-	0x18, 0xc6, 0x3b, 0x1c, 0xe2, 0x02, 0x4e, 0x0c, 0xa8, 0x50, 0xa5, 0x87, 0x9d, 0xbc, 0xd8, 0x82,
-	0xde, 0x44, 0x14, 0xe7, 0x65, 0xfe, 0x61, 0xc8, 0xbc, 0x79, 0xeb, 0x1b, 0xb3, 0xb4, 0x68, 0x93,
-	0x98, 0x26, 0x07, 0xbf, 0x88, 0x9f, 0x69, 0x47, 0x3f, 0x82, 0xf6, 0x93, 0x48, 0x92, 0x6e, 0x6b,
-	0x45, 0xe7, 0x29, 0xef, 0xf3, 0x3e, 0xcf, 0xf3, 0xeb, 0x0b, 0x45, 0x3d, 0x25, 0x49, 0x2c, 0x95,
-	0xd0, 0x02, 0x6f, 0x03, 0xe5, 0x24, 0x33, 0x40, 0x28, 0xd7, 0x2a, 0x7d, 0x51, 0x92, 0x84, 0x47,
-	0x2c, 0xd7, 0x99, 0x81, 0x98, 0x88, 0x22, 0x61, 0x82, 0x89, 0xc4, 0x25, 0xc1, 0x4c, 0x9d, 0x72,
-	0xc2, 0x4d, 0x9e, 0x10, 0x9e, 0x35, 0xe2, 0x0e, 0x96, 0x19, 0x58, 0x0e, 0xf2, 0x99, 0x25, 0x44,
-	0x14, 0x85, 0xe0, 0xf5, 0x23, 0x21, 0xd1, 0x6f, 0x92, 0x96, 0x75, 0xfb, 0xfc, 0xff, 0xb6, 0xbf,
-	0x6c, 0xfe, 0xb6, 0xfb, 0xc7, 0xef, 0x6b, 0x68, 0x6b, 0x68, 0xe3, 0x23, 0x03, 0x57, 0x3e, 0x81,
-	0x0f, 0x51, 0xf7, 0x3e, 0xe7, 0x0c, 0xf7, 0x63, 0xc8, 0xfc, 0x47, 0x63, 0xab, 0xc3, 0xa6, 0x16,
-	0x9c, 0x0d, 0x02, 0x7c, 0x8a, 0x36, 0xc6, 0xe2, 0x89, 0x5e, 0xf3, 0xa9, 0xc0, 0x3b, 0x4b, 0x77,
-	0xbe, 0x9b, 0xd0, 0xd7, 0xf0, 0xd7, 0x75, 0x39, 0x08, 0xf0, 0x2d, 0xda, 0x9c, 0x50, 0x96, 0x97,
-	0x9a, 0xaa, 0x4b, 0x46, 0xb9, 0xc6, 0xfb, 0x36, 0xe9, 0x4f, 0x88, 0x5b, 0x8e, 0xc5, 0xac, 0x30,
-	0x2d, 0x6c, 0x8c, 0xfa, 0x4e, 0x8d, 0x68, 0xaa, 0x34, 0xd0, 0x54, 0xe3, 0x83, 0x46, 0xa1, 0x6d,
-	0x59, 0xdc, 0x2a, 0xd7, 0xf2, 0x2e, 0x50, 0xef, 0x2e, 0x2f, 0xb5, 0x3f, 0x6c, 0xaf, 0x11, 0x5e,
-	0x6c, 0x2d, 0xe5, 0x0f, 0xa3, 0x06, 0x3c, 0x18, 0x28, 0x72, 0x7d, 0x23, 0xa0, 0x05, 0x58, 0x6c,
-	0x7f, 0x02, 0x1a, 0x46, 0x39, 0x08, 0x86, 0xbb, 0xb3, 0xaf, 0x28, 0x98, 0x55, 0x51, 0xe7, 0xa3,
-	0x8a, 0x3a, 0x9f, 0x55, 0xd4, 0x79, 0xec, 0x32, 0x25, 0x09, 0xac, 0xbb, 0xff, 0x76, 0xf2, 0x1d,
-	0x00, 0x00, 0xff, 0xff, 0xff, 0x3c, 0xb0, 0x30, 0x84, 0x02, 0x00, 0x00,
+	// 301 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x91, 0xcf, 0x4a, 0xc3, 0x30,
+	0x1c, 0xc7, 0x3b, 0x1c, 0xe2, 0x02, 0x4e, 0x0c, 0xb8, 0x43, 0x85, 0x1e, 0x7a, 0xf2, 0x62, 0x0b,
+	0x7a, 0x13, 0x3d, 0x38, 0x2f, 0x9b, 0x0c, 0x91, 0x79, 0xf3, 0xd6, 0x5f, 0xcc, 0xd2, 0xa2, 0xcd,
+	0x2f, 0xa6, 0xc9, 0xc1, 0x97, 0xf0, 0xb9, 0x76, 0xf4, 0x11, 0xb4, 0x4f, 0x22, 0x49, 0xe7, 0xda,
+	0xc9, 0xf4, 0xd4, 0x7c, 0xff, 0x7d, 0xf8, 0x41, 0xc9, 0x40, 0x2b, 0x96, 0x28, 0x8d, 0x06, 0xe9,
+	0x21, 0x70, 0xc9, 0x72, 0x0b, 0x8c, 0x4b, 0xa3, 0xb3, 0x17, 0xad, 0x58, 0x78, 0x2a, 0x0a, 0x93,
+	0x5b, 0x48, 0x18, 0x96, 0xa9, 0x40, 0x81, 0xa9, 0x6f, 0x82, 0x5d, 0x78, 0xe5, 0x85, 0x7f, 0x35,
+	0x84, 0xf0, 0xb2, 0x53, 0xf7, 0xb0, 0xdc, 0x42, 0xfb, 0x50, 0xcf, 0x22, 0x65, 0x58, 0x96, 0x28,
+	0x57, 0x1f, 0x05, 0xa9, 0x79, 0x53, 0xbc, 0x6a, 0xd6, 0x67, 0xef, 0x3b, 0xe4, 0x60, 0xec, 0xca,
+	0x13, 0x0b, 0x37, 0xcd, 0x0d, 0xf4, 0x84, 0xf4, 0xef, 0x0b, 0x29, 0xe8, 0x30, 0x81, 0xbc, 0x19,
+	0x25, 0x4e, 0x87, 0x5d, 0x8d, 0x52, 0xc4, 0x01, 0xbd, 0x20, 0x7b, 0x77, 0xf8, 0xc4, 0xa7, 0x72,
+	0x81, 0xf4, 0xa8, 0x4d, 0x7f, 0xbc, 0x39, 0x7f, 0x0d, 0xb7, 0xda, 0x55, 0x1c, 0xd0, 0x29, 0xd9,
+	0x9f, 0x73, 0x51, 0x54, 0x86, 0xeb, 0x6b, 0xc1, 0xa5, 0xa1, 0x61, 0xdb, 0xdc, 0x08, 0x1c, 0xe5,
+	0xef, 0xcc, 0xa1, 0x66, 0x64, 0xe8, 0xd5, 0x84, 0x67, 0xda, 0x00, 0xcf, 0x0c, 0x3d, 0x6e, 0xfb,
+	0x9b, 0x89, 0x83, 0xfd, 0x13, 0x3a, 0xda, 0x15, 0x19, 0xcc, 0x8a, 0xca, 0x34, 0x47, 0x8d, 0xda,
+	0xee, 0xda, 0x74, 0x8c, 0xed, 0xfe, 0x6a, 0xfe, 0x60, 0xa1, 0x2c, 0xcc, 0x2d, 0x42, 0x77, 0xbe,
+	0x36, 0x7f, 0xcd, 0x3b, 0x7e, 0x15, 0x07, 0xe3, 0xd1, 0xf2, 0x2b, 0x0a, 0x96, 0x75, 0xd4, 0xfb,
+	0xa8, 0xa3, 0xde, 0x67, 0x1d, 0xf5, 0x1e, 0xfb, 0x42, 0x2b, 0x06, 0xbb, 0xfe, 0x7f, 0x9d, 0x7f,
+	0x07, 0x00, 0x00, 0xff, 0xff, 0x24, 0x53, 0x33, 0x81, 0x3c, 0x02, 0x00, 0x00,
 }

@@ -13,11 +13,10 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	pb "github.com/benchhub/benchhub/pkg/central/centralpb"
 	"github.com/benchhub/benchhub/pkg/central/config"
 	"github.com/benchhub/benchhub/pkg/central/store/meta"
 	rpc "github.com/benchhub/benchhub/pkg/central/transport/grpc"
-	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
+	pb "github.com/benchhub/benchhub/pkg/common/commonpb"
 	"github.com/benchhub/benchhub/pkg/common/spec"
 )
 
@@ -41,19 +40,19 @@ func NewGrpcServer(meta meta.Provider, r *Registry) (*GrpcServer, error) {
 	return srv, nil
 }
 
-func (srv *GrpcServer) Ping(ctx context.Context, ping *pbc.Ping) (*pbc.Pong, error) {
+func (srv *GrpcServer) Ping(ctx context.Context, ping *pb.Ping) (*pb.Pong, error) {
 	srv.log.Infof("got ping, message is %s", ping.Message)
 	res := fmt.Sprintf("pong from central %s your message is %s", igrpc.Hostname(), ping.Message)
-	return &pbc.Pong{Message: res}, nil
+	return &pb.Pong{Message: res}, nil
 }
 
-func (srv *GrpcServer) NodeInfo(ctx context.Context, _ *pbc.NodeInfoReq) (*pbc.NodeInfoRes, error) {
+func (srv *GrpcServer) NodeInfo(ctx context.Context, _ *pb.NodeInfoReq) (*pb.NodeInfoRes, error) {
 	node, err := Node(srv.globalConfig)
 	if err != nil {
 		log.Warnf("failed to get central node info %v", err)
 		return nil, status.Errorf(codes.Internal, "failed to get central node info %v", err)
 	}
-	return &pbc.NodeInfoRes{
+	return &pb.NodeInfoRes{
 		Node: node,
 	}, nil
 }

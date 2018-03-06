@@ -8,9 +8,8 @@ import (
 	dlog "github.com/dyweb/gommon/log"
 
 	"github.com/benchhub/benchhub/pkg/agent/config"
-	cpb "github.com/benchhub/benchhub/pkg/central/centralpb"
 	"github.com/benchhub/benchhub/pkg/central/transport/grpc"
-	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
+	pb "github.com/benchhub/benchhub/pkg/common/commonpb"
 )
 
 const (
@@ -90,7 +89,7 @@ func (b *Beater) Register() error {
 	if err != nil {
 		return err
 	}
-	req := &cpb.RegisterAgentReq{
+	req := &pb.RegisterAgentReq{
 		Node: *node,
 	}
 	res, err := c.RegisterAgent(ctx, req)
@@ -106,9 +105,9 @@ func (b *Beater) Beat() error {
 	c := b.client
 	ctx, cancel := context.WithTimeout(context.Background(), heartbeatTimeout)
 	defer cancel()
-	req := &cpb.AgentHeartbeatReq{
+	req := &pb.AgentHeartbeatReq{
 		Id: b.id,
-		Status: pbc.NodeStatus{
+		Status: pb.NodeStatus{
 			State: b.registry.State.Current(),
 		},
 	}

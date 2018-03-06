@@ -7,9 +7,8 @@ import (
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 
-	cpb "github.com/benchhub/benchhub/pkg/central/centralpb"
 	mygrpc "github.com/benchhub/benchhub/pkg/central/transport/grpc"
-	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
+	pb "github.com/benchhub/benchhub/pkg/common/commonpb"
 	"io/ioutil"
 	"os/user"
 )
@@ -33,7 +32,7 @@ func (c *CentralCommand) PingCmd() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			c.mustCreateClient()
 			host, _ := os.Hostname()
-			if res, err := c.client.Ping(context.Background(), &pbc.Ping{Message: "ping from " + host}); err != nil {
+			if res, err := c.client.Ping(context.Background(), &pb.Ping{Message: "ping from " + host}); err != nil {
 				log.Fatal(err)
 			} else {
 				log.Infof("ping finished central response is %s", res.Message)
@@ -57,7 +56,7 @@ func (c *CentralCommand) SubmitCmd() *cobra.Command {
 			if err != nil {
 				log.Fatalf("failed to read file %s %v", args[0], err)
 			}
-			if res, err := c.client.SubmitJob(context.Background(), &cpb.SubmitJobReq{
+			if res, err := c.client.SubmitJob(context.Background(), &pb.SubmitJobReq{
 				User: username(),
 				Spec: string(b),
 			}); err != nil {

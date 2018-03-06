@@ -7,7 +7,6 @@ option go_package = "grpc";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "github.com/benchhub/benchhub/pkg/common/commonpb/types.proto";
-import "github.com/benchhub/benchhub/pkg/central/centralpb/types.proto";
 
 option (gogoproto.sizer_all) = true;
 option (gogoproto.marshaler_all) = true;
@@ -21,12 +20,12 @@ service BenchHubCentral {
     rpc NodeInfo (bhcommon.NodeInfoReq) returns (bhcommon.NodeInfoRes) {
     }
 
-    rpc RegisterAgent (bhcentral.RegisterAgentReq) returns (bhcentral.RegisterAgentRes) {
+    rpc RegisterAgent (bhcommon.RegisterAgentReq) returns (bhcommon.RegisterAgentRes) {
     }
-    rpc AgentHeartbeat (bhcentral.AgentHeartbeatReq) returns (bhcentral.AgentHeartbeatRes) {
+    rpc AgentHeartbeat (bhcommon.AgentHeartbeatReq) returns (bhcommon.AgentHeartbeatRes) {
     }
-    rpc ListAgent (bhcentral.ListAgentReq) returns (bhcentral.ListAgentRes) {
+    rpc ListAgent (bhcommon.ListAgentReq) returns (bhcommon.ListAgentRes) {
     }
-    rpc SubmitJob (bhcentral.SubmitJobReq) returns (bhcentral.SubmitJobRes) {
+    rpc SubmitJob (bhcommon.SubmitJobReq) returns (bhcommon.SubmitJobRes) {
     }
 }
