@@ -17,17 +17,6 @@ const (
 
 var agent *AgentCommand
 
-var agentCmd = &cobra.Command{
-	Use:     "agent",
-	Aliases: []string{"a"},
-	Short:   "benchub agent",
-	Long:    "Communicate with BenchHub agent",
-	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
-		os.Exit(1)
-	},
-}
-
 type AgentCommand struct {
 	addr   string
 	client mygrpc.BenchHubAgentClient
@@ -51,6 +40,7 @@ func (c *AgentCommand) PingCmd() *cobra.Command {
 }
 
 func (c *AgentCommand) mustCreateClient() {
+	log.Infof("host is %s", c.addr)
 	if c.client != nil {
 		return
 	}
@@ -60,10 +50,8 @@ func (c *AgentCommand) mustCreateClient() {
 		c.client = mygrpc.NewClient(conn)
 	}
 }
-
 func init() {
 	agent = &AgentCommand{
 		addr: localAgentAddr,
 	}
-	agentCmd.AddCommand(agent.PingCmd())
 }

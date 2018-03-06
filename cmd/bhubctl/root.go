@@ -25,17 +25,6 @@ type CentralCommand struct {
 	client mygrpc.BenchHubCentralClient
 }
 
-var centralCmd = &cobra.Command{
-	Use:     "central",
-	Aliases: []string{"c"},
-	Short:   "benchub central",
-	Long:    "Communicate with BenchHub central",
-	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
-		os.Exit(1)
-	},
-}
-
 func (c *CentralCommand) PingCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "ping",
@@ -55,9 +44,10 @@ func (c *CentralCommand) PingCmd() *cobra.Command {
 
 func (c *CentralCommand) SubmitCmd() *cobra.Command {
 	return &cobra.Command{
-		Use:   "submit",
-		Short: "submit job",
-		Long:  "Submit job for BenchHub to run",
+		Use:     "submit",
+		Short:   "submit job",
+		Aliases: []string{"s"},
+		Long:    "Submit job for BenchHub to run",
 		Run: func(cmd *cobra.Command, args []string) {
 			c.mustCreateClient()
 			if len(args) < 1 {
@@ -80,6 +70,7 @@ func (c *CentralCommand) SubmitCmd() *cobra.Command {
 }
 
 func (c *CentralCommand) mustCreateClient() {
+	log.Infof("host is %s", c.addr)
 	if c.client != nil {
 		return
 	}
@@ -91,10 +82,9 @@ func (c *CentralCommand) mustCreateClient() {
 }
 
 func init() {
-	central := &CentralCommand{
+	central = &CentralCommand{
 		addr: localCentralAddr,
 	}
-	centralCmd.AddCommand(central.PingCmd(), central.SubmitCmd())
 }
 
 func username() string {
