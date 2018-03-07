@@ -4,20 +4,19 @@ import (
 	"encoding/json"
 )
 
-//func (x *OwnerType) UnmarshalYAML(unmarshal func(interface{}) error) error {
-//	log.Printf("unmarshaler called")
-//	var s string
-//	if err := unmarshal(&s); err != nil {
-//		return err
-//	}
-//	switch s {
-//	case "user":
-//		*x = OwnerType_USER
-//	case "org":
-//		*x = OwnerType_ORG
-//	}
-//	return nil
-//}
+func (x *OwnerType) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	var s string
+	if err := unmarshal(&s); err != nil {
+		return err
+	}
+	switch s {
+	case "user":
+		*x = OwnerType_USER
+	case "org":
+		*x = OwnerType_ORG
+	}
+	return nil
+}
 
 //func (m *Owner) UnmarshalYAML(unmarshal func(interface{}) error) error {
 //	log.Printf("unmarshaler called")

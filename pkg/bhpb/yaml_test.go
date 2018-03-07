@@ -43,13 +43,15 @@ func (o *OwnerWrapper) UnmarshalJSON(data []byte) error {
 // using https://godoc.org/gopkg.in/yaml.v2
 // Struct fields are only unmarshalled if they are exported (have an upper case first letter), and are unmarshalled using the field name lowercased as the default key
 func TestOwner_YAML_Unmarshal(t *testing.T) {
+	assert := asst.New(t)
+
 	var wrapper OwnerWrapper
 	testutil.ReadYAMLTo(t, "testdata/owner.yml", &wrapper)
 	t.Log(wrapper.S)
 	t.Log(wrapper.CamelCase)
 	t.Log(wrapper.XXX)
 	t.Log(wrapper.Owner.Name)
-	t.Log(wrapper.Owner.Type)
+	assert.Equal(OwnerType_ORG, wrapper.Owner.Type)
 }
 
 func TestOwner_UnmarshalYAML(t *testing.T) {
