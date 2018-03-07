@@ -61,6 +61,8 @@ func (x *OwnerType) UnmarshalYAML(unmarshal func(interface{}) error) error {
 //	return nil
 //}
 
+// Deprecated
+// used by github.com/ghodss/yaml because it it convert yaml to json
 func (x *OwnerType) UnmarshalJSON(b []byte) error {
 	var s string
 	if err := json.Unmarshal(b, &s); err != nil {

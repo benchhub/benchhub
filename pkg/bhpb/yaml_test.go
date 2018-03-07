@@ -1,13 +1,14 @@
 package bhpb
 
 import (
+	"encoding/json"
 	"testing"
 	"time"
-	"encoding/json"
 
-	"github.com/ghodss/yaml"
 	"github.com/dyweb/gommon/util/testutil"
+	jyaml "github.com/ghodss/yaml" // it convert yaml to json ...
 	asst "github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v2"
 )
 
 // NOTE: when no yaml tag, it will lower case it ....
@@ -54,17 +55,31 @@ func TestOwner_YAML_Unmarshal(t *testing.T) {
 	assert.Equal(OwnerType_ORG, wrapper.Owner.Type)
 }
 
-func TestOwner_UnmarshalYAML(t *testing.T) {
+func TestOwnerType_UnmarshalJSON(t *testing.T) {
 	assert := asst.New(t)
 
 	// use https://github.com/ghodss/yaml
 	b := testutil.ReadFixture(t, "testdata/owner.yml")
 	var wrapper OwnerWrapper
-	err := yaml.Unmarshal(b, &wrapper)
+	err := jyaml.Unmarshal(b, &wrapper)
 	assert.Nil(err)
 	assert.Equal("camelallsmall", wrapper.CamelCase)
 	// FIXED: error unmarshaling JSON: json: cannot unmarshal string into Go struct field OwnerAux.T of type time.Duration
 	assert.Equal(10*time.Second, wrapper.T)
 	assert.Equal("at15", wrapper.Owner.Name)
 	assert.Equal(OwnerType_ORG, wrapper.Owner.Type)
+}
+
+func TestOwner_UnmarshalYAML(t *testing.T) {
+	assert := asst.New(t)
+	b := testutil.ReadFixture(t, "testdata/owner_unknown_field.yml")
+
+	var owner Owner
+	err := yaml.Unmarshal(b, &owner)
+	assert.Nil(err)
+
+	err = yaml.UnmarshalStrict(b, &owner)
+	msg := `yaml: unmarshal errors:
+  line 4: field unknown not found in type bhpb.Owner`
+	assert.Equal(msg, err.Error())
 }

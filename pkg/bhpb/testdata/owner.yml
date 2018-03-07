@@ -6,5 +6,5 @@ t: "10s"
 owner:
   id: "1"
   name: "at15"
-  # TODO: custom yaml unmarshaler
+  # NOTE: enum in proto requires custom yaml unmarshaler
   type: "org"
