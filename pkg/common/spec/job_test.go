@@ -12,7 +12,7 @@ import (
 func TestJob_Parse(t *testing.T) {
 
 	files := []string{
-		"pingpong.yml",
+		//"pingpong.yml",
 		"xephonb-kairosdb.yml",
 	}
 

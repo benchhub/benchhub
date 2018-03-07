@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/dyweb/gommon/util/testutil"
 	asst "github.com/stretchr/testify/assert"
 
 	"github.com/benchhub/benchhub/pkg/common/spec"
@@ -13,6 +14,9 @@ func TestDocker_Pull(t *testing.T) {
 	if testing.Short() {
 		t.Skipf("skip runner test in short tests")
 	}
+
+	testutil.RunIf(t, testutil.IsTravis())
+
 	t.Run("pull", func(t *testing.T) {
 		assert := asst.New(t)
 		d, err := NewDocker(spec.Docker{
