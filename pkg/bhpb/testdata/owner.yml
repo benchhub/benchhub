@@ -1,6 +1,7 @@
 s: "1s"
 camelCase: "camel"
 camelcase: "camel2"
+t: "10s"
 owner:
   id: "1"
   name: "at15"

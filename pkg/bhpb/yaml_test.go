@@ -5,11 +5,13 @@ import (
 
 	"github.com/ghodss/yaml"
 	"github.com/dyweb/gommon/util/testutil"
+	"time"
 )
 
 // NOTE: when no yaml tag, it will lower case it ....
 type OwnerAux struct {
 	S         string
+	T         time.Duration
 	CamelCase string
 	Owner     Owner
 	XXX       map[string]interface{} `yaml:",inline"`
@@ -33,7 +35,9 @@ func TestOwner_UnmarshalYAML(t *testing.T) {
 	var aux OwnerAux
 	err := yaml.Unmarshal(b, &aux)
 	t.Log(aux.CamelCase)
+	t.Log(aux.T)
 	t.Log(aux.Owner.Name)
 	t.Log(aux.Owner.Type)
+	// FIXME: error unmarshaling JSON: json: cannot unmarshal string into Go struct field OwnerAux.T of type time.Duration
 	t.Log(err)
 }
