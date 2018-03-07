@@ -67,3 +67,103 @@ currently we just store all the meta inside central's memory, agent also need st
 - nodes assignment
 - current stage
   - status of all nodes
+- [ ] TODO: copy is needed between config struct and proto message
+- ref https://developer.github.com/v3/repos/#get
+
+spec
+
+````text
+{
+    id string # assigned when job is created
+    name string 
+    Owner: {
+        id string
+        name string
+        type enum # user, org
+    }
+    Workload: {
+        framework string
+        frameworkVersion string
+        database string
+        databaseVersion string        
+    }
+    NodeAssignment: [
+        {
+            name string # the unique name used throughout config TODO: might put it into dns?
+            role enum # node role, loader or database
+            # TODO: add label to nodes
+            # TODO: select node etc. by resource etc.
+            selectors [
+            ]
+        }
+    ]
+    Pipelines: [
+        {
+            name string # unique in pipelines
+            stages []string # stages that can run in parallel
+        }
+    ]
+    Stages: [
+        {
+            name string # unique name used throughout config
+            type enum # short running (default), long running (must have at lease one long running task in this stage), stopper (special stage used to stop long running stage)
+            selectors [
+                # OR relation between multiple selectors
+                {
+                # TODO: use label when it is supported
+                    name string,
+                    role enum
+                }
+            ]
+            # optional, used for running tasks in parallel, if used, MUST specify all the tasks, and all the tasks MUST have name
+            pipelines [
+                {
+                    name string # unique in pipelines
+                    tasks []string # tasks that can run in parallel
+                }
+            ]
+            tasks [
+                {
+                   name string # unique in stage MUST be specified if pipeline is used or is longRunning
+                   longRunning bool
+                   driver enum # exec, shell, docker
+                   env: [
+                      {
+                        k string
+                        v string
+                      }
+                   ]
+                   stopper: {
+                       stage string
+                       task string
+                       all bool # stop all long running tasks in a stage
+                   }
+                   shell: {
+                       command string # passed to sh -c                        
+                   }
+                   exec: {
+                       command string # path to binary
+                       args []string
+                   }
+                   docker: {
+                       image string
+                       action enum # pull, start
+                       ports [
+                            {
+                                guest int
+                                host int
+                            }
+                       ]
+                   }
+                   // MUST NOT contains long running task in readiness check
+                   ready: {
+                        tasks []task
+                   }
+                   // TODO: health check
+                }
+            ]
+
+        }
+    ]
+}
+````

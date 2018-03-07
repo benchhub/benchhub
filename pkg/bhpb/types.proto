@@ -103,7 +103,155 @@ enum NodeState {
 }
 
 // ---------------------------
-//           <node>
+//           </node>
+// ---------------------------
+
+// ---------------------------
+//          <identity>
+// ---------------------------
+enum OwnerType {
+    UNKNOWN_OWNER = 0;
+    USER = 1;
+    ORG = 2;
+}
+
+message Owner {
+    string id = 1;
+    string name = 2;
+    OwnerType owner = 3;
+}
+
+// ---------------------------
+//          </identity>
+// ---------------------------
+
+// ---------------------------
+//        <job spec>
+// ---------------------------
+
+message JobSpec {
+    string id = 1;
+    string name = 2;
+    Owner owner = 3 [(gogoproto.nullable) = false];
+    WorkloadSpec workload = 4 [(gogoproto.nullable) = false];
+    repeated NodeAssignmentSpec nodeAssignments = 5 [(gogoproto.nullable) = false];
+    repeated StagePipeline pipelines = 6 [(gogoproto.nullable) = false];
+    repeated StageSpec stages = 7 [(gogoproto.nullable) = false];
+}
+
+message WorkloadSpec {
+    string framework = 1;
+    string frameworkVersion = 2;
+    string database = 3;
+    string databaseVersion = 4;
+}
+
+message NodeSelectorSpec {
+    bool all = 1; // all is used for install util packages in the whole cluster
+    bool none = 2; // none is used for stages like stopper, where central tell all the nodes to stop long running tasks
+    string name = 3;
+    Role role = 4;
+    // TODO: label support
+}
+
+message NodeAssignmentSpec {
+    string name = 1; // unique in job, used to refer assigned node in rest of the config
+    Role role = 2; // role for the node, MUST be either database or loader
+    repeated NodeSelectorSpec selectors = 3 [(gogoproto.nullable) = false]; // select by label, resource TODO: not used in assignment
+}
+
+message StagePipeline {
+    string name = 1; // unqiue in piplines
+    repeated string stages = 2; // stages that can run in parallel
+}
+
+enum StageType {
+    SHORT_RUNNING = 0;
+    LONG_RUNNING = 1;
+}
+
+message StageSpec {
+    string name = 1; // unqiue in job, used by rest of the config
+    StageType type = 2; // if LONG_RUNNING, there must be at least one long running task in this stage
+    // selct by name, role, the relation between multiple selector is OR, NOT AND
+    repeated NodeSelectorSpec selectors = 3 [(gogoproto.nullable) = false];
+    repeated TaskPipeline pipelines = 4 [(gogoproto.nullable) = false];
+    repeated TaskSpec tasks = 5 [(gogoproto.nullable) = false];
+}
+
+message TaskPipeline {
+    string name = 1; // unique in pipelines
+    repeated string tasks = 2; // tasks that can run in parallel
+}
+
+enum TaskDriver {
+    STOPPER = 0; // TODO: have stopper stage or stopper task?
+    SHELL = 1;
+    EXEC = 2;
+    DOCKER = 3;
+}
+
+message TaskSpec {
+    string name = 1; // unique in stage, MUST be specified if pipeline is used or is longRunning
+    bool longRunning = 2;
+    TaskDriver driver = 3;
+    repeated Env env = 4;
+
+    // NOTE: we intentionly don't use [(gogoproto.nullable) = false], so we can check nil to see if config match driver
+    StopperSpec stopper = 5;
+    ShellSpec shell = 6;
+    ExecSpec exec = 7;
+    DockerSpec docker = 8;
+
+    // for long running task
+    ReadySpec ready = 9 [(gogoproto.nullable) = false];
+    // TODO: liveness check ...
+}
+
+message Env {
+    string k = 1;
+    string v = 2;
+}
+
+message StopperSpec {
+    string stage = 1;
+    string task = 2;
+    bool all = 3; // stop all long running tasks in a stage
+}
+
+message ShellSpec {
+    string command = 1;
+}
+
+message ExecSpec {
+    string command = 1;
+    repeated string args = 2;
+}
+
+enum DockerAction {
+    UNKNOWN = 0;
+    PULL = 1;
+    RUN = 2;
+}
+
+message Port {
+    int32 guest = 1;
+    int32 host = 2;
+}
+
+message DockerSpec {
+    string image = 1;
+    DockerAction action = 2;
+    repeated Port ports = 3 [(gogoproto.nullable) = false];
+}
+
+message ReadySpec {
+    // at least one task, MUST NOT have long running task
+    repeated TaskSpec tasks = 1 [(gogoproto.nullable) = false];
+}
+
+// ---------------------------
+//        </job spec>
 // ---------------------------
 
 // ---------------------------
@@ -128,6 +276,7 @@ message JobStatus {
     int64 stage = 1;
     int64 task = 2;
 }
+
 // ---------------------------
 //           <job>
 // ---------------------------
@@ -153,7 +302,7 @@ message NodeInfoRes {
     NodeInfo node = 1;
 }
 // ---------------------------
-//       <common rpc>
+//       </common rpc>
 // ---------------------------
 
 // ---------------------------
@@ -186,7 +335,7 @@ message AgentHeartbeatRes {
 }
 
 // ---------------------------
-//       <node rpc>
+//       </node rpc>
 // ---------------------------
 
 // ---------------------------
@@ -210,5 +359,5 @@ message JobStatusRes {
 
 }
 // ---------------------------
-//       <job rpc>
+//       </job rpc>
 // ---------------------------

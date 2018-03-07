@@ -31,6 +31,7 @@ TODO
   - https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
 
 NOTE: the real spec is currently written in YAML, see [pkg/common/spec/xephonb-kairosdb.yml](../pkg/common/spec/xephonb-kairosdb.yml)
+NOTE: an updated version is in [store.md](store.md)
 
 ````text
 name xephon-b-v0.1-kairosdb-1.2.0
