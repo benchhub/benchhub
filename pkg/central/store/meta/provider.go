@@ -7,7 +7,6 @@ import (
 	"github.com/dyweb/gommon/errors"
 
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
-	"github.com/benchhub/benchhub/pkg/common/spec"
 )
 
 var (
@@ -36,9 +35,9 @@ type NodeProvider interface {
 // TODO: maintain a queue for job
 type JobProvider interface {
 	// TODO: should return both spec and job status ...
-	GetJobSpec(id string) (spec.Job, error)
-	AddJobSpec(id string, job spec.Job) error
-	GetPendingJob() (job spec.Job, empty bool, err error)
+	GetJobSpec(id string) (pb.JobSpec, error)
+	AddJobSpec(id string, job pb.JobSpec) error
+	GetPendingJob() (job pb.JobSpec, empty bool, err error)
 }
 
 type Provider interface {

@@ -17,7 +17,6 @@ import (
 	"github.com/benchhub/benchhub/pkg/central/config"
 	"github.com/benchhub/benchhub/pkg/central/store/meta"
 	rpc "github.com/benchhub/benchhub/pkg/central/transport/grpc"
-	"github.com/benchhub/benchhub/pkg/common/spec"
 )
 
 var _ rpc.BenchHubCentralServer = (*GrpcServer)(nil)
@@ -105,13 +104,15 @@ func (srv *GrpcServer) ListAgent(ctx context.Context, req *pb.ListAgentReq) (*pb
 }
 
 func (srv *GrpcServer) SubmitJob(ctx context.Context, req *pb.SubmitJobReq) (*pb.SubmitJobRes, error) {
-	var job spec.Job
-	if err := dconfig.LoadYAMLDirectFrom(bytes.NewReader([]byte(req.Spec)), &job); err != nil {
+	var job pb.JobSpec
+	if err := dconfig.LoadYAMLDirectFromStrict(bytes.NewReader([]byte(req.Spec)), &job); err != nil {
 		return nil, errors.Wrap(err, "can't parse YAML job spec")
 	}
-	if err := job.Validate(); err != nil {
-		return nil, errors.Wrap(err, "invalid job spec")
-	}
+	// TODO: implement the validate logic
+	//if err := job.Validate(); err != nil {
+	//	return nil, errors.Wrap(err, "invalid job spec")
+	//}
+	// TODO: wrap this in store
 	// FIXME: we are just using project name + a global counter ...
 	atomic.AddInt64(&srv.c, 1)
 	id := fmt.Sprintf("%s-%d", job.Name, atomic.LoadInt64(&srv.c))

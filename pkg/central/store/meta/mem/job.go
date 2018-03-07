@@ -1,13 +1,14 @@
 package mem
 
 import (
-	"github.com/benchhub/benchhub/pkg/common/spec"
+	pb "github.com/benchhub/benchhub/pkg/bhpb"
+
 	"github.com/dyweb/gommon/errors"
 )
 
-var emptySpec = spec.Job{}
+var emptySpec = pb.JobSpec{}
 
-func (s *MetaStore) GetJobSpec(id string) (spec.Job, error) {
+func (s *MetaStore) GetJobSpec(id string) (pb.JobSpec, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	if job, ok := s.specs[id]; ok {
@@ -17,7 +18,7 @@ func (s *MetaStore) GetJobSpec(id string) (spec.Job, error) {
 	}
 }
 
-func (s *MetaStore) AddJobSpec(id string, job spec.Job) error {
+func (s *MetaStore) AddJobSpec(id string, job pb.JobSpec) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if _, ok := s.specs[id]; ok {
@@ -28,7 +29,7 @@ func (s *MetaStore) AddJobSpec(id string, job spec.Job) error {
 	return nil
 }
 
-func (s *MetaStore) GetPendingJob() (job spec.Job, empty bool, err error) {
+func (s *MetaStore) GetPendingJob() (job pb.JobSpec, empty bool, err error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	// FIFO

@@ -7,7 +7,7 @@ import (
 	"github.com/dyweb/gommon/util/testutil"
 	asst "github.com/stretchr/testify/assert"
 
-	"github.com/benchhub/benchhub/pkg/common/spec"
+	pb "github.com/benchhub/benchhub/pkg/bhpb"
 )
 
 func TestDocker_Pull(t *testing.T) {
@@ -19,9 +19,9 @@ func TestDocker_Pull(t *testing.T) {
 
 	t.Run("pull", func(t *testing.T) {
 		assert := asst.New(t)
-		d, err := NewDocker(spec.Docker{
+		d, err := NewDocker(pb.DockerSpec{
 			Image:  "influxdb:1.3.9",
-			Action: spec.DockerPull,
+			Action: pb.DockerAction_PULL,
 		}, nil)
 		assert.Nil(err)
 		err = d.Run(context.Background())
@@ -29,9 +29,9 @@ func TestDocker_Pull(t *testing.T) {
 	})
 	t.Run("pull not exist", func(t *testing.T) {
 		assert := asst.New(t)
-		d, err := NewDocker(spec.Docker{
+		d, err := NewDocker(pb.DockerSpec{
 			Image:  "xephonk:2.0",
-			Action: spec.DockerPull,
+			Action: pb.DockerAction_PULL,
 		}, nil)
 		assert.Nil(err)
 		err = d.Run(context.Background())
@@ -42,9 +42,9 @@ func TestDocker_Pull(t *testing.T) {
 	})
 	t.Run("start", func(t *testing.T) {
 		assert := asst.New(t)
-		d, err := NewDocker(spec.Docker{
+		d, err := NewDocker(pb.DockerSpec{
 			Image:  "influxdb:1.3.9",
-			Action: spec.DockerRun,
+			Action: pb.DockerAction_RUN,
 		}, nil)
 		assert.Nil(err)
 		err = d.Run(context.Background())

@@ -93,9 +93,9 @@ func TestWorkloadSpec_UnmarshalYAML(t *testing.T) {
 
 func TestJobSpec_UnmarshalYAML(t *testing.T) {
 	// TODO: move spec to a more common place
-	prefix := "../common/spec/"
+	prefix := "../../example/"
 	files := []string{
-		"pingpong.yml",
+		"pingpong/pingpong.yml",
 		// TODO: refactor xephonb-kairosdb
 		//"xephonb-kairosdb.yml",
 	}

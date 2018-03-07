@@ -1,13 +1,9 @@
 package server
 
 import (
-	"bytes"
 	"testing"
 
-	"github.com/dyweb/gommon/config"
 	"github.com/dyweb/gommon/util/testutil"
-
-	"github.com/benchhub/benchhub/pkg/common/spec"
 )
 
 func TestJobController_AcquireNodes(t *testing.T) {
@@ -43,14 +39,14 @@ func TestJobController_AcquireNodes(t *testing.T) {
 	//})
 }
 
-func readJob(t *testing.T, path string) spec.Job {
-	b := testutil.ReadFixture(t, path)
-	var job spec.Job
-	if err := config.LoadYAMLDirectFrom(bytes.NewReader(b), &job); err != nil {
-		t.Fatal(err)
-	}
-	if err := job.Validate(); err != nil {
-		t.Fatal(err)
-	}
-	return job
-}
+// func readJob(t *testing.T, path string) spec.Job {
+// 	b := testutil.ReadFixture(t, path)
+// 	var job spec.Job
+// 	if err := config.LoadYAMLDirectFrom(bytes.NewReader(b), &job); err != nil {
+// 		t.Fatal(err)
+// 	}
+// 	if err := job.Validate(); err != nil {
+// 		t.Fatal(err)
+// 	}
+// 	return job
+// }

@@ -7,7 +7,6 @@ import (
 
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
 	"github.com/benchhub/benchhub/pkg/central/store/meta"
-	"github.com/benchhub/benchhub/pkg/common/spec"
 	"github.com/benchhub/benchhub/pkg/util/logutil"
 )
 
@@ -19,7 +18,7 @@ type MetaStore struct {
 	nodes  map[string]pb.Node
 	status map[string]pb.NodeStatus
 
-	specs         map[string]spec.Job
+	specs         map[string]pb.JobSpec
 	pendingSpecs  []string
 	finishedSpecs []string
 
@@ -30,7 +29,7 @@ func NewMetaStore() *MetaStore {
 	s := &MetaStore{
 		nodes:  make(map[string]pb.Node, 10),
 		status: make(map[string]pb.NodeStatus, 10),
-		specs:  make(map[string]spec.Job, 10),
+		specs:  make(map[string]pb.JobSpec, 10),
 	}
 	dlog.NewStructLogger(log, s)
 	return s
