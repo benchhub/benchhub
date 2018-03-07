@@ -1,9 +1,19 @@
 # start a server, wait for it, ping it
-name: pingpong
-reason: pingpong
-framework: na
-workload: na
-database: na
+Name: pingpong
+Owner:
+  Id: "1"
+  Name: "at15"
+  # TODO: custom yaml unmarshaler
+  Type: "user"
+Workload:
+  Framework: pingpong
+  FrameworkVersion: "0.0.1"
+  Database: pingpong
+  DatabaseVersion: "0.0.1"
+NodeAssignments:
+  - name: srv
+    # TODO: custom yaml unmarshaler
+    role: database
 nodes:
   - name: srv
     type: database

@@ -118,7 +118,7 @@ enum OwnerType {
 message Owner {
     string id = 1;
     string name = 2;
-    OwnerType owner = 3;
+    OwnerType type = 3;
 }
 
 // ---------------------------
