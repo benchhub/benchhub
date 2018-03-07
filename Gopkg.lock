@@ -90,7 +90,13 @@
     "util/runtimeutil",
     "util/testutil"
   ]
-  revision = "c8e954df8b57315f12078e6217655776ac9d3e24"
+  revision = "91100e20169d61798d0fcd2ab631fc5448e809b8"
+
+[[projects]]
+  name = "github.com/ghodss/yaml"
+  packages = ["."]
+  revision = "0ca9ea5df5451ffdf184b4428c902747c2c11cd7"
+  version = "v1.0.0"
 
 [[projects]]
   name = "github.com/gogo/protobuf"
@@ -181,7 +187,7 @@
     "proxy",
     "trace"
   ]
-  revision = "22ae77b79946ea320088417e4d50825671d82d57"
+  revision = "d25186b37f34ebdbbea8f488ef055638dfab272d"
 
 [[projects]]
   branch = "master"
@@ -257,6 +263,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "7dad51a4a8c7891810aa20295356d703edf5b70325216b2589e6982b6d30fad4"
+  inputs-digest = "78353b4c0968c10a2e3d3621a745bee6adaf759f17ba09afa11e8fdbac523cf1"
   solver-name = "gps-cdcl"
   solver-version = 1

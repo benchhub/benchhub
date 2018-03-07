@@ -2,6 +2,8 @@ package bhpb
 
 import (
 	"testing"
+
+	"github.com/ghodss/yaml"
 	"github.com/dyweb/gommon/util/testutil"
 )
 
@@ -23,4 +25,15 @@ func TestOwner_YAML_Unmarshal(t *testing.T) {
 	t.Log(aux.XXX)
 	t.Log(aux.Owner.Name)
 	t.Log(aux.Owner.Type)
+}
+
+func TestOwner_UnmarshalYAML(t *testing.T) {
+	// use https://github.com/ghodss/yaml
+	b := testutil.ReadFixture(t, "testdata/owner.yml")
+	var aux OwnerAux
+	err := yaml.Unmarshal(b, &aux)
+	t.Log(aux.CamelCase)
+	t.Log(aux.Owner.Name)
+	t.Log(aux.Owner.Type)
+	t.Log(err)
 }
