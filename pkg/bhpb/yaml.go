@@ -1,7 +1,6 @@
 package bhpb
 
 import (
-	"log"
 	"encoding/json"
 )
 
@@ -64,7 +63,6 @@ import (
 //}
 
 func (x *OwnerType) UnmarshalJSON(b []byte) error {
-	log.Printf("unmarshaler called")
 	var s string
 	if err := json.Unmarshal(b, &s); err != nil {
 		return err
