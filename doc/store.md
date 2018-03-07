@@ -87,7 +87,7 @@ spec
         database string
         databaseVersion string        
     }
-    NodeAssignment: [
+    NodeAssignments: [
         {
             name string # the unique name used throughout config TODO: might put it into dns?
             role enum # node role, loader or database

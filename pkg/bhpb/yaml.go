@@ -76,3 +76,39 @@ func (x *OwnerType) UnmarshalJSON(b []byte) error {
 	}
 	return nil
 }
+
+func (x *Role) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	var s string
+	if err := unmarshal(&s); err != nil {
+		return err
+	}
+	switch s {
+	case "any":
+		*x = Role_ANY
+	case "central":
+		*x = Role_CENTRAL
+	case "loader":
+		*x = Role_LOADER
+	case "database":
+		*x = Role_DATABASE
+	}
+	return nil
+}
+
+func (x *TaskDriver) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	var s string
+	if err := unmarshal(&s); err != nil {
+		return err
+	}
+	switch s {
+	case "stopper":
+		*x = TaskDriver_STOPPER
+	case "shell":
+		*x = TaskDriver_SHELL
+	case "exec":
+		*x = TaskDriver_EXEC
+	case "docker":
+		*x = TaskDriver_DOCKER
+	}
+	return nil
+}

@@ -20,6 +20,7 @@ type OwnerWrapper struct {
 	XXX       map[string]interface{} `yaml:",inline"`
 }
 
+// Deprecated
 // how to handle time.Duration when using ghodss/yaml, it is supported by go-yaml, but not json
 // http://choly.ca/post/go-json-marshalling/
 func (o *OwnerWrapper) UnmarshalJSON(data []byte) error {
@@ -55,6 +56,7 @@ func TestOwner_YAML_Unmarshal(t *testing.T) {
 	assert.Equal(OwnerType_ORG, wrapper.Owner.Type)
 }
 
+// Deprecated we are using gogoprotobuf to generate yaml field for camelCase key
 func TestOwnerType_UnmarshalJSON(t *testing.T) {
 	assert := asst.New(t)
 
@@ -82,4 +84,25 @@ func TestOwner_UnmarshalYAML(t *testing.T) {
 	msg := `yaml: unmarshal errors:
   line 4: field unknown not found in type bhpb.Owner`
 	assert.Equal(msg, err.Error())
+}
+
+func TestWorkloadSpec_UnmarshalYAML(t *testing.T) {
+	var workload WorkloadSpec
+	testutil.ReadYAMLToStrict(t, "testdata/workload.yml", &workload)
+}
+
+func TestJobSpec_UnmarshalYAML(t *testing.T) {
+	// TODO: move spec to a more common place
+	prefix := "../common/spec/"
+	files := []string{
+		"pingpong.yml",
+		// TODO: refactor xephonb-kairosdb
+		//"xephonb-kairosdb.yml",
+	}
+	for _, f := range files {
+		t.Run(f, func(t *testing.T) {
+			var job JobSpec
+			testutil.ReadYAMLToStrict(t, prefix+f, &job)
+		})
+	}
 }

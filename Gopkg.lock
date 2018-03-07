@@ -17,7 +17,7 @@
     "ice/transport/http",
     "ice/util/logutil"
   ]
-  revision = "fe22dcbfc9f7e8140853038e1d737853d554b16f"
+  revision = "1eae51f02b6b9b0e8adf781c6dc570458c18db77"
 
 [[projects]]
   name = "github.com/davecgh/go-spew"
@@ -90,7 +90,7 @@
     "util/runtimeutil",
     "util/testutil"
   ]
-  revision = "91100e20169d61798d0fcd2ab631fc5448e809b8"
+  revision = "9205d0bbac41b6bc0d3430d077595e178bb4374c"
 
 [[projects]]
   name = "github.com/ghodss/yaml"

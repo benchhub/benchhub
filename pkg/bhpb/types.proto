@@ -141,9 +141,9 @@ message JobSpec {
 
 message WorkloadSpec {
     string framework = 1;
-    string frameworkVersion = 2;
+    string frameworkVersion = 2 [(gogoproto.moretags) = "yaml:\"frameworkVersion\""];
     string database = 3;
-    string databaseVersion = 4;
+    string databaseVersion = 4 [(gogoproto.moretags) = "yaml:\"databaseVersion\""];
 }
 
 message NodeSelectorSpec {
@@ -156,7 +156,7 @@ message NodeSelectorSpec {
 
 message NodeAssignmentSpec {
     string name = 1; // unique in job, used to refer assigned node in rest of the config
-    Role role = 2; // role for the node, MUST be either database or loader
+    Role role = 2; // role assign to the node after selection, MUST be either database or loader # TODO: update node role in status, info.role is node's preferred role
     repeated NodeSelectorSpec selectors = 3 [(gogoproto.nullable) = false]; // select by label, resource TODO: not used in assignment
 }
 
@@ -165,14 +165,11 @@ message StagePipeline {
     repeated string stages = 2; // stages that can run in parallel
 }
 
-enum StageType {
-    SHORT_RUNNING = 0;
-    LONG_RUNNING = 1;
-}
 
 message StageSpec {
     string name = 1; // unqiue in job, used by rest of the config
-    StageType type = 2; // if LONG_RUNNING, there must be at least one long running task in this stage
+    // if LONG_RUNNING, there must be at least one long running task in this stage
+    bool longRunning = 2 [(gogoproto.moretags) = "yaml:\"longRunning\""];
     // selct by name, role, the relation between multiple selector is OR, NOT AND
     repeated NodeSelectorSpec selectors = 3 [(gogoproto.nullable) = false];
     repeated TaskPipeline pipelines = 4 [(gogoproto.nullable) = false];
@@ -185,15 +182,16 @@ message TaskPipeline {
 }
 
 enum TaskDriver {
-    STOPPER = 0; // TODO: have stopper stage or stopper task?
-    SHELL = 1;
-    EXEC = 2;
-    DOCKER = 3;
+    UNKNOWN_TASKDRIVER = 0;
+    STOPPER = 1;
+    SHELL = 2;
+    EXEC = 3;
+    DOCKER = 4;
 }
 
 message TaskSpec {
     string name = 1; // unique in stage, MUST be specified if pipeline is used or is longRunning
-    bool longRunning = 2;
+    bool longRunning = 2 [(gogoproto.moretags) = "yaml:\"longRunning\""];
     TaskDriver driver = 3;
     repeated Env env = 4;
 
