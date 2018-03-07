@@ -5,9 +5,22 @@ import (
 	"github.com/dyweb/gommon/util/testutil"
 )
 
+// NOTE: when no yaml tag, it will lower case it ....
+type OwnerAux struct {
+	S         string
+	CamelCase string
+	Owner     Owner
+	XXX       map[string]interface{} `yaml:",inline"`
+}
+
+// https://godoc.org/gopkg.in/yaml.v2
+// Struct fields are only unmarshalled if they are exported (have an upper case first letter), and are unmarshalled using the field name lowercased as the default key
 func TestOwner_YAML_Unmarshal(t *testing.T) {
-	owner := Owner{}
-	testutil.ReadYAMLTo(t, "testdata/owner.yml", &owner)
-	t.Log(owner.Name)
-	t.Log(owner.Type)
+	var aux OwnerAux
+	testutil.ReadYAMLTo(t, "testdata/owner.yml", &aux)
+	t.Log(aux.S)
+	t.Log(aux.CamelCase)
+	t.Log(aux.XXX)
+	t.Log(aux.Owner.Name)
+	t.Log(aux.Owner.Type)
 }
