@@ -269,8 +269,8 @@ message Job {
     repeated int64 backgroundStages = 10; // stages running in background
     repeated int64 finishedStages = 11; // finished stages, foreground or stopped background
 
-    repeated JobPipeline pipelines = 12;
-    repeated JobStage stages = 13;
+    repeated JobStagePipeline pipelines = 12 [(gogoproto.nullable) = false];
+    repeated JobStage stages = 13 [(gogoproto.nullable) = false];
 
 }
 
@@ -284,49 +284,64 @@ enum JobStatus {
     JOB_ABORTED = 4;
 }
 
-message JobPipeline {
-    JobPipelineStatus status = 1;
+message JobStagePipeline {
+    JobStagePipelineStatus status = 1;
     repeated int64 stages = 2; // index in stages
 }
 
-enum JobPipelineStatus {
-    UNKNOWN_JOB_PIPELINE_STATUS = 0;
-    JOB_PIPELINE_QUEUED = 1;
-    JOB_PIPELINE_RUNNING = 2;
-    JOB_PIPELINE_FINISHED = 3;
-    JOB_PIPELINE_BACKGROUND = 4;
+enum JobStagePipelineStatus {
+    UNKNOWN_JOB_STAGE_PIPELINE_STATUS = 0;
+    JOB_STAGE_PIPELINE_QUEUED = 1;
+    JOB_STAGE_PIPELINE_RUNNING = 2;
+    JOB_STAGE_PIPELINE_FINISHED = 3;
+    JOB_STAGE_PIPELINE_BACKGROUND = 4;
 }
-
 
 message JobStage {
     int64 index = 1; // array index in stages
     int64 pipeline = 2; // array index in piplines
-    StageSpec spec = 3; // TODO: rendered stage spec
-    repeated JobNodeStage stages = 4;
+    StageSpec spec = 3 [(gogoproto.nullable) = false]; // TODO: rendered stage spec
+    repeated NodeJobStage nodes = 4 [(gogoproto.nullable) = false];
 }
 
-message JobNodeStage {
+message NodeJobStage {
     string id = 1; // node id when agent register
     string name = 2; // name assigned in spec
     Role role = 3; // role specified when got assigned
-    NodeInfo info = 4; // node info when agent register
-    repeated StagePipeline pipelines = 5;
+    NodeInfo info = 4 [(gogoproto.nullable) = false]; // node info when agent register
+    repeated StageTaskPipeline pipelines = 5 [(gogoproto.nullable) = false];
+    repeated Task tasks = 6 [(gogoproto.nullable) = false];
 }
 
-message StagePipeline {
-
+message StageTaskPipeline {
+    StageTaskPipelineStatus status = 1;
+    repeated int64 tasks = 2;
 }
 
-//enum JobResult {
-//    UNKNOWN_RESULT = 0;
-//    SUCCESS = 1;
-//    ERROR = 2;
-//}
+enum StageTaskPipelineStatus {
+    UNKNOWN_STAGE_TASK_PIPELINE_STATUS = 0;
+    STAGE_TASK_PIPELINE_QUEUED = 1;
+    STAGE_TASK_PIPELINE_RUNNING = 2;
+    STAGE_TASK_PIPELINE_FINISHED = 3;
+    STAGE_TASK_PIPELINE_BACKGROUND = 4;
+}
 
-//message JobStatus {
-//    int64 stage = 1;
-//    int64 task = 2;
-//}
+message Task {
+    TaskStatus status = 1;
+
+    int64 startTime = 2;
+    int64 readyTime = 3;
+    int64 stopTime = 4;
+}
+
+enum TaskStatus {
+    UNKNOWN_TASK_STATUS = 0;
+    TASK_QUEUED = 1;
+    TASK_RUNNING = 2;
+    TASK_BACKGROUND = 3;
+    TASK_FINISHED = 4;
+    TASK_ABORTED = 5;
+}
 
 // ---------------------------
 //           <job>
