@@ -67,9 +67,8 @@ func (s *Scheduler) AssignNode(nodes []pb.Node, specs []pb.NodeAssignmentSpec) (
 
 	res := make([]pb.AssignedNode, 0, len(assignedNodes))
 	// the result is in the order of specification
-	for _, id := range assignedSpecs {
-		//s.log.Info(assignedNodes[id].Spec.Name)
-		res = append(res, *assignedNodes[id])
+	for i := 0; i < len(specs); i++ {
+		res = append(res, *assignedNodes[assignedSpecs[i]])
 	}
 	return res, merr.ErrorOrNil()
 }
