@@ -44,11 +44,11 @@ stages:
         shell:
           command: "wget https://github.com/benchhub/benchhub/releases/download/v0.0.1/pingserver-0.0.1.zip && unzip pingserver-0.0.1.zip"
   - name: start_server
-    longRunning: true
+    background: true
     selectors:
       - name: srv
     tasks:
-      - longRunning: true
+      - background: true
         driver: shell
         shell:
           command: "pingserver 8080"

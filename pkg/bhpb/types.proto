@@ -93,13 +93,13 @@ message NodeStatus {
 }
 
 enum NodeState {
-    UNKNOWN_STATE = 0;
-    FINDING_CENTRAL = 1;
-    IDLE = 2;
-    JOB_RUNNING = 3;
-    JOB_WAITING_PEERS = 5;
-    JOB_REPORTING = 6;
-    JOB_CLEANUP = 7;
+    UNKNOWN_NODE_STATE = 0;
+    NODE_FINDING_CENTRAL = 1;
+    NODE_IDLE = 2;
+    NODE_JOB_RUNNING = 3;
+    NODE_JOB_WAITING_PEERS = 5;
+    NODE_JOB_REPORTING = 6;
+    NODE_JOB_CLEANUP = 7;
 }
 
 // ---------------------------
@@ -135,7 +135,7 @@ message JobSpec {
     Owner owner = 3 [(gogoproto.nullable) = false];
     WorkloadSpec workload = 4 [(gogoproto.nullable) = false];
     repeated NodeAssignmentSpec nodeAssignments = 5 [(gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"nodeAssignments\""];
-    repeated StagePipeline pipelines = 6 [(gogoproto.nullable) = false];
+    repeated StagePipelineSpec pipelines = 6 [(gogoproto.nullable) = false];
     repeated StageSpec stages = 7 [(gogoproto.nullable) = false];
 }
 
@@ -160,23 +160,21 @@ message NodeAssignmentSpec {
     repeated NodeSelectorSpec selectors = 3 [(gogoproto.nullable) = false]; // select by label, resource TODO: not used in assignment
 }
 
-message StagePipeline {
+message StagePipelineSpec {
     string name = 1; // unqiue in piplines
     repeated string stages = 2; // stages that can run in parallel
 }
 
-
 message StageSpec {
     string name = 1; // unqiue in job, used by rest of the config
-    // if LONG_RUNNING, there must be at least one long running task in this stage
-    bool longRunning = 2 [(gogoproto.moretags) = "yaml:\"longRunning\""];
+    bool background = 2; // if true, there MUST be one task that is background
     // selct by name, role, the relation between multiple selector is OR, NOT AND
     repeated NodeSelectorSpec selectors = 3 [(gogoproto.nullable) = false];
-    repeated TaskPipeline pipelines = 4 [(gogoproto.nullable) = false];
+    repeated TaskPipelineSpec pipelines = 4 [(gogoproto.nullable) = false];
     repeated TaskSpec tasks = 5 [(gogoproto.nullable) = false];
 }
 
-message TaskPipeline {
+message TaskPipelineSpec {
     string name = 1; // unique in pipelines
     repeated string tasks = 2; // tasks that can run in parallel
 }
@@ -191,7 +189,7 @@ enum TaskDriver {
 
 message TaskSpec {
     string name = 1; // unique in stage, MUST be specified if pipeline is used or is longRunning
-    bool longRunning = 2 [(gogoproto.moretags) = "yaml:\"longRunning\""];
+    bool background = 2; // the container stage MUST also be background
     TaskDriver driver = 3;
     repeated Env env = 4;
 
@@ -257,23 +255,78 @@ message ReadySpec {
 // ---------------------------
 
 message Job {
-    // TODO: job should have much more info
     string id = 1;
-    string spec = 2;
-    int64 createTime = 3;
-    int64 startTime = 4;
+    string rawSpec = 2; // original job spec file content
+    JobSpec spec = 3;
+
+    int64 createTime = 4;
+    int64 startTime = 5;
+    int64 stopTime = 6;
+
+    JobStatus status = 7;
+    int64 currentPipeline = 8; // array index in pipelines
+    repeated int64 foregroundStages = 9; // stages running in foreground
+    repeated int64 backgroundStages = 10; // stages running in background
+    repeated int64 finishedStages = 11; // finished stages, foreground or stopped background
+
+    repeated JobPipeline pipelines = 12;
+    repeated JobStage stages = 13;
+
 }
 
-enum JobResult {
-    UNKNOWN_RESULT = 0;
-    SUCCESS = 1;
-    ERROR = 2;
+// TODO: the state of waiting for central to ack ?
+
+enum JobStatus {
+    UNKNOWN_JOB_STATUS = 0;
+    JOB_QUEUED = 1;
+    JOB_RUNNING = 2;
+    JOB_FINISHED = 3;
+    JOB_ABORTED = 4;
 }
 
-message JobStatus {
-    int64 stage = 1;
-    int64 task = 2;
+message JobPipeline {
+    JobPipelineStatus status = 1;
+    repeated int64 stages = 2; // index in stages
 }
+
+enum JobPipelineStatus {
+    UNKNOWN_JOB_PIPELINE_STATUS = 0;
+    JOB_PIPELINE_QUEUED = 1;
+    JOB_PIPELINE_RUNNING = 2;
+    JOB_PIPELINE_FINISHED = 3;
+    JOB_PIPELINE_BACKGROUND = 4;
+}
+
+
+message JobStage {
+    int64 index = 1; // array index in stages
+    int64 pipeline = 2; // array index in piplines
+    StageSpec spec = 3; // TODO: rendered stage spec
+    repeated JobNodeStage stages = 4;
+}
+
+message JobNodeStage {
+    string id = 1; // node id when agent register
+    string name = 2; // name assigned in spec
+    Role role = 3; // role specified when got assigned
+    NodeInfo info = 4; // node info when agent register
+    repeated StagePipeline pipelines = 5;
+}
+
+message StagePipeline {
+
+}
+
+//enum JobResult {
+//    UNKNOWN_RESULT = 0;
+//    SUCCESS = 1;
+//    ERROR = 2;
+//}
+
+//message JobStatus {
+//    int64 stage = 1;
+//    int64 task = 2;
+//}
 
 // ---------------------------
 //           <job>

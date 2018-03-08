@@ -58,6 +58,9 @@ currently we just store all the meta inside central's memory, agent also need st
         state enum
         // TODO: job info
     }
+    jobs: [
+    // TODO: running and longRunning
+    ]
 ]
 ````
     
@@ -133,6 +136,7 @@ spec
                         v string
                       }
                    ]
+                   // TODO: does node selector apply to stopper? yes! 
                    stopper: {
                        stage string
                        task string
@@ -163,6 +167,85 @@ spec
                 }
             ]
 
+        }
+    ]
+}
+````
+
+job status, a global view of job status, can also be used as final job history
+
+- [ ] TODO: we need to know all stages in one node, and also need to know status of all nodes in one stage
+
+````text
+{
+    id string
+    rawSpec string
+    spec JobSpec
+    
+    createTime int64  unix nano
+    startTime int64
+    stopTime int64
+    
+    status enum;
+    currentPipeline # the array index in pipeline
+    foregroundStages # array of index of stages currently running in foreground
+    backgroundStages # array of index of stages currently running in background
+    finishedStages # array of index of finished stages
+    
+    # TODO: how to describe pipelines
+    pipelines: [
+        {
+            status enum # queued, running, finished, aborted, background
+            stages: [
+                # TODO: just refer index ?
+            ]
+        }
+    ]
+    stages [
+        {
+            index int # the index in stages, filled by central, not configurable by client
+            pipeline int # the index in pipelines, filled by central, not configurable by client
+            name string
+            spec StageSpec # rendered with information
+            nodes: [
+                {
+                    id string
+                    name string # name assigned in config
+                    role enum # role specified when got assigned
+                    info NodeInfo # node info when registered to server
+                    pipelines: [
+                        {
+                            status enum # queued, running, finished, aborted, background
+                            tasks: [
+                                # TODO: just refer index ?
+                            ]
+                        }
+                    ]
+                    tasks: [
+                        foreground: [
+                            {
+                                startTime int64
+                                # TODO: log, resource usage etc.
+                            }
+                        ]
+                        background: [
+                            {
+                                startTime int64
+                                readyTime int64
+                            }
+                        ]
+                    ]
+                }
+            ]
+            tasks: [
+                {
+                    nodes: [
+                        {
+                            status: finished?
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }

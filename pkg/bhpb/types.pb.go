@@ -19,9 +19,9 @@
 		WorkloadSpec
 		NodeSelectorSpec
 		NodeAssignmentSpec
-		StagePipeline
+		StagePipelineSpec
 		StageSpec
-		TaskPipeline
+		TaskPipelineSpec
 		TaskSpec
 		Env
 		StopperSpec
@@ -31,7 +31,10 @@
 		DockerSpec
 		ReadySpec
 		Job
-		JobStatus
+		JobPipeline
+		JobStage
+		JobNodeStage
+		StagePipeline
 		Ping
 		Pong
 		EmptyReq
@@ -140,32 +143,32 @@ func (Provider) EnumDescriptor() ([]byte, []int) { return fileDescriptorTypes, [
 type NodeState int32
 
 const (
-	NodeState_UNKNOWN_STATE     NodeState = 0
-	NodeState_FINDING_CENTRAL   NodeState = 1
-	NodeState_IDLE              NodeState = 2
-	NodeState_JOB_RUNNING       NodeState = 3
-	NodeState_JOB_WAITING_PEERS NodeState = 5
-	NodeState_JOB_REPORTING     NodeState = 6
-	NodeState_JOB_CLEANUP       NodeState = 7
+	NodeState_UNKNOWN_NODE_STATE     NodeState = 0
+	NodeState_NODE_FINDING_CENTRAL   NodeState = 1
+	NodeState_NODE_IDLE              NodeState = 2
+	NodeState_NODE_JOB_RUNNING       NodeState = 3
+	NodeState_NODE_JOB_WAITING_PEERS NodeState = 5
+	NodeState_NODE_JOB_REPORTING     NodeState = 6
+	NodeState_NODE_JOB_CLEANUP       NodeState = 7
 )
 
 var NodeState_name = map[int32]string{
-	0: "UNKNOWN_STATE",
-	1: "FINDING_CENTRAL",
-	2: "IDLE",
-	3: "JOB_RUNNING",
-	5: "JOB_WAITING_PEERS",
-	6: "JOB_REPORTING",
-	7: "JOB_CLEANUP",
+	0: "UNKNOWN_NODE_STATE",
+	1: "NODE_FINDING_CENTRAL",
+	2: "NODE_IDLE",
+	3: "NODE_JOB_RUNNING",
+	5: "NODE_JOB_WAITING_PEERS",
+	6: "NODE_JOB_REPORTING",
+	7: "NODE_JOB_CLEANUP",
 }
 var NodeState_value = map[string]int32{
-	"UNKNOWN_STATE":     0,
-	"FINDING_CENTRAL":   1,
-	"IDLE":              2,
-	"JOB_RUNNING":       3,
-	"JOB_WAITING_PEERS": 5,
-	"JOB_REPORTING":     6,
-	"JOB_CLEANUP":       7,
+	"UNKNOWN_NODE_STATE":     0,
+	"NODE_FINDING_CENTRAL":   1,
+	"NODE_IDLE":              2,
+	"NODE_JOB_RUNNING":       3,
+	"NODE_JOB_WAITING_PEERS": 5,
+	"NODE_JOB_REPORTING":     6,
+	"NODE_JOB_CLEANUP":       7,
 }
 
 func (x NodeState) String() string {
@@ -254,29 +257,65 @@ func (x DockerAction) String() string {
 }
 func (DockerAction) EnumDescriptor() ([]byte, []int) { return fileDescriptorTypes, []int{5} }
 
-type JobResult int32
+type JobStatus int32
 
 const (
-	JobResult_UNKNOWN_RESULT JobResult = 0
-	JobResult_SUCCESS        JobResult = 1
-	JobResult_ERROR          JobResult = 2
+	JobStatus_UNKNOWN_JOB_STATUS JobStatus = 0
+	JobStatus_JOB_QUEUED         JobStatus = 1
+	JobStatus_JOB_RUNNING        JobStatus = 2
+	JobStatus_JOB_FINISHED       JobStatus = 3
+	JobStatus_JOB_ABORTED        JobStatus = 4
 )
 
-var JobResult_name = map[int32]string{
-	0: "UNKNOWN_RESULT",
-	1: "SUCCESS",
-	2: "ERROR",
+var JobStatus_name = map[int32]string{
+	0: "UNKNOWN_JOB_STATUS",
+	1: "JOB_QUEUED",
+	2: "JOB_RUNNING",
+	3: "JOB_FINISHED",
+	4: "JOB_ABORTED",
 }
-var JobResult_value = map[string]int32{
-	"UNKNOWN_RESULT": 0,
-	"SUCCESS":        1,
-	"ERROR":          2,
+var JobStatus_value = map[string]int32{
+	"UNKNOWN_JOB_STATUS": 0,
+	"JOB_QUEUED":         1,
+	"JOB_RUNNING":        2,
+	"JOB_FINISHED":       3,
+	"JOB_ABORTED":        4,
 }
 
-func (x JobResult) String() string {
-	return proto.EnumName(JobResult_name, int32(x))
+func (x JobStatus) String() string {
+	return proto.EnumName(JobStatus_name, int32(x))
 }
-func (JobResult) EnumDescriptor() ([]byte, []int) { return fileDescriptorTypes, []int{6} }
+func (JobStatus) EnumDescriptor() ([]byte, []int) { return fileDescriptorTypes, []int{6} }
+
+type JobPipelineStatus int32
+
+const (
+	JobPipelineStatus_UNKNOWN_JOB_PIPELINE_STATUS JobPipelineStatus = 0
+	JobPipelineStatus_JOB_PIPELINE_QUEUED         JobPipelineStatus = 1
+	JobPipelineStatus_JOB_PIPELINE_RUNNING        JobPipelineStatus = 2
+	JobPipelineStatus_JOB_PIPELINE_FINISHED       JobPipelineStatus = 3
+	JobPipelineStatus_JOB_PIPELINE_BACKGROUND     JobPipelineStatus = 4
+)
+
+var JobPipelineStatus_name = map[int32]string{
+	0: "UNKNOWN_JOB_PIPELINE_STATUS",
+	1: "JOB_PIPELINE_QUEUED",
+	2: "JOB_PIPELINE_RUNNING",
+	3: "JOB_PIPELINE_FINISHED",
+	4: "JOB_PIPELINE_BACKGROUND",
+}
+var JobPipelineStatus_value = map[string]int32{
+	"UNKNOWN_JOB_PIPELINE_STATUS": 0,
+	"JOB_PIPELINE_QUEUED":         1,
+	"JOB_PIPELINE_RUNNING":        2,
+	"JOB_PIPELINE_FINISHED":       3,
+	"JOB_PIPELINE_BACKGROUND":     4,
+}
+
+func (x JobPipelineStatus) String() string {
+	return proto.EnumName(JobPipelineStatus_name, int32(x))
+}
+func (JobPipelineStatus) EnumDescriptor() ([]byte, []int) { return fileDescriptorTypes, []int{7} }
 
 // ---------------------------
 //           <node>
@@ -386,7 +425,7 @@ type JobSpec struct {
 	Owner           Owner                `protobuf:"bytes,3,opt,name=owner" json:"owner"`
 	Workload        WorkloadSpec         `protobuf:"bytes,4,opt,name=workload" json:"workload"`
 	NodeAssignments []NodeAssignmentSpec `protobuf:"bytes,5,rep,name=nodeAssignments" json:"nodeAssignments" yaml:"nodeAssignments"`
-	Pipelines       []StagePipeline      `protobuf:"bytes,6,rep,name=pipelines" json:"pipelines"`
+	Pipelines       []StagePipelineSpec  `protobuf:"bytes,6,rep,name=pipelines" json:"pipelines"`
 	Stages          []StageSpec          `protobuf:"bytes,7,rep,name=stages" json:"stages"`
 }
 
@@ -430,23 +469,22 @@ func (m *NodeAssignmentSpec) String() string            { return proto.CompactTe
 func (*NodeAssignmentSpec) ProtoMessage()               {}
 func (*NodeAssignmentSpec) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{10} }
 
-type StagePipeline struct {
+type StagePipelineSpec struct {
 	Name   string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Stages []string `protobuf:"bytes,2,rep,name=stages" json:"stages,omitempty"`
 }
 
-func (m *StagePipeline) Reset()                    { *m = StagePipeline{} }
-func (m *StagePipeline) String() string            { return proto.CompactTextString(m) }
-func (*StagePipeline) ProtoMessage()               {}
-func (*StagePipeline) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{11} }
+func (m *StagePipelineSpec) Reset()                    { *m = StagePipelineSpec{} }
+func (m *StagePipelineSpec) String() string            { return proto.CompactTextString(m) }
+func (*StagePipelineSpec) ProtoMessage()               {}
+func (*StagePipelineSpec) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{11} }
 
 type StageSpec struct {
-	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	// if LONG_RUNNING, there must be at least one long running task in this stage
-	LongRunning bool `protobuf:"varint,2,opt,name=longRunning,proto3" json:"longRunning,omitempty" yaml:"longRunning"`
+	Name       string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Background bool   `protobuf:"varint,2,opt,name=background,proto3" json:"background,omitempty"`
 	// selct by name, role, the relation between multiple selector is OR, NOT AND
 	Selectors []NodeSelectorSpec `protobuf:"bytes,3,rep,name=selectors" json:"selectors"`
-	Pipelines []TaskPipeline     `protobuf:"bytes,4,rep,name=pipelines" json:"pipelines"`
+	Pipelines []TaskPipelineSpec `protobuf:"bytes,4,rep,name=pipelines" json:"pipelines"`
 	Tasks     []TaskSpec         `protobuf:"bytes,5,rep,name=tasks" json:"tasks"`
 }
 
@@ -455,21 +493,21 @@ func (m *StageSpec) String() string            { return proto.CompactTextString(
 func (*StageSpec) ProtoMessage()               {}
 func (*StageSpec) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{12} }
 
-type TaskPipeline struct {
+type TaskPipelineSpec struct {
 	Name  string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Tasks []string `protobuf:"bytes,2,rep,name=tasks" json:"tasks,omitempty"`
 }
 
-func (m *TaskPipeline) Reset()                    { *m = TaskPipeline{} }
-func (m *TaskPipeline) String() string            { return proto.CompactTextString(m) }
-func (*TaskPipeline) ProtoMessage()               {}
-func (*TaskPipeline) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{13} }
+func (m *TaskPipelineSpec) Reset()                    { *m = TaskPipelineSpec{} }
+func (m *TaskPipelineSpec) String() string            { return proto.CompactTextString(m) }
+func (*TaskPipelineSpec) ProtoMessage()               {}
+func (*TaskPipelineSpec) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{13} }
 
 type TaskSpec struct {
-	Name        string     `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	LongRunning bool       `protobuf:"varint,2,opt,name=longRunning,proto3" json:"longRunning,omitempty" yaml:"longRunning"`
-	Driver      TaskDriver `protobuf:"varint,3,opt,name=driver,proto3,enum=bh.TaskDriver" json:"driver,omitempty"`
-	Env         []*Env     `protobuf:"bytes,4,rep,name=env" json:"env,omitempty"`
+	Name       string     `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Background bool       `protobuf:"varint,2,opt,name=background,proto3" json:"background,omitempty"`
+	Driver     TaskDriver `protobuf:"varint,3,opt,name=driver,proto3,enum=bh.TaskDriver" json:"driver,omitempty"`
+	Env        []*Env     `protobuf:"bytes,4,rep,name=env" json:"env,omitempty"`
 	// NOTE: we intentionly don't use [(gogoproto.nullable) = false], so we can check nil to see if config match driver
 	Stopper *StopperSpec `protobuf:"bytes,5,opt,name=stopper" json:"stopper,omitempty"`
 	Shell   *ShellSpec   `protobuf:"bytes,6,opt,name=shell" json:"shell,omitempty"`
@@ -556,11 +594,19 @@ func (*ReadySpec) ProtoMessage()               {}
 func (*ReadySpec) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{21} }
 
 type Job struct {
-	// TODO: job should have much more info
-	Id         string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Spec       string `protobuf:"bytes,2,opt,name=spec,proto3" json:"spec,omitempty"`
-	CreateTime int64  `protobuf:"varint,3,opt,name=createTime,proto3" json:"createTime,omitempty"`
-	StartTime  int64  `protobuf:"varint,4,opt,name=startTime,proto3" json:"startTime,omitempty"`
+	Id               string         `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	RawSpec          string         `protobuf:"bytes,2,opt,name=rawSpec,proto3" json:"rawSpec,omitempty"`
+	Spec             *JobSpec       `protobuf:"bytes,3,opt,name=spec" json:"spec,omitempty"`
+	CreateTime       int64          `protobuf:"varint,4,opt,name=createTime,proto3" json:"createTime,omitempty"`
+	StartTime        int64          `protobuf:"varint,5,opt,name=startTime,proto3" json:"startTime,omitempty"`
+	StopTime         int64          `protobuf:"varint,6,opt,name=stopTime,proto3" json:"stopTime,omitempty"`
+	Status           JobStatus      `protobuf:"varint,7,opt,name=status,proto3,enum=bh.JobStatus" json:"status,omitempty"`
+	CurrentPipeline  int64          `protobuf:"varint,8,opt,name=currentPipeline,proto3" json:"currentPipeline,omitempty"`
+	ForegroundStages []int64        `protobuf:"varint,9,rep,packed,name=foregroundStages" json:"foregroundStages,omitempty"`
+	BackgroundStages []int64        `protobuf:"varint,10,rep,packed,name=backgroundStages" json:"backgroundStages,omitempty"`
+	FinishedStages   []int64        `protobuf:"varint,11,rep,packed,name=finishedStages" json:"finishedStages,omitempty"`
+	Pipelines        []*JobPipeline `protobuf:"bytes,12,rep,name=pipelines" json:"pipelines,omitempty"`
+	Stages           []*JobStage    `protobuf:"bytes,13,rep,name=stages" json:"stages,omitempty"`
 }
 
 func (m *Job) Reset()                    { *m = Job{} }
@@ -568,15 +614,48 @@ func (m *Job) String() string            { return proto.CompactTextString(m) }
 func (*Job) ProtoMessage()               {}
 func (*Job) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{22} }
 
-type JobStatus struct {
-	Stage int64 `protobuf:"varint,1,opt,name=stage,proto3" json:"stage,omitempty"`
-	Task  int64 `protobuf:"varint,2,opt,name=task,proto3" json:"task,omitempty"`
+type JobPipeline struct {
+	Status JobPipelineStatus `protobuf:"varint,1,opt,name=status,proto3,enum=bh.JobPipelineStatus" json:"status,omitempty"`
+	Stages []int64           `protobuf:"varint,2,rep,packed,name=stages" json:"stages,omitempty"`
 }
 
-func (m *JobStatus) Reset()                    { *m = JobStatus{} }
-func (m *JobStatus) String() string            { return proto.CompactTextString(m) }
-func (*JobStatus) ProtoMessage()               {}
-func (*JobStatus) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{23} }
+func (m *JobPipeline) Reset()                    { *m = JobPipeline{} }
+func (m *JobPipeline) String() string            { return proto.CompactTextString(m) }
+func (*JobPipeline) ProtoMessage()               {}
+func (*JobPipeline) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{23} }
+
+type JobStage struct {
+	Index    int64           `protobuf:"varint,1,opt,name=index,proto3" json:"index,omitempty"`
+	Pipeline int64           `protobuf:"varint,2,opt,name=pipeline,proto3" json:"pipeline,omitempty"`
+	Spec     *StageSpec      `protobuf:"bytes,3,opt,name=spec" json:"spec,omitempty"`
+	Stages   []*JobNodeStage `protobuf:"bytes,4,rep,name=stages" json:"stages,omitempty"`
+}
+
+func (m *JobStage) Reset()                    { *m = JobStage{} }
+func (m *JobStage) String() string            { return proto.CompactTextString(m) }
+func (*JobStage) ProtoMessage()               {}
+func (*JobStage) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{24} }
+
+type JobNodeStage struct {
+	Id        string           `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name      string           `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Role      Role             `protobuf:"varint,3,opt,name=role,proto3,enum=bh.Role" json:"role,omitempty"`
+	Info      *NodeInfo        `protobuf:"bytes,4,opt,name=info" json:"info,omitempty"`
+	Pipelines []*StagePipeline `protobuf:"bytes,5,rep,name=pipelines" json:"pipelines,omitempty"`
+}
+
+func (m *JobNodeStage) Reset()                    { *m = JobNodeStage{} }
+func (m *JobNodeStage) String() string            { return proto.CompactTextString(m) }
+func (*JobNodeStage) ProtoMessage()               {}
+func (*JobNodeStage) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{25} }
+
+type StagePipeline struct {
+}
+
+func (m *StagePipeline) Reset()                    { *m = StagePipeline{} }
+func (m *StagePipeline) String() string            { return proto.CompactTextString(m) }
+func (*StagePipeline) ProtoMessage()               {}
+func (*StagePipeline) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{26} }
 
 // ---------------------------
 //       <common rpc>
@@ -588,7 +667,7 @@ type Ping struct {
 func (m *Ping) Reset()                    { *m = Ping{} }
 func (m *Ping) String() string            { return proto.CompactTextString(m) }
 func (*Ping) ProtoMessage()               {}
-func (*Ping) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{24} }
+func (*Ping) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{27} }
 
 type Pong struct {
 	Message string `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
@@ -597,7 +676,7 @@ type Pong struct {
 func (m *Pong) Reset()                    { *m = Pong{} }
 func (m *Pong) String() string            { return proto.CompactTextString(m) }
 func (*Pong) ProtoMessage()               {}
-func (*Pong) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{25} }
+func (*Pong) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{28} }
 
 type EmptyReq struct {
 }
@@ -605,7 +684,7 @@ type EmptyReq struct {
 func (m *EmptyReq) Reset()                    { *m = EmptyReq{} }
 func (m *EmptyReq) String() string            { return proto.CompactTextString(m) }
 func (*EmptyReq) ProtoMessage()               {}
-func (*EmptyReq) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{26} }
+func (*EmptyReq) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{29} }
 
 type NodeInfoReq struct {
 }
@@ -613,7 +692,7 @@ type NodeInfoReq struct {
 func (m *NodeInfoReq) Reset()                    { *m = NodeInfoReq{} }
 func (m *NodeInfoReq) String() string            { return proto.CompactTextString(m) }
 func (*NodeInfoReq) ProtoMessage()               {}
-func (*NodeInfoReq) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{27} }
+func (*NodeInfoReq) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{30} }
 
 type NodeInfoRes struct {
 	Node *NodeInfo `protobuf:"bytes,1,opt,name=node" json:"node,omitempty"`
@@ -622,7 +701,7 @@ type NodeInfoRes struct {
 func (m *NodeInfoRes) Reset()                    { *m = NodeInfoRes{} }
 func (m *NodeInfoRes) String() string            { return proto.CompactTextString(m) }
 func (*NodeInfoRes) ProtoMessage()               {}
-func (*NodeInfoRes) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{28} }
+func (*NodeInfoRes) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{31} }
 
 // ---------------------------
 //       <node rpc>
@@ -634,7 +713,7 @@ type RegisterAgentReq struct {
 func (m *RegisterAgentReq) Reset()                    { *m = RegisterAgentReq{} }
 func (m *RegisterAgentReq) String() string            { return proto.CompactTextString(m) }
 func (*RegisterAgentReq) ProtoMessage()               {}
-func (*RegisterAgentReq) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{29} }
+func (*RegisterAgentReq) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{32} }
 
 type RegisterAgentRes struct {
 	Id      string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -645,7 +724,7 @@ type RegisterAgentRes struct {
 func (m *RegisterAgentRes) Reset()                    { *m = RegisterAgentRes{} }
 func (m *RegisterAgentRes) String() string            { return proto.CompactTextString(m) }
 func (*RegisterAgentRes) ProtoMessage()               {}
-func (*RegisterAgentRes) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{30} }
+func (*RegisterAgentRes) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{33} }
 
 type ListAgentReq struct {
 }
@@ -653,7 +732,7 @@ type ListAgentReq struct {
 func (m *ListAgentReq) Reset()                    { *m = ListAgentReq{} }
 func (m *ListAgentReq) String() string            { return proto.CompactTextString(m) }
 func (*ListAgentReq) ProtoMessage()               {}
-func (*ListAgentReq) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{31} }
+func (*ListAgentReq) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{34} }
 
 type ListAgentRes struct {
 	Agents []Node `protobuf:"bytes,1,rep,name=agents" json:"agents"`
@@ -662,7 +741,7 @@ type ListAgentRes struct {
 func (m *ListAgentRes) Reset()                    { *m = ListAgentRes{} }
 func (m *ListAgentRes) String() string            { return proto.CompactTextString(m) }
 func (*ListAgentRes) ProtoMessage()               {}
-func (*ListAgentRes) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{32} }
+func (*ListAgentRes) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{35} }
 
 type AgentHeartbeatReq struct {
 	Id     string     `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -672,7 +751,7 @@ type AgentHeartbeatReq struct {
 func (m *AgentHeartbeatReq) Reset()                    { *m = AgentHeartbeatReq{} }
 func (m *AgentHeartbeatReq) String() string            { return proto.CompactTextString(m) }
 func (*AgentHeartbeatReq) ProtoMessage()               {}
-func (*AgentHeartbeatReq) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{33} }
+func (*AgentHeartbeatReq) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{36} }
 
 type AgentHeartbeatRes struct {
 }
@@ -680,7 +759,7 @@ type AgentHeartbeatRes struct {
 func (m *AgentHeartbeatRes) Reset()                    { *m = AgentHeartbeatRes{} }
 func (m *AgentHeartbeatRes) String() string            { return proto.CompactTextString(m) }
 func (*AgentHeartbeatRes) ProtoMessage()               {}
-func (*AgentHeartbeatRes) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{34} }
+func (*AgentHeartbeatRes) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{37} }
 
 // ---------------------------
 //       <job rpc>
@@ -693,7 +772,7 @@ type SubmitJobReq struct {
 func (m *SubmitJobReq) Reset()                    { *m = SubmitJobReq{} }
 func (m *SubmitJobReq) String() string            { return proto.CompactTextString(m) }
 func (*SubmitJobReq) ProtoMessage()               {}
-func (*SubmitJobReq) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{35} }
+func (*SubmitJobReq) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{38} }
 
 type SubmitJobRes struct {
 	Id      string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -703,7 +782,7 @@ type SubmitJobRes struct {
 func (m *SubmitJobRes) Reset()                    { *m = SubmitJobRes{} }
 func (m *SubmitJobRes) String() string            { return proto.CompactTextString(m) }
 func (*SubmitJobRes) ProtoMessage()               {}
-func (*SubmitJobRes) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{36} }
+func (*SubmitJobRes) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{39} }
 
 type JobStatusReq struct {
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -712,7 +791,7 @@ type JobStatusReq struct {
 func (m *JobStatusReq) Reset()                    { *m = JobStatusReq{} }
 func (m *JobStatusReq) String() string            { return proto.CompactTextString(m) }
 func (*JobStatusReq) ProtoMessage()               {}
-func (*JobStatusReq) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{37} }
+func (*JobStatusReq) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{40} }
 
 type JobStatusRes struct {
 }
@@ -720,7 +799,7 @@ type JobStatusRes struct {
 func (m *JobStatusRes) Reset()                    { *m = JobStatusRes{} }
 func (m *JobStatusRes) String() string            { return proto.CompactTextString(m) }
 func (*JobStatusRes) ProtoMessage()               {}
-func (*JobStatusRes) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{38} }
+func (*JobStatusRes) Descriptor() ([]byte, []int) { return fileDescriptorTypes, []int{41} }
 
 func init() {
 	proto.RegisterType((*Node)(nil), "bh.Node")
@@ -734,9 +813,9 @@ func init() {
 	proto.RegisterType((*WorkloadSpec)(nil), "bh.WorkloadSpec")
 	proto.RegisterType((*NodeSelectorSpec)(nil), "bh.NodeSelectorSpec")
 	proto.RegisterType((*NodeAssignmentSpec)(nil), "bh.NodeAssignmentSpec")
-	proto.RegisterType((*StagePipeline)(nil), "bh.StagePipeline")
+	proto.RegisterType((*StagePipelineSpec)(nil), "bh.StagePipelineSpec")
 	proto.RegisterType((*StageSpec)(nil), "bh.StageSpec")
-	proto.RegisterType((*TaskPipeline)(nil), "bh.TaskPipeline")
+	proto.RegisterType((*TaskPipelineSpec)(nil), "bh.TaskPipelineSpec")
 	proto.RegisterType((*TaskSpec)(nil), "bh.TaskSpec")
 	proto.RegisterType((*Env)(nil), "bh.Env")
 	proto.RegisterType((*StopperSpec)(nil), "bh.StopperSpec")
@@ -746,7 +825,10 @@ func init() {
 	proto.RegisterType((*DockerSpec)(nil), "bh.DockerSpec")
 	proto.RegisterType((*ReadySpec)(nil), "bh.ReadySpec")
 	proto.RegisterType((*Job)(nil), "bh.Job")
-	proto.RegisterType((*JobStatus)(nil), "bh.JobStatus")
+	proto.RegisterType((*JobPipeline)(nil), "bh.JobPipeline")
+	proto.RegisterType((*JobStage)(nil), "bh.JobStage")
+	proto.RegisterType((*JobNodeStage)(nil), "bh.JobNodeStage")
+	proto.RegisterType((*StagePipeline)(nil), "bh.StagePipeline")
 	proto.RegisterType((*Ping)(nil), "bh.Ping")
 	proto.RegisterType((*Pong)(nil), "bh.Pong")
 	proto.RegisterType((*EmptyReq)(nil), "bh.EmptyReq")
@@ -768,7 +850,8 @@ func init() {
 	proto.RegisterEnum("bh.OwnerType", OwnerType_name, OwnerType_value)
 	proto.RegisterEnum("bh.TaskDriver", TaskDriver_name, TaskDriver_value)
 	proto.RegisterEnum("bh.DockerAction", DockerAction_name, DockerAction_value)
-	proto.RegisterEnum("bh.JobResult", JobResult_name, JobResult_value)
+	proto.RegisterEnum("bh.JobStatus", JobStatus_name, JobStatus_value)
+	proto.RegisterEnum("bh.JobPipelineStatus", JobPipelineStatus_name, JobPipelineStatus_value)
 }
 func (m *Node) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
@@ -1263,7 +1346,7 @@ func (m *NodeAssignmentSpec) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
-func (m *StagePipeline) Marshal() (dAtA []byte, err error) {
+func (m *StagePipelineSpec) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalTo(dAtA)
@@ -1273,7 +1356,7 @@ func (m *StagePipeline) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *StagePipeline) MarshalTo(dAtA []byte) (int, error) {
+func (m *StagePipelineSpec) MarshalTo(dAtA []byte) (int, error) {
 	var i int
 	_ = i
 	var l int
@@ -1323,10 +1406,10 @@ func (m *StageSpec) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintTypes(dAtA, i, uint64(len(m.Name)))
 		i += copy(dAtA[i:], m.Name)
 	}
-	if m.LongRunning {
+	if m.Background {
 		dAtA[i] = 0x10
 		i++
-		if m.LongRunning {
+		if m.Background {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
@@ -1372,7 +1455,7 @@ func (m *StageSpec) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
-func (m *TaskPipeline) Marshal() (dAtA []byte, err error) {
+func (m *TaskPipelineSpec) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalTo(dAtA)
@@ -1382,7 +1465,7 @@ func (m *TaskPipeline) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *TaskPipeline) MarshalTo(dAtA []byte) (int, error) {
+func (m *TaskPipelineSpec) MarshalTo(dAtA []byte) (int, error) {
 	var i int
 	_ = i
 	var l int
@@ -1432,10 +1515,10 @@ func (m *TaskSpec) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintTypes(dAtA, i, uint64(len(m.Name)))
 		i += copy(dAtA[i:], m.Name)
 	}
-	if m.LongRunning {
+	if m.Background {
 		dAtA[i] = 0x10
 		i++
-		if m.LongRunning {
+		if m.Background {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
@@ -1763,26 +1846,129 @@ func (m *Job) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintTypes(dAtA, i, uint64(len(m.Id)))
 		i += copy(dAtA[i:], m.Id)
 	}
-	if len(m.Spec) > 0 {
+	if len(m.RawSpec) > 0 {
 		dAtA[i] = 0x12
 		i++
-		i = encodeVarintTypes(dAtA, i, uint64(len(m.Spec)))
-		i += copy(dAtA[i:], m.Spec)
+		i = encodeVarintTypes(dAtA, i, uint64(len(m.RawSpec)))
+		i += copy(dAtA[i:], m.RawSpec)
+	}
+	if m.Spec != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintTypes(dAtA, i, uint64(m.Spec.Size()))
+		n12, err := m.Spec.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n12
 	}
 	if m.CreateTime != 0 {
-		dAtA[i] = 0x18
+		dAtA[i] = 0x20
 		i++
 		i = encodeVarintTypes(dAtA, i, uint64(m.CreateTime))
 	}
 	if m.StartTime != 0 {
-		dAtA[i] = 0x20
+		dAtA[i] = 0x28
 		i++
 		i = encodeVarintTypes(dAtA, i, uint64(m.StartTime))
+	}
+	if m.StopTime != 0 {
+		dAtA[i] = 0x30
+		i++
+		i = encodeVarintTypes(dAtA, i, uint64(m.StopTime))
+	}
+	if m.Status != 0 {
+		dAtA[i] = 0x38
+		i++
+		i = encodeVarintTypes(dAtA, i, uint64(m.Status))
+	}
+	if m.CurrentPipeline != 0 {
+		dAtA[i] = 0x40
+		i++
+		i = encodeVarintTypes(dAtA, i, uint64(m.CurrentPipeline))
+	}
+	if len(m.ForegroundStages) > 0 {
+		dAtA14 := make([]byte, len(m.ForegroundStages)*10)
+		var j13 int
+		for _, num1 := range m.ForegroundStages {
+			num := uint64(num1)
+			for num >= 1<<7 {
+				dAtA14[j13] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j13++
+			}
+			dAtA14[j13] = uint8(num)
+			j13++
+		}
+		dAtA[i] = 0x4a
+		i++
+		i = encodeVarintTypes(dAtA, i, uint64(j13))
+		i += copy(dAtA[i:], dAtA14[:j13])
+	}
+	if len(m.BackgroundStages) > 0 {
+		dAtA16 := make([]byte, len(m.BackgroundStages)*10)
+		var j15 int
+		for _, num1 := range m.BackgroundStages {
+			num := uint64(num1)
+			for num >= 1<<7 {
+				dAtA16[j15] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j15++
+			}
+			dAtA16[j15] = uint8(num)
+			j15++
+		}
+		dAtA[i] = 0x52
+		i++
+		i = encodeVarintTypes(dAtA, i, uint64(j15))
+		i += copy(dAtA[i:], dAtA16[:j15])
+	}
+	if len(m.FinishedStages) > 0 {
+		dAtA18 := make([]byte, len(m.FinishedStages)*10)
+		var j17 int
+		for _, num1 := range m.FinishedStages {
+			num := uint64(num1)
+			for num >= 1<<7 {
+				dAtA18[j17] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j17++
+			}
+			dAtA18[j17] = uint8(num)
+			j17++
+		}
+		dAtA[i] = 0x5a
+		i++
+		i = encodeVarintTypes(dAtA, i, uint64(j17))
+		i += copy(dAtA[i:], dAtA18[:j17])
+	}
+	if len(m.Pipelines) > 0 {
+		for _, msg := range m.Pipelines {
+			dAtA[i] = 0x62
+			i++
+			i = encodeVarintTypes(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if len(m.Stages) > 0 {
+		for _, msg := range m.Stages {
+			dAtA[i] = 0x6a
+			i++
+			i = encodeVarintTypes(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
 	}
 	return i, nil
 }
 
-func (m *JobStatus) Marshal() (dAtA []byte, err error) {
+func (m *JobPipeline) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalTo(dAtA)
@@ -1792,21 +1978,159 @@ func (m *JobStatus) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *JobStatus) MarshalTo(dAtA []byte) (int, error) {
+func (m *JobPipeline) MarshalTo(dAtA []byte) (int, error) {
 	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.Stage != 0 {
+	if m.Status != 0 {
 		dAtA[i] = 0x8
 		i++
-		i = encodeVarintTypes(dAtA, i, uint64(m.Stage))
+		i = encodeVarintTypes(dAtA, i, uint64(m.Status))
 	}
-	if m.Task != 0 {
+	if len(m.Stages) > 0 {
+		dAtA20 := make([]byte, len(m.Stages)*10)
+		var j19 int
+		for _, num1 := range m.Stages {
+			num := uint64(num1)
+			for num >= 1<<7 {
+				dAtA20[j19] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j19++
+			}
+			dAtA20[j19] = uint8(num)
+			j19++
+		}
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintTypes(dAtA, i, uint64(j19))
+		i += copy(dAtA[i:], dAtA20[:j19])
+	}
+	return i, nil
+}
+
+func (m *JobStage) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *JobStage) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Index != 0 {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintTypes(dAtA, i, uint64(m.Index))
+	}
+	if m.Pipeline != 0 {
 		dAtA[i] = 0x10
 		i++
-		i = encodeVarintTypes(dAtA, i, uint64(m.Task))
+		i = encodeVarintTypes(dAtA, i, uint64(m.Pipeline))
 	}
+	if m.Spec != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintTypes(dAtA, i, uint64(m.Spec.Size()))
+		n21, err := m.Spec.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n21
+	}
+	if len(m.Stages) > 0 {
+		for _, msg := range m.Stages {
+			dAtA[i] = 0x22
+			i++
+			i = encodeVarintTypes(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	return i, nil
+}
+
+func (m *JobNodeStage) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *JobNodeStage) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Id) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintTypes(dAtA, i, uint64(len(m.Id)))
+		i += copy(dAtA[i:], m.Id)
+	}
+	if len(m.Name) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintTypes(dAtA, i, uint64(len(m.Name)))
+		i += copy(dAtA[i:], m.Name)
+	}
+	if m.Role != 0 {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintTypes(dAtA, i, uint64(m.Role))
+	}
+	if m.Info != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintTypes(dAtA, i, uint64(m.Info.Size()))
+		n22, err := m.Info.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n22
+	}
+	if len(m.Pipelines) > 0 {
+		for _, msg := range m.Pipelines {
+			dAtA[i] = 0x2a
+			i++
+			i = encodeVarintTypes(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	return i, nil
+}
+
+func (m *StagePipeline) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *StagePipeline) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
 	return i, nil
 }
 
@@ -1913,11 +2237,11 @@ func (m *NodeInfoRes) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintTypes(dAtA, i, uint64(m.Node.Size()))
-		n12, err := m.Node.MarshalTo(dAtA[i:])
+		n23, err := m.Node.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n12
+		i += n23
 	}
 	return i, nil
 }
@@ -1940,11 +2264,11 @@ func (m *RegisterAgentReq) MarshalTo(dAtA []byte) (int, error) {
 	dAtA[i] = 0xa
 	i++
 	i = encodeVarintTypes(dAtA, i, uint64(m.Node.Size()))
-	n13, err := m.Node.MarshalTo(dAtA[i:])
+	n24, err := m.Node.MarshalTo(dAtA[i:])
 	if err != nil {
 		return 0, err
 	}
-	i += n13
+	i += n24
 	return i, nil
 }
 
@@ -1972,19 +2296,19 @@ func (m *RegisterAgentRes) MarshalTo(dAtA []byte) (int, error) {
 	dAtA[i] = 0x12
 	i++
 	i = encodeVarintTypes(dAtA, i, uint64(m.Node.Size()))
-	n14, err := m.Node.MarshalTo(dAtA[i:])
+	n25, err := m.Node.MarshalTo(dAtA[i:])
 	if err != nil {
 		return 0, err
 	}
-	i += n14
+	i += n25
 	dAtA[i] = 0x1a
 	i++
 	i = encodeVarintTypes(dAtA, i, uint64(m.Central.Size()))
-	n15, err := m.Central.MarshalTo(dAtA[i:])
+	n26, err := m.Central.MarshalTo(dAtA[i:])
 	if err != nil {
 		return 0, err
 	}
-	i += n15
+	i += n26
 	return i, nil
 }
 
@@ -2060,11 +2384,11 @@ func (m *AgentHeartbeatReq) MarshalTo(dAtA []byte) (int, error) {
 	dAtA[i] = 0x12
 	i++
 	i = encodeVarintTypes(dAtA, i, uint64(m.Status.Size()))
-	n16, err := m.Status.MarshalTo(dAtA[i:])
+	n27, err := m.Status.MarshalTo(dAtA[i:])
 	if err != nil {
 		return 0, err
 	}
-	i += n16
+	i += n27
 	return i, nil
 }
 
@@ -2419,7 +2743,7 @@ func (m *NodeAssignmentSpec) Size() (n int) {
 	return n
 }
 
-func (m *StagePipeline) Size() (n int) {
+func (m *StagePipelineSpec) Size() (n int) {
 	var l int
 	_ = l
 	l = len(m.Name)
@@ -2442,7 +2766,7 @@ func (m *StageSpec) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTypes(uint64(l))
 	}
-	if m.LongRunning {
+	if m.Background {
 		n += 2
 	}
 	if len(m.Selectors) > 0 {
@@ -2466,7 +2790,7 @@ func (m *StageSpec) Size() (n int) {
 	return n
 }
 
-func (m *TaskPipeline) Size() (n int) {
+func (m *TaskPipelineSpec) Size() (n int) {
 	var l int
 	_ = l
 	l = len(m.Name)
@@ -2489,7 +2813,7 @@ func (m *TaskSpec) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTypes(uint64(l))
 	}
-	if m.LongRunning {
+	if m.Background {
 		n += 2
 	}
 	if m.Driver != 0 {
@@ -2629,8 +2953,12 @@ func (m *Job) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTypes(uint64(l))
 	}
-	l = len(m.Spec)
+	l = len(m.RawSpec)
 	if l > 0 {
+		n += 1 + l + sovTypes(uint64(l))
+	}
+	if m.Spec != nil {
+		l = m.Spec.Size()
 		n += 1 + l + sovTypes(uint64(l))
 	}
 	if m.CreateTime != 0 {
@@ -2639,18 +2967,119 @@ func (m *Job) Size() (n int) {
 	if m.StartTime != 0 {
 		n += 1 + sovTypes(uint64(m.StartTime))
 	}
+	if m.StopTime != 0 {
+		n += 1 + sovTypes(uint64(m.StopTime))
+	}
+	if m.Status != 0 {
+		n += 1 + sovTypes(uint64(m.Status))
+	}
+	if m.CurrentPipeline != 0 {
+		n += 1 + sovTypes(uint64(m.CurrentPipeline))
+	}
+	if len(m.ForegroundStages) > 0 {
+		l = 0
+		for _, e := range m.ForegroundStages {
+			l += sovTypes(uint64(e))
+		}
+		n += 1 + sovTypes(uint64(l)) + l
+	}
+	if len(m.BackgroundStages) > 0 {
+		l = 0
+		for _, e := range m.BackgroundStages {
+			l += sovTypes(uint64(e))
+		}
+		n += 1 + sovTypes(uint64(l)) + l
+	}
+	if len(m.FinishedStages) > 0 {
+		l = 0
+		for _, e := range m.FinishedStages {
+			l += sovTypes(uint64(e))
+		}
+		n += 1 + sovTypes(uint64(l)) + l
+	}
+	if len(m.Pipelines) > 0 {
+		for _, e := range m.Pipelines {
+			l = e.Size()
+			n += 1 + l + sovTypes(uint64(l))
+		}
+	}
+	if len(m.Stages) > 0 {
+		for _, e := range m.Stages {
+			l = e.Size()
+			n += 1 + l + sovTypes(uint64(l))
+		}
+	}
 	return n
 }
 
-func (m *JobStatus) Size() (n int) {
+func (m *JobPipeline) Size() (n int) {
 	var l int
 	_ = l
-	if m.Stage != 0 {
-		n += 1 + sovTypes(uint64(m.Stage))
+	if m.Status != 0 {
+		n += 1 + sovTypes(uint64(m.Status))
 	}
-	if m.Task != 0 {
-		n += 1 + sovTypes(uint64(m.Task))
+	if len(m.Stages) > 0 {
+		l = 0
+		for _, e := range m.Stages {
+			l += sovTypes(uint64(e))
+		}
+		n += 1 + sovTypes(uint64(l)) + l
 	}
+	return n
+}
+
+func (m *JobStage) Size() (n int) {
+	var l int
+	_ = l
+	if m.Index != 0 {
+		n += 1 + sovTypes(uint64(m.Index))
+	}
+	if m.Pipeline != 0 {
+		n += 1 + sovTypes(uint64(m.Pipeline))
+	}
+	if m.Spec != nil {
+		l = m.Spec.Size()
+		n += 1 + l + sovTypes(uint64(l))
+	}
+	if len(m.Stages) > 0 {
+		for _, e := range m.Stages {
+			l = e.Size()
+			n += 1 + l + sovTypes(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *JobNodeStage) Size() (n int) {
+	var l int
+	_ = l
+	l = len(m.Id)
+	if l > 0 {
+		n += 1 + l + sovTypes(uint64(l))
+	}
+	l = len(m.Name)
+	if l > 0 {
+		n += 1 + l + sovTypes(uint64(l))
+	}
+	if m.Role != 0 {
+		n += 1 + sovTypes(uint64(m.Role))
+	}
+	if m.Info != nil {
+		l = m.Info.Size()
+		n += 1 + l + sovTypes(uint64(l))
+	}
+	if len(m.Pipelines) > 0 {
+		for _, e := range m.Pipelines {
+			l = e.Size()
+			n += 1 + l + sovTypes(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *StagePipeline) Size() (n int) {
+	var l int
+	_ = l
 	return n
 }
 
@@ -4012,7 +4441,7 @@ func (m *JobSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Pipelines = append(m.Pipelines, StagePipeline{})
+			m.Pipelines = append(m.Pipelines, StagePipelineSpec{})
 			if err := m.Pipelines[len(m.Pipelines)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -4502,7 +4931,7 @@ func (m *NodeAssignmentSpec) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *StagePipeline) Unmarshal(dAtA []byte) error {
+func (m *StagePipelineSpec) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -4525,10 +4954,10 @@ func (m *StagePipeline) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: StagePipeline: wiretype end group for non-group")
+			return fmt.Errorf("proto: StagePipelineSpec: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: StagePipeline: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: StagePipelineSpec: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -4670,7 +5099,7 @@ func (m *StageSpec) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 2:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field LongRunning", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Background", wireType)
 			}
 			var v int
 			for shift := uint(0); ; shift += 7 {
@@ -4687,7 +5116,7 @@ func (m *StageSpec) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.LongRunning = bool(v != 0)
+			m.Background = bool(v != 0)
 		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Selectors", wireType)
@@ -4745,7 +5174,7 @@ func (m *StageSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Pipelines = append(m.Pipelines, TaskPipeline{})
+			m.Pipelines = append(m.Pipelines, TaskPipelineSpec{})
 			if err := m.Pipelines[len(m.Pipelines)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -4802,7 +5231,7 @@ func (m *StageSpec) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *TaskPipeline) Unmarshal(dAtA []byte) error {
+func (m *TaskPipelineSpec) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -4825,10 +5254,10 @@ func (m *TaskPipeline) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: TaskPipeline: wiretype end group for non-group")
+			return fmt.Errorf("proto: TaskPipelineSpec: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TaskPipeline: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: TaskPipelineSpec: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -4970,7 +5399,7 @@ func (m *TaskSpec) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 2:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field LongRunning", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Background", wireType)
 			}
 			var v int
 			for shift := uint(0); ; shift += 7 {
@@ -4987,7 +5416,7 @@ func (m *TaskSpec) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.LongRunning = bool(v != 0)
+			m.Background = bool(v != 0)
 		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Driver", wireType)
@@ -6002,7 +6431,7 @@ func (m *Job) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Spec", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field RawSpec", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -6027,9 +6456,42 @@ func (m *Job) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Spec = string(dAtA[iNdEx:postIndex])
+			m.RawSpec = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Spec", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Spec == nil {
+				m.Spec = &JobSpec{}
+			}
+			if err := m.Spec.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CreateTime", wireType)
 			}
@@ -6048,7 +6510,7 @@ func (m *Job) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 4:
+		case 5:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field StartTime", wireType)
 			}
@@ -6067,6 +6529,311 @@ func (m *Job) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field StopTime", wireType)
+			}
+			m.StopTime = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.StopTime |= (int64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Status", wireType)
+			}
+			m.Status = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Status |= (JobStatus(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CurrentPipeline", wireType)
+			}
+			m.CurrentPipeline = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CurrentPipeline |= (int64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 9:
+			if wireType == 0 {
+				var v int64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowTypes
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= (int64(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				m.ForegroundStages = append(m.ForegroundStages, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowTypes
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= (int(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthTypes
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				for iNdEx < postIndex {
+					var v int64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowTypes
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= (int64(b) & 0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.ForegroundStages = append(m.ForegroundStages, v)
+				}
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field ForegroundStages", wireType)
+			}
+		case 10:
+			if wireType == 0 {
+				var v int64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowTypes
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= (int64(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				m.BackgroundStages = append(m.BackgroundStages, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowTypes
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= (int(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthTypes
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				for iNdEx < postIndex {
+					var v int64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowTypes
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= (int64(b) & 0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.BackgroundStages = append(m.BackgroundStages, v)
+				}
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field BackgroundStages", wireType)
+			}
+		case 11:
+			if wireType == 0 {
+				var v int64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowTypes
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= (int64(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				m.FinishedStages = append(m.FinishedStages, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowTypes
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= (int(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthTypes
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				for iNdEx < postIndex {
+					var v int64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowTypes
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= (int64(b) & 0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.FinishedStages = append(m.FinishedStages, v)
+				}
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field FinishedStages", wireType)
+			}
+		case 12:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pipelines", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Pipelines = append(m.Pipelines, &JobPipeline{})
+			if err := m.Pipelines[len(m.Pipelines)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 13:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Stages", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Stages = append(m.Stages, &JobStage{})
+			if err := m.Stages[len(m.Stages)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTypes(dAtA[iNdEx:])
@@ -6088,7 +6855,7 @@ func (m *Job) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *JobStatus) Unmarshal(dAtA []byte) error {
+func (m *JobPipeline) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -6111,17 +6878,17 @@ func (m *JobStatus) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: JobStatus: wiretype end group for non-group")
+			return fmt.Errorf("proto: JobPipeline: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: JobStatus: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: JobPipeline: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Stage", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Status", wireType)
 			}
-			m.Stage = 0
+			m.Status = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTypes
@@ -6131,16 +6898,147 @@ func (m *JobStatus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Stage |= (int64(b) & 0x7F) << shift
+				m.Status |= (JobPipelineStatus(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType == 0 {
+				var v int64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowTypes
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= (int64(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				m.Stages = append(m.Stages, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowTypes
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= (int(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthTypes
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				for iNdEx < postIndex {
+					var v int64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowTypes
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= (int64(b) & 0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.Stages = append(m.Stages, v)
+				}
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field Stages", wireType)
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTypes(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *JobStage) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTypes
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: JobStage: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: JobStage: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Index", wireType)
+			}
+			m.Index = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Index |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
 		case 2:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Task", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Pipeline", wireType)
 			}
-			m.Task = 0
+			m.Pipeline = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTypes
@@ -6150,11 +7048,316 @@ func (m *JobStatus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Task |= (int64(b) & 0x7F) << shift
+				m.Pipeline |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Spec", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Spec == nil {
+				m.Spec = &StageSpec{}
+			}
+			if err := m.Spec.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Stages", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Stages = append(m.Stages, &JobNodeStage{})
+			if err := m.Stages[len(m.Stages)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTypes(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *JobNodeStage) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTypes
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: JobNodeStage: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: JobNodeStage: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Id = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Role", wireType)
+			}
+			m.Role = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Role |= (Role(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Info", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Info == nil {
+				m.Info = &NodeInfo{}
+			}
+			if err := m.Info.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pipelines", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Pipelines = append(m.Pipelines, &StagePipeline{})
+			if err := m.Pipelines[len(m.Pipelines)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTypes(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *StagePipeline) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTypes
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: StagePipeline: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: StagePipeline: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTypes(dAtA[iNdEx:])
@@ -7469,119 +8672,138 @@ var (
 func init() { proto.RegisterFile("types.proto", fileDescriptorTypes) }
 
 var fileDescriptorTypes = []byte{
-	// 1812 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x58, 0x4f, 0x77, 0xdb, 0x58,
-	0x15, 0xaf, 0x2c, 0xf9, 0xdf, 0xb5, 0xe3, 0xa8, 0xaf, 0x25, 0x88, 0x32, 0x27, 0xf5, 0x08, 0x66,
-	0x4e, 0x26, 0x0c, 0x29, 0x13, 0x18, 0xe8, 0x19, 0x56, 0x8a, 0xad, 0x49, 0xdd, 0xfa, 0xd8, 0xe6,
-	0xd9, 0x4e, 0x60, 0x36, 0x45, 0xb6, 0x5f, 0x1d, 0x11, 0x5b, 0xcf, 0xa3, 0x27, 0x67, 0x9a, 0x1d,
-	0x5b, 0xb6, 0x7c, 0x02, 0xb6, 0x7c, 0x93, 0xae, 0x38, 0xec, 0xd8, 0xe5, 0x94, 0x7e, 0x84, 0xf2,
-	0x05, 0x38, 0xef, 0x4a, 0x4f, 0x52, 0x12, 0xa7, 0x70, 0x38, 0xec, 0x74, 0xff, 0xbe, 0xfb, 0xe7,
-	0xf7, 0xee, 0xbb, 0x36, 0xd4, 0xa2, 0xcb, 0x15, 0x13, 0x07, 0xab, 0x90, 0x47, 0x9c, 0x14, 0x26,
-	0x67, 0x8f, 0x7e, 0x3a, 0xf7, 0xa3, 0xb3, 0xf5, 0xe4, 0x60, 0xca, 0x97, 0x4f, 0xe6, 0x7c, 0xce,
-	0x9f, 0xa0, 0x68, 0xb2, 0x7e, 0x85, 0x14, 0x12, 0xf8, 0x15, 0x9b, 0xd8, 0x53, 0x30, 0x7a, 0x7c,
-	0xc6, 0x48, 0x03, 0x0a, 0xfe, 0xcc, 0xd2, 0x9a, 0xda, 0x5e, 0x95, 0x16, 0xfc, 0x19, 0xf9, 0x11,
-	0x14, 0x45, 0xe4, 0x45, 0xcc, 0x2a, 0x34, 0xb5, 0xbd, 0xc6, 0xe1, 0xd6, 0xc1, 0xe4, 0xec, 0x40,
-	0x2a, 0x0e, 0x25, 0x93, 0xc6, 0x32, 0xf2, 0x29, 0x18, 0x7e, 0xf0, 0x8a, 0x5b, 0x7a, 0x53, 0xdb,
-	0xab, 0x1d, 0xd6, 0x95, 0x4e, 0x27, 0x78, 0xc5, 0x8f, 0x8c, 0x37, 0x57, 0x8f, 0xef, 0x51, 0x94,
-	0xdb, 0x7f, 0x2e, 0x40, 0x45, 0x09, 0x6e, 0x9d, 0x44, 0xc0, 0x38, 0xe3, 0x22, 0xc2, 0x83, 0xaa,
-	0x14, 0xbf, 0x89, 0x0d, 0x86, 0x37, 0x9b, 0x85, 0x89, 0xe3, 0x8a, 0x74, 0xec, 0xcc, 0x66, 0xa1,
-	0x72, 0x2a, 0x65, 0xe4, 0x23, 0xa8, 0x8a, 0xc8, 0x0b, 0xa3, 0x91, 0xbf, 0x64, 0x96, 0xd1, 0xd4,
-	0xf6, 0x74, 0x9a, 0x31, 0xc8, 0x23, 0xa8, 0x4c, 0x38, 0x8f, 0x85, 0x45, 0x14, 0xa6, 0x34, 0xf9,
-	0x08, 0x8c, 0x90, 0x2f, 0x98, 0x05, 0x98, 0x1a, 0x7a, 0xa7, 0x7c, 0xc1, 0x28, 0x72, 0xc9, 0x21,
-	0x54, 0x56, 0x21, 0xbf, 0xf0, 0x67, 0x2c, 0xb4, 0x6a, 0x78, 0xbe, 0xa9, 0x12, 0x1b, 0x24, 0xfc,
-	0x24, 0x8e, 0x54, 0x4f, 0xda, 0x4c, 0xbd, 0x95, 0x37, 0xf5, 0xa3, 0x4b, 0xab, 0x7e, 0xdd, 0xa6,
-	0x95, 0xf0, 0x95, 0x8d, 0xd2, 0xb3, 0x29, 0x18, 0x32, 0x27, 0xac, 0xc7, 0x2a, 0xad, 0xc7, 0x0a,
-	0x23, 0xf7, 0x83, 0x99, 0x94, 0x25, 0x35, 0x49, 0x69, 0xb2, 0x0b, 0x10, 0xb2, 0x25, 0x8f, 0x98,
-	0xa3, 0xaa, 0x53, 0xa5, 0x39, 0x8e, 0xfd, 0x17, 0x0d, 0xea, 0xf9, 0x43, 0xc9, 0x43, 0x28, 0x4e,
-	0x79, 0xc8, 0x04, 0xfa, 0x2f, 0xd2, 0x98, 0x90, 0x6e, 0x96, 0x6c, 0xc9, 0xc3, 0xcb, 0xaf, 0x43,
-	0x16, 0x77, 0xb8, 0x48, 0x73, 0x1c, 0xd2, 0x84, 0x5a, 0x4c, 0x8d, 0x78, 0xe4, 0x2d, 0xf0, 0x9c,
-	0x22, 0xcd, 0xb3, 0x64, 0x90, 0x33, 0x5f, 0x9c, 0xa3, 0xbd, 0x81, 0xe2, 0x94, 0x96, 0x8d, 0x91,
-	0xdf, 0xb1, 0x6d, 0x11, 0x85, 0x19, 0xc3, 0x3e, 0x89, 0x23, 0x54, 0xa5, 0x94, 0xed, 0x0f, 0xbc,
-	0x25, 0x4b, 0x0a, 0x80, 0xdf, 0x64, 0x07, 0x4a, 0x21, 0x9b, 0xfb, 0x3c, 0x48, 0x0a, 0x90, 0x50,
-	0xf2, 0x54, 0x3f, 0x10, 0x91, 0x17, 0x4c, 0x59, 0x92, 0x7c, 0x4a, 0xdb, 0x5f, 0x00, 0x28, 0x7c,
-	0xae, 0x45, 0x06, 0x5f, 0xed, 0x6e, 0xf8, 0xda, 0x3d, 0x28, 0xf6, 0xbf, 0x0b, 0x58, 0xb8, 0x09,
-	0x92, 0x18, 0x53, 0x21, 0x17, 0xd3, 0xc7, 0x60, 0xc8, 0xab, 0x86, 0xe7, 0x26, 0x0e, 0xd1, 0x78,
-	0x74, 0xb9, 0x62, 0x14, 0x45, 0xf6, 0xdf, 0x0a, 0x50, 0x7e, 0xce, 0x27, 0xc3, 0x15, 0x9b, 0xfe,
-	0x57, 0x2e, 0x3f, 0x81, 0x22, 0x97, 0x2e, 0x12, 0x98, 0x57, 0x53, 0x9f, 0x09, 0x56, 0x62, 0xa9,
-	0x04, 0xd7, 0x77, 0x3c, 0x3c, 0x5f, 0x70, 0x6f, 0x86, 0xb5, 0x4e, 0xc0, 0x75, 0x9a, 0xf0, 0xe4,
-	0x71, 0x0a, 0x5c, 0x4a, 0x8f, 0xfc, 0x1e, 0xb6, 0x03, 0x3e, 0x63, 0x8e, 0x10, 0xfe, 0x3c, 0x58,
-	0xb2, 0x20, 0x12, 0x56, 0xb1, 0xa9, 0xef, 0xd5, 0x0e, 0x77, 0x54, 0x25, 0x32, 0x11, 0x3a, 0xd8,
-	0x95, 0x0e, 0xde, 0x5f, 0x3d, 0xde, 0xb9, 0xf4, 0x96, 0x8b, 0xaf, 0xec, 0x1b, 0xc6, 0x36, 0xbd,
-	0xe9, 0x8e, 0x7c, 0x09, 0xd5, 0x95, 0xbf, 0x62, 0x0b, 0x3f, 0x60, 0xc2, 0x2a, 0xa1, 0xef, 0xfb,
-	0xd2, 0xf7, 0x30, 0xf2, 0xe6, 0x6c, 0x90, 0x48, 0x92, 0xb8, 0x32, 0x4d, 0xf2, 0x13, 0x28, 0x09,
-	0xa9, 0x21, 0xac, 0x32, 0xda, 0x6c, 0xa5, 0x36, 0xb9, 0x3c, 0x12, 0x15, 0xfb, 0x1f, 0x1a, 0xd4,
-	0xf3, 0x69, 0x4a, 0x68, 0xbd, 0x0a, 0xbd, 0x25, 0x93, 0x79, 0x26, 0xc5, 0xcd, 0x18, 0xe4, 0x18,
-	0xcc, 0x94, 0x38, 0x61, 0xa1, 0x48, 0x01, 0x74, 0xf4, 0xc3, 0xf7, 0x57, 0x8f, 0xbf, 0x1f, 0x67,
-	0x76, 0x53, 0xc3, 0xa6, 0xb7, 0x8c, 0x10, 0xdd, 0x5e, 0xe4, 0x4d, 0x3c, 0x91, 0xe2, 0x4c, 0xd1,
-	0xa4, 0x0d, 0xdb, 0xea, 0x5b, 0x9d, 0x61, 0xe0, 0x19, 0x8f, 0xb2, 0xea, 0xdd, 0x50, 0xb0, 0xe9,
-	0x4d, 0x13, 0xfb, 0x0f, 0x60, 0x22, 0x1c, 0xd9, 0x82, 0x4d, 0x23, 0x1e, 0x62, 0x72, 0x26, 0xe8,
-	0xde, 0x62, 0x81, 0x69, 0x55, 0xa8, 0xfc, 0x44, 0xd0, 0xf0, 0x20, 0x06, 0x4d, 0x85, 0xe2, 0x77,
-	0x0a, 0x24, 0x3d, 0x07, 0x24, 0x35, 0xd0, 0x8c, 0x4d, 0x03, 0xcd, 0xfe, 0xa3, 0x06, 0xe4, 0x76,
-	0xc7, 0x37, 0x5e, 0x3c, 0xe5, 0xa8, 0xb0, 0x71, 0x32, 0x3e, 0x85, 0xaa, 0x48, 0x02, 0x16, 0x96,
-	0x8e, 0xed, 0x7b, 0x98, 0x5e, 0xac, 0x5c, 0x26, 0xaa, 0xeb, 0xa9, 0xb2, 0xfd, 0x6b, 0xd8, 0xba,
-	0x86, 0x8b, 0xbb, 0x6e, 0x7d, 0x02, 0x8d, 0x42, 0x53, 0x97, 0xb7, 0x3e, 0x41, 0xc1, 0xbf, 0x34,
-	0xa8, 0xa6, 0x08, 0xd9, 0x68, 0xf9, 0x14, 0x6a, 0x0b, 0x1e, 0xcc, 0xe9, 0x3a, 0x08, 0xfc, 0x60,
-	0x1e, 0x97, 0xeb, 0x68, 0xe7, 0xfd, 0xd5, 0x63, 0x12, 0xf7, 0x23, 0x27, 0xb4, 0x69, 0x5e, 0xf5,
-	0x7f, 0x4f, 0x89, 0xfc, 0x22, 0x8f, 0x7f, 0x03, 0x2d, 0xf1, 0x5a, 0x8e, 0x3c, 0x71, 0x7e, 0x37,
-	0xfc, 0xf7, 0xa0, 0x18, 0x79, 0xe2, 0x5c, 0xdd, 0xc6, 0xba, 0xb2, 0xc8, 0x9d, 0x11, 0x2b, 0xd8,
-	0x4f, 0xa1, 0x9e, 0x77, 0xb5, 0x31, 0xef, 0x87, 0xca, 0x5b, 0x5c, 0xb0, 0xc4, 0xf2, 0x6d, 0x01,
-	0x2a, 0xca, 0xe7, 0xff, 0xb9, 0x5c, 0x9f, 0x42, 0x69, 0x16, 0xfa, 0x17, 0xc9, 0xc8, 0x6a, 0x1c,
-	0x36, 0x54, 0xfc, 0x6d, 0xe4, 0xd2, 0x44, 0x4a, 0x7e, 0x00, 0x3a, 0x0b, 0x2e, 0x92, 0xb2, 0x94,
-	0xa5, 0x92, 0x1b, 0x5c, 0x50, 0xc9, 0x23, 0x9f, 0x41, 0x59, 0x44, 0x7c, 0xb5, 0x62, 0x21, 0xbe,
-	0x0d, 0xb5, 0xc3, 0xed, 0x78, 0x02, 0x20, 0x4b, 0x86, 0x4c, 0x95, 0x1c, 0x87, 0xf8, 0x19, 0x5b,
-	0x2c, 0xac, 0x12, 0x2a, 0xc6, 0xa3, 0x42, 0x32, 0x50, 0x2d, 0x96, 0x91, 0x26, 0x18, 0xec, 0x35,
-	0x9b, 0x5a, 0xe5, 0x6c, 0x07, 0x71, 0x5f, 0xb3, 0x29, 0xaa, 0xa0, 0x04, 0x83, 0xe6, 0xd3, 0x73,
-	0x16, 0x5a, 0x15, 0xd4, 0xc1, 0xa0, 0xdb, 0xc8, 0x41, 0xad, 0x44, 0x4a, 0x3e, 0x83, 0x62, 0xc8,
-	0xbc, 0xd9, 0xa5, 0x55, 0xcd, 0x8e, 0xa3, 0x92, 0x91, 0x6f, 0x0e, 0x6a, 0xd8, 0x1f, 0x83, 0xee,
-	0x06, 0x17, 0xa4, 0x0e, 0x9a, 0x1a, 0x43, 0xda, 0xb9, 0xa4, 0x2e, 0x92, 0xf9, 0xae, 0x5d, 0xd8,
-	0x1d, 0xa8, 0xe5, 0x92, 0x92, 0xad, 0x42, 0x38, 0x27, 0xea, 0x31, 0x21, 0xbb, 0x23, 0x7b, 0xa6,
-	0x5e, 0x05, 0xf9, 0xad, 0xc6, 0x80, 0x9e, 0x8e, 0x01, 0xfb, 0x13, 0xa8, 0xa6, 0x69, 0x13, 0x0b,
-	0xca, 0x53, 0xbe, 0x5c, 0x7a, 0x81, 0x7a, 0x5d, 0x14, 0x69, 0x3f, 0x85, 0x8a, 0xca, 0xfc, 0x6e,
-	0x2d, 0x79, 0xa4, 0x17, 0xce, 0x15, 0x64, 0xf0, 0xdb, 0xfe, 0x19, 0x18, 0x03, 0x1e, 0x46, 0x32,
-	0xc8, 0xf9, 0x9a, 0x89, 0x48, 0x6d, 0x0b, 0x48, 0x5c, 0x5b, 0xd0, 0x8a, 0xf1, 0x82, 0x66, 0x87,
-	0x00, 0x59, 0x05, 0xa5, 0x9d, 0xbf, 0xcc, 0x25, 0x87, 0x04, 0xd9, 0x83, 0x92, 0x37, 0x8d, 0xd4,
-	0x10, 0x6e, 0xc4, 0xd7, 0x23, 0xb6, 0x72, 0x90, 0x4f, 0x13, 0x39, 0xf9, 0x31, 0x14, 0x57, 0x3c,
-	0x8c, 0xd4, 0x0d, 0xc4, 0xb9, 0x23, 0x03, 0x52, 0x45, 0x47, 0xa1, 0xfd, 0x25, 0x54, 0xd3, 0x76,
-	0x64, 0x17, 0x49, 0xfb, 0x4f, 0x17, 0x69, 0x0e, 0xfa, 0x73, 0x3e, 0xd9, 0xf4, 0x20, 0x8b, 0x15,
-	0x9b, 0xaa, 0xd2, 0xcb, 0x6f, 0xb9, 0x17, 0x4d, 0x43, 0xe6, 0x45, 0x0c, 0xd7, 0x46, 0x1d, 0xd7,
-	0xc6, 0x1c, 0xe7, 0xc3, 0x2b, 0xa7, 0x8c, 0x4f, 0xbe, 0xfe, 0xf1, 0x02, 0x72, 0xad, 0xdf, 0xfa,
-	0xa6, 0x7e, 0xeb, 0x71, 0xbf, 0xed, 0x26, 0x18, 0x03, 0x79, 0xb7, 0x2c, 0x28, 0x2f, 0x99, 0x10,
-	0x59, 0x19, 0x15, 0x89, 0x1a, 0xfc, 0x83, 0x1a, 0x00, 0x15, 0x77, 0xb9, 0x8a, 0x2e, 0x29, 0xfb,
-	0xd6, 0xde, 0x82, 0x9a, 0xda, 0xb5, 0x25, 0xf9, 0x24, 0x4f, 0x0a, 0x79, 0x5d, 0xe4, 0x4b, 0x8e,
-	0x0e, 0x6e, 0xac, 0xec, 0x14, 0x25, 0xf6, 0x57, 0x60, 0x52, 0x36, 0xf7, 0x45, 0xc4, 0x42, 0x67,
-	0xce, 0x82, 0x88, 0xb2, 0x6f, 0xe5, 0xa2, 0x7f, 0x97, 0x95, 0xda, 0xc9, 0xd1, 0xf6, 0xf5, 0x2d,
-	0x5b, 0x71, 0xab, 0xf0, 0xca, 0x57, 0xe1, 0xc3, 0xbe, 0xc8, 0xe7, 0x50, 0x9e, 0xb2, 0x20, 0x0a,
-	0x93, 0x05, 0x74, 0xb3, 0xaa, 0x52, 0xb1, 0x1b, 0x50, 0xef, 0xfa, 0x22, 0x52, 0x11, 0xdb, 0xbf,
-	0xbc, 0x46, 0x0b, 0x39, 0x04, 0xbc, 0x39, 0xee, 0x41, 0x5a, 0x86, 0x31, 0xe9, 0x4c, 0xad, 0x1c,
-	0xb1, 0xd4, 0xfe, 0x0d, 0xdc, 0x47, 0x9b, 0x67, 0xcc, 0x0b, 0xa3, 0x09, 0xf3, 0x30, 0xfd, 0x9b,
-	0x29, 0x7c, 0x8e, 0x2f, 0x55, 0xb4, 0x16, 0x49, 0x12, 0x8d, 0xfc, 0x7a, 0xb9, 0x16, 0xb9, 0x2d,
-	0x26, 0x5a, 0x0b, 0xfb, 0xc1, 0x6d, 0x97, 0x42, 0xc6, 0x37, 0x5c, 0x4f, 0x96, 0x7e, 0xf4, 0x9c,
-	0x4f, 0xe4, 0x11, 0x04, 0x8c, 0xb5, 0x60, 0xa1, 0x9a, 0xd3, 0xf2, 0x7b, 0x13, 0x44, 0xe5, 0xb3,
-	0x90, 0xb3, 0xbb, 0x5d, 0x5d, 0x0b, 0xca, 0x2b, 0x16, 0xcc, 0xd4, 0x5c, 0xd7, 0xa9, 0x22, 0xed,
-	0x5d, 0xa8, 0xa7, 0xf0, 0xdc, 0x90, 0x94, 0xac, 0x60, 0x4e, 0x2e, 0xf6, 0x9f, 0x81, 0x21, 0xdf,
-	0x7e, 0x62, 0x42, 0x7d, 0xdc, 0x7b, 0xd1, 0xeb, 0x9f, 0xf6, 0x5e, 0xd2, 0x7e, 0xd7, 0x35, 0xef,
-	0x91, 0x32, 0xe8, 0x4e, 0xef, 0x77, 0xa6, 0x46, 0x6a, 0x50, 0x6e, 0xb9, 0xbd, 0x11, 0x75, 0xba,
-	0x66, 0x81, 0x00, 0x94, 0xba, 0x7d, 0xa7, 0xed, 0x52, 0x53, 0x27, 0x75, 0xa8, 0xb4, 0x9d, 0x91,
-	0x73, 0xe4, 0x0c, 0x5d, 0xd3, 0xd8, 0xff, 0xab, 0x06, 0x95, 0x74, 0xdf, 0x7f, 0x08, 0xa6, 0x72,
-	0x37, 0xa0, 0xfd, 0x93, 0x8e, 0x34, 0xb8, 0x47, 0x08, 0x34, 0xba, 0xfd, 0x96, 0xd3, 0xcd, 0x78,
-	0x9a, 0xd4, 0x3c, 0x71, 0x8e, 0xa9, 0xd3, 0x1b, 0x65, 0xdc, 0x82, 0x0c, 0xc7, 0xe9, 0x76, 0x32,
-	0x8e, 0x8e, 0x9c, 0xd3, 0x61, 0xc6, 0x31, 0xa4, 0x37, 0xe7, 0x9b, 0x31, 0x75, 0x33, 0x5e, 0x51,
-	0x6a, 0x1d, 0xb7, 0x06, 0x19, 0xa7, 0x44, 0x1e, 0xc0, 0xf6, 0xc0, 0x69, 0xbd, 0x70, 0x73, 0xee,
-	0xcb, 0xfb, 0x7f, 0xd2, 0xa0, 0x9a, 0xfe, 0x50, 0x20, 0xf7, 0x61, 0x4b, 0x05, 0x3b, 0x1c, 0x39,
-	0x23, 0x99, 0xfc, 0x03, 0xd8, 0xfe, 0xba, 0xd3, 0x6b, 0x77, 0x7a, 0xc7, 0x2f, 0x55, 0xee, 0x1a,
-	0xa9, 0x80, 0xd1, 0x69, 0x77, 0x5d, 0xb3, 0x40, 0xb6, 0xa1, 0xf6, 0xbc, 0x7f, 0xf4, 0x92, 0x8e,
-	0x7b, 0xbd, 0x4e, 0xef, 0xd8, 0xd4, 0xc9, 0xf7, 0xe0, 0xbe, 0x64, 0x9c, 0x3a, 0x9d, 0x91, 0xb4,
-	0x19, 0xb8, 0x2e, 0x1d, 0x9a, 0x45, 0xe9, 0x19, 0xf5, 0xdc, 0x41, 0x9f, 0x4a, 0x81, 0x59, 0x52,
-	0xa6, 0xad, 0xae, 0xeb, 0xf4, 0xc6, 0x03, 0xb3, 0xbc, 0xff, 0x05, 0x54, 0xd3, 0x9f, 0x18, 0xf9,
-	0x50, 0xfa, 0xa7, 0x3d, 0x2c, 0x5a, 0x05, 0x8c, 0xf1, 0x10, 0x4b, 0x55, 0x06, 0xbd, 0x4f, 0x8f,
-	0xcd, 0xc2, 0x3e, 0x05, 0xc8, 0x9e, 0x63, 0xb2, 0x03, 0x44, 0xd9, 0x8c, 0x9c, 0xe1, 0x8b, 0x36,
-	0xed, 0x9c, 0xa0, 0x61, 0x0d, 0xca, 0xc3, 0x51, 0x7f, 0x30, 0x40, 0xdb, 0x2a, 0x14, 0x87, 0xcf,
-	0xdc, 0xae, 0x6c, 0x61, 0x05, 0x0c, 0xf7, 0xb7, 0x6e, 0xcb, 0xd4, 0x65, 0x33, 0xdb, 0xfd, 0xd6,
-	0x0b, 0x59, 0xcd, 0xfd, 0x03, 0xa8, 0xe7, 0xa7, 0xb6, 0xb4, 0x4e, 0xbc, 0xc6, 0x31, 0x0c, 0xc6,
-	0xdd, 0x6e, 0x1c, 0x03, 0x1d, 0xf7, 0xcc, 0xc2, 0xfe, 0xaf, 0x70, 0x0e, 0x52, 0x26, 0xd6, 0x0b,
-	0xf9, 0x78, 0x34, 0x52, 0xf4, 0xb8, 0xc3, 0x71, 0x77, 0x94, 0x1c, 0x3f, 0x6e, 0xb5, 0xdc, 0xe1,
-	0x30, 0x3e, 0xde, 0xa5, 0xb4, 0x4f, 0xcd, 0xc2, 0xd1, 0xce, 0x9b, 0x7f, 0xee, 0xde, 0x7b, 0xf3,
-	0x6e, 0x57, 0xfb, 0xfb, 0xbb, 0x5d, 0xed, 0xed, 0xbb, 0x5d, 0xed, 0x1b, 0x63, 0x72, 0xb6, 0x9a,
-	0x4c, 0x4a, 0xf8, 0x57, 0xc5, 0xcf, 0xff, 0x1d, 0x00, 0x00, 0xff, 0xff, 0xd8, 0x41, 0xfc, 0x9e,
-	0xec, 0x10, 0x00, 0x00,
+	// 2115 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x38, 0xcd, 0x6e, 0xdb, 0xd8,
+	0xd5, 0xa1, 0x48, 0xfd, 0x1d, 0xc9, 0x36, 0x73, 0xe3, 0x38, 0x9a, 0x64, 0xe0, 0x68, 0xf8, 0x4d,
+	0x02, 0x8d, 0xbf, 0x49, 0xd2, 0x71, 0xd1, 0x22, 0x1d, 0x14, 0x28, 0x68, 0x8b, 0x71, 0x94, 0x08,
+	0x94, 0xe6, 0x4a, 0x8a, 0xdb, 0xd9, 0xa4, 0x94, 0x74, 0x2d, 0xb3, 0x96, 0x48, 0x85, 0xa4, 0x9c,
+	0x78, 0xd7, 0x6d, 0xb7, 0x7d, 0x81, 0x16, 0xe8, 0xaa, 0x40, 0x9f, 0xa3, 0xc8, 0x72, 0xd0, 0x4d,
+	0x57, 0x0d, 0xda, 0x3c, 0xc2, 0x3c, 0x41, 0x71, 0x0f, 0xef, 0x25, 0xa9, 0x9f, 0xa4, 0x83, 0xd9,
+	0xdd, 0xf3, 0xff, 0x73, 0xcf, 0x39, 0xf7, 0x90, 0x50, 0x89, 0xae, 0xe6, 0x2c, 0x7c, 0x38, 0x0f,
+	0xfc, 0xc8, 0x27, 0xb9, 0xe1, 0xf9, 0xed, 0x07, 0x13, 0x37, 0x3a, 0x5f, 0x0c, 0x1f, 0x8e, 0xfc,
+	0xd9, 0xa3, 0x89, 0x3f, 0xf1, 0x1f, 0x21, 0x69, 0xb8, 0x38, 0x43, 0x08, 0x01, 0x3c, 0xc5, 0x22,
+	0xc6, 0x08, 0x34, 0xdb, 0x1f, 0x33, 0xb2, 0x0d, 0x39, 0x77, 0x5c, 0x53, 0xea, 0x4a, 0xa3, 0x4c,
+	0x73, 0xee, 0x98, 0xfc, 0x1f, 0xe4, 0xc3, 0xc8, 0x89, 0x58, 0x2d, 0x57, 0x57, 0x1a, 0xdb, 0x87,
+	0x5b, 0x0f, 0x87, 0xe7, 0x0f, 0x39, 0x63, 0x8f, 0x23, 0x69, 0x4c, 0x23, 0xf7, 0x41, 0x73, 0xbd,
+	0x33, 0xbf, 0xa6, 0xd6, 0x95, 0x46, 0xe5, 0xb0, 0x2a, 0x79, 0x5a, 0xde, 0x99, 0x7f, 0xa4, 0xbd,
+	0x7d, 0x77, 0xf7, 0x1a, 0x45, 0xba, 0xf1, 0xc7, 0x1c, 0x94, 0x24, 0x61, 0xcd, 0x12, 0x01, 0xed,
+	0xdc, 0x0f, 0x23, 0x34, 0x54, 0xa6, 0x78, 0x26, 0x06, 0x68, 0xce, 0x78, 0x1c, 0x08, 0xc5, 0x25,
+	0xae, 0xd8, 0x1c, 0x8f, 0x03, 0xa9, 0x94, 0xd3, 0xc8, 0xa7, 0x50, 0x0e, 0x23, 0x27, 0x88, 0xfa,
+	0xee, 0x8c, 0xd5, 0xb4, 0xba, 0xd2, 0x50, 0x69, 0x8a, 0x20, 0xb7, 0xa1, 0x34, 0xf4, 0xfd, 0x98,
+	0x98, 0x47, 0x62, 0x02, 0x93, 0x4f, 0x41, 0x0b, 0xfc, 0x29, 0xab, 0x01, 0x86, 0x86, 0xda, 0xa9,
+	0x3f, 0x65, 0x14, 0xb1, 0xe4, 0x10, 0x4a, 0xf3, 0xc0, 0xbf, 0x74, 0xc7, 0x2c, 0xa8, 0x55, 0xd0,
+	0xbe, 0x2e, 0x03, 0xeb, 0x0a, 0xbc, 0xf0, 0x23, 0xe1, 0xe3, 0x32, 0x23, 0x67, 0xee, 0x8c, 0xdc,
+	0xe8, 0xaa, 0x56, 0x5d, 0x96, 0x39, 0x16, 0x78, 0x29, 0x23, 0xf9, 0x0c, 0x0a, 0x1a, 0x8f, 0x09,
+	0xf3, 0x31, 0x4f, 0xf2, 0x31, 0x47, 0xcf, 0x5d, 0x6f, 0xcc, 0x69, 0x22, 0x27, 0x09, 0x4c, 0xf6,
+	0x01, 0x02, 0x36, 0xf3, 0x23, 0x66, 0xca, 0xec, 0x94, 0x69, 0x06, 0x63, 0xfc, 0x59, 0x81, 0x6a,
+	0xd6, 0x28, 0xd9, 0x85, 0xfc, 0xc8, 0x0f, 0x58, 0x88, 0xfa, 0xf3, 0x34, 0x06, 0xb8, 0x9a, 0x19,
+	0x9b, 0xf9, 0xc1, 0xd5, 0x93, 0x80, 0xc5, 0x37, 0x9c, 0xa7, 0x19, 0x0c, 0xa9, 0x43, 0x25, 0x86,
+	0xfa, 0x7e, 0xe4, 0x4c, 0xd1, 0x4e, 0x9e, 0x66, 0x51, 0xdc, 0xc9, 0xb1, 0x1b, 0x5e, 0xa0, 0xbc,
+	0x86, 0xe4, 0x04, 0xe6, 0x17, 0xc3, 0xcf, 0xb1, 0x6c, 0x1e, 0x89, 0x29, 0xc2, 0x78, 0x11, 0x7b,
+	0x28, 0x53, 0xc9, 0xaf, 0xdf, 0x73, 0x66, 0x4c, 0x24, 0x00, 0xcf, 0x64, 0x0f, 0x0a, 0x01, 0x9b,
+	0xb8, 0xbe, 0x27, 0x12, 0x20, 0x20, 0x6e, 0xd5, 0xf5, 0xc2, 0xc8, 0xf1, 0x46, 0x4c, 0x04, 0x9f,
+	0xc0, 0xc6, 0x57, 0x00, 0xb2, 0x3e, 0x17, 0x61, 0x5a, 0xbe, 0xca, 0x87, 0xcb, 0xd7, 0xb0, 0x21,
+	0xdf, 0x79, 0xed, 0xb1, 0x60, 0x53, 0x49, 0xa2, 0x4f, 0xb9, 0x8c, 0x4f, 0x9f, 0x81, 0xc6, 0x5b,
+	0x0d, 0xed, 0x0a, 0x85, 0x28, 0xdc, 0xbf, 0x9a, 0x33, 0x8a, 0x24, 0xe3, 0x1f, 0x39, 0x28, 0x3e,
+	0xf3, 0x87, 0xbd, 0x39, 0x1b, 0xfd, 0x20, 0x95, 0xf7, 0x20, 0xef, 0x73, 0x15, 0xa2, 0xcc, 0xcb,
+	0x89, 0x4e, 0x51, 0x2b, 0x31, 0x95, 0x17, 0xd7, 0x6b, 0x3f, 0xb8, 0x98, 0xfa, 0xce, 0x18, 0x73,
+	0x2d, 0x8a, 0xeb, 0x54, 0xe0, 0xb8, 0x39, 0x59, 0x5c, 0x92, 0x8f, 0xfc, 0x16, 0x76, 0x3c, 0x7f,
+	0xcc, 0xcc, 0x30, 0x74, 0x27, 0xde, 0x8c, 0x79, 0x51, 0x58, 0xcb, 0xd7, 0xd5, 0x46, 0xe5, 0x70,
+	0x4f, 0x66, 0x22, 0x25, 0xa1, 0x82, 0x7d, 0xae, 0xe0, 0xfb, 0x77, 0x77, 0xf7, 0xae, 0x9c, 0xd9,
+	0xf4, 0x6b, 0x63, 0x45, 0xd8, 0xa0, 0xab, 0xea, 0xc8, 0x2f, 0xa0, 0x3c, 0x77, 0xe7, 0x6c, 0xea,
+	0x7a, 0x2c, 0xac, 0x15, 0x50, 0xf7, 0x4d, 0xae, 0xbb, 0x17, 0x39, 0x13, 0xd6, 0x15, 0x94, 0x8c,
+	0x6f, 0x29, 0x37, 0xf9, 0x7f, 0x28, 0x84, 0x9c, 0x2b, 0xac, 0x15, 0x51, 0x6e, 0x2b, 0x91, 0xcb,
+	0xf0, 0x0b, 0x16, 0xe3, 0x9f, 0x0a, 0x54, 0xb3, 0xa1, 0xf2, 0xf2, 0x3a, 0x0b, 0x9c, 0x19, 0xe3,
+	0xb1, 0x8a, 0x04, 0xa7, 0x08, 0x72, 0x02, 0x7a, 0x02, 0xbc, 0x60, 0x41, 0x98, 0x14, 0xd1, 0xd1,
+	0x9d, 0xef, 0xdf, 0xdd, 0xbd, 0x15, 0x47, 0xb7, 0xca, 0x61, 0xd0, 0x35, 0x21, 0xac, 0x70, 0x27,
+	0x72, 0x86, 0x4e, 0x98, 0xd4, 0x9a, 0x84, 0x49, 0x13, 0x76, 0xe4, 0x59, 0xda, 0xd0, 0xd0, 0xc6,
+	0xed, 0x34, 0x83, 0x2b, 0x0c, 0x06, 0x5d, 0x15, 0x31, 0x7e, 0x07, 0x3a, 0x96, 0x24, 0x9b, 0xb2,
+	0x51, 0xe4, 0x07, 0x18, 0x9c, 0x0e, 0xaa, 0x33, 0x9d, 0x62, 0x58, 0x25, 0xca, 0x8f, 0x58, 0x38,
+	0xbe, 0x17, 0x17, 0x4e, 0x89, 0xe2, 0x39, 0x29, 0x26, 0x35, 0x53, 0x4c, 0x72, 0xa8, 0x69, 0x9b,
+	0x86, 0x9a, 0xf1, 0x7b, 0x05, 0xc8, 0xfa, 0xad, 0x6f, 0x6c, 0x3e, 0xa9, 0x28, 0xb7, 0x71, 0x3a,
+	0x3e, 0x86, 0x72, 0x28, 0x1c, 0x0e, 0x6b, 0x2a, 0x5e, 0xdf, 0x6e, 0xd2, 0x5c, 0x99, 0x48, 0xe4,
+	0xad, 0x27, 0xcc, 0xc6, 0xaf, 0xe0, 0xfa, 0x5a, 0x6d, 0x7c, 0xa8, 0xfb, 0x45, 0x79, 0xe4, 0xea,
+	0x2a, 0xef, 0x7e, 0x51, 0x09, 0xff, 0x52, 0xa0, 0x9c, 0x54, 0xc9, 0x46, 0xc9, 0x7d, 0x80, 0xa1,
+	0x33, 0xba, 0x98, 0x04, 0xfe, 0xc2, 0x1b, 0x8b, 0x8c, 0x65, 0x30, 0x3f, 0xde, 0x79, 0x2e, 0x99,
+	0x56, 0xbb, 0x96, 0x4a, 0xf6, 0x9d, 0xf0, 0xe2, 0xe3, 0xc5, 0xde, 0x80, 0x7c, 0xe4, 0x84, 0x17,
+	0xb2, 0xff, 0xaa, 0x52, 0x2a, 0xc3, 0x1d, 0x33, 0x18, 0xbf, 0x04, 0x7d, 0x55, 0xdd, 0xc6, 0x28,
+	0x77, 0xa5, 0xc6, 0x38, 0x3d, 0x42, 0xfa, 0xef, 0x39, 0x28, 0x49, 0xbd, 0x3f, 0x2a, 0x39, 0xf7,
+	0xa1, 0x30, 0x0e, 0xdc, 0x4b, 0x31, 0x8e, 0xb6, 0x0f, 0xb7, 0xa5, 0xa7, 0x4d, 0xc4, 0x52, 0x41,
+	0x25, 0x9f, 0x80, 0xca, 0xbc, 0x4b, 0x91, 0x84, 0x22, 0x67, 0xb2, 0xbc, 0x4b, 0xca, 0x71, 0xe4,
+	0x0b, 0x28, 0x86, 0x91, 0x3f, 0x9f, 0xb3, 0x00, 0xe7, 0x7e, 0xe5, 0x70, 0x27, 0xee, 0x6c, 0x44,
+	0x71, 0xc7, 0xa8, 0xa4, 0xe3, 0x80, 0x3e, 0x67, 0xd3, 0x69, 0xad, 0x80, 0x8c, 0xf1, 0x08, 0xe0,
+	0x08, 0x64, 0x8b, 0x69, 0xa4, 0x0e, 0x1a, 0x7b, 0xc3, 0x46, 0xb5, 0x62, 0xba, 0x5f, 0x58, 0x6f,
+	0xd8, 0x08, 0x59, 0x90, 0x82, 0x4e, 0xfb, 0xa3, 0x0b, 0x16, 0xd4, 0x4a, 0xc8, 0x83, 0x4e, 0x37,
+	0x11, 0x83, 0x5c, 0x82, 0x4a, 0xbe, 0x80, 0x7c, 0xc0, 0x9c, 0xf1, 0x55, 0xad, 0x9c, 0x9a, 0xa3,
+	0x1c, 0x91, 0xbd, 0x06, 0xe4, 0x30, 0x3e, 0x03, 0xd5, 0xf2, 0x2e, 0x49, 0x15, 0x14, 0x39, 0x5e,
+	0x94, 0x0b, 0x0e, 0x5d, 0x8a, 0xd9, 0xad, 0x5c, 0x1a, 0x2d, 0xa8, 0x64, 0x82, 0xe2, 0x17, 0x82,
+	0x25, 0x2a, 0xd8, 0x63, 0x80, 0xdf, 0x01, 0xbf, 0x19, 0x39, 0xf1, 0xf9, 0x59, 0xb6, 0xb7, 0x9a,
+	0xb4, 0xb7, 0x71, 0x0f, 0xca, 0x49, 0xd8, 0xa4, 0x06, 0xc5, 0x91, 0x3f, 0x9b, 0x39, 0x9e, 0x7c,
+	0x39, 0x24, 0x68, 0x3c, 0x86, 0x92, 0x8c, 0xfc, 0xc3, 0x5c, 0xdc, 0xa4, 0x13, 0x4c, 0x64, 0x61,
+	0xe0, 0xd9, 0xf8, 0x09, 0x68, 0x5d, 0x3f, 0x88, 0xb8, 0x93, 0x93, 0x05, 0x0b, 0x23, 0xb9, 0x09,
+	0x20, 0xb0, 0xb4, 0x7c, 0xe5, 0xe3, 0xe5, 0xcb, 0x08, 0x00, 0xd2, 0x0c, 0x72, 0x39, 0x77, 0x96,
+	0x09, 0x0e, 0x01, 0xd2, 0x80, 0x82, 0x33, 0x8a, 0xe4, 0x70, 0xdd, 0x8e, 0x5f, 0xa4, 0x58, 0xca,
+	0x44, 0x3c, 0x15, 0x74, 0xf2, 0x39, 0xe4, 0xe7, 0x7e, 0x10, 0xc9, 0x7e, 0xc3, 0x79, 0xc2, 0x1d,
+	0x92, 0x49, 0x47, 0xa2, 0xf1, 0x33, 0x28, 0x27, 0xd7, 0x91, 0xb6, 0x8c, 0xf2, 0xbf, 0x5a, 0xe6,
+	0x3b, 0x15, 0xd4, 0x67, 0xfe, 0x70, 0xed, 0xb5, 0xad, 0x41, 0x31, 0x70, 0x5e, 0x73, 0x7e, 0x91,
+	0x7e, 0x09, 0x92, 0xbb, 0xa0, 0x85, 0x1c, 0x1d, 0x3f, 0xb9, 0x15, 0xae, 0x5a, 0x3c, 0xd9, 0x14,
+	0x09, 0xbc, 0x4d, 0x46, 0x01, 0x73, 0x22, 0x96, 0xd9, 0x2b, 0x33, 0x98, 0xe5, 0xb5, 0x33, 0xbf,
+	0x61, 0xed, 0xe4, 0x15, 0x8e, 0xc4, 0x42, 0xbc, 0x76, 0x4a, 0x98, 0xdc, 0xc3, 0xb9, 0x16, 0x2d,
+	0x42, 0xac, 0x67, 0xb1, 0x43, 0x70, 0xe3, 0x88, 0xa4, 0x82, 0x48, 0x1a, 0xb0, 0x33, 0x5a, 0x04,
+	0x01, 0xf3, 0x22, 0x39, 0x09, 0xb0, 0xb6, 0x55, 0xba, 0x8a, 0x26, 0x07, 0xa0, 0x9f, 0xf9, 0x01,
+	0x8b, 0xfb, 0xb7, 0x17, 0x8f, 0xcc, 0x72, 0x5d, 0x6d, 0xa8, 0x74, 0x0d, 0xcf, 0x79, 0xd3, 0x5e,
+	0x17, 0xbc, 0x10, 0xf3, 0xae, 0xe2, 0xc9, 0x7d, 0xd8, 0x3e, 0x73, 0x3d, 0x37, 0x3c, 0x67, 0x92,
+	0xb3, 0x82, 0x9c, 0x2b, 0x58, 0xf2, 0x20, 0x3b, 0x14, 0xab, 0x78, 0x57, 0x3b, 0x22, 0x26, 0xe9,
+	0x63, 0x76, 0x12, 0x7e, 0x9e, 0xcc, 0xf5, 0xad, 0xf4, 0x5e, 0xe3, 0xf8, 0x27, 0x2c, 0x99, 0xf2,
+	0x7d, 0xa8, 0x64, 0xe4, 0xc9, 0x83, 0x24, 0x69, 0xf1, 0x26, 0x77, 0x73, 0xc5, 0xc0, 0x4a, 0xf2,
+	0x96, 0xdf, 0x0e, 0x35, 0xd1, 0xfa, 0x07, 0x05, 0x4a, 0xd2, 0x14, 0x96, 0xb4, 0x37, 0x66, 0x6f,
+	0x50, 0xa5, 0x4a, 0x63, 0x80, 0x5f, 0x9d, 0xf4, 0x15, 0x8b, 0x46, 0xa5, 0x09, 0xcc, 0x97, 0xbf,
+	0x4c, 0xd5, 0x2c, 0xef, 0x2b, 0xa2, 0x6e, 0x1a, 0x89, 0xe5, 0x78, 0x32, 0xea, 0xc2, 0x51, 0xb1,
+	0x75, 0x66, 0x22, 0xfc, 0x8b, 0x02, 0xd5, 0x2c, 0xe1, 0x07, 0xed, 0x8a, 0xf2, 0x55, 0x56, 0x37,
+	0xbe, 0xca, 0x75, 0xf1, 0x21, 0xa6, 0xad, 0x7f, 0x88, 0xc5, 0x9f, 0x60, 0xe4, 0x51, 0xf6, 0xae,
+	0xe2, 0xa7, 0xe8, 0xfa, 0xda, 0xba, 0x96, 0xb9, 0x2d, 0x63, 0x07, 0xb6, 0x96, 0x68, 0x46, 0x1d,
+	0xb4, 0xae, 0xeb, 0x4d, 0x78, 0x6f, 0xcd, 0x58, 0x18, 0xa6, 0x23, 0x41, 0x82, 0xc8, 0xe1, 0x7f,
+	0x94, 0x03, 0xa0, 0x64, 0xcd, 0xe6, 0xd1, 0x15, 0x65, 0xaf, 0x8c, 0x2d, 0xa8, 0x24, 0x3e, 0xb2,
+	0x57, 0xc6, 0xa3, 0x2c, 0x18, 0xf2, 0x88, 0xf8, 0xc6, 0x89, 0x0a, 0xd6, 0x22, 0xe2, 0x14, 0xe3,
+	0x6b, 0xd0, 0x29, 0x9b, 0xb8, 0x61, 0xc4, 0x02, 0x73, 0xc2, 0xbc, 0x88, 0xb2, 0x57, 0xfc, 0x83,
+	0xf4, 0x43, 0x52, 0xf2, 0xdb, 0x11, 0x65, 0xdf, 0xac, 0xc9, 0x86, 0x6b, 0xb7, 0x20, 0x75, 0xe5,
+	0x3e, 0xae, 0x8b, 0x7c, 0x09, 0xc5, 0x11, 0xf3, 0xa2, 0x40, 0x7c, 0x28, 0x6d, 0x66, 0x95, 0x2c,
+	0xc6, 0x36, 0x54, 0xdb, 0x6e, 0x18, 0x49, 0x8f, 0x8d, 0x9f, 0x2f, 0xc1, 0xbc, 0xf7, 0x0a, 0xce,
+	0x04, 0xf7, 0x75, 0x25, 0x9d, 0x97, 0x5c, 0x99, 0x5c, 0x8b, 0x63, 0xaa, 0xf1, 0x0d, 0x5c, 0x47,
+	0x99, 0xa7, 0xcc, 0x09, 0xa2, 0x21, 0x73, 0x30, 0xfc, 0xd5, 0x10, 0xbe, 0x4c, 0x9a, 0x27, 0x97,
+	0xbe, 0x8e, 0xe9, 0x57, 0x52, 0x66, 0xd3, 0x8e, 0x16, 0xa1, 0x71, 0x63, 0x5d, 0x65, 0xc8, 0xfd,
+	0xeb, 0x2d, 0x86, 0x33, 0x37, 0x7a, 0xe6, 0x0f, 0xb9, 0x09, 0x02, 0xda, 0x22, 0x64, 0x81, 0xdc,
+	0x2c, 0xf8, 0x99, 0xe3, 0xc2, 0x74, 0xd4, 0xe2, 0xd9, 0x78, 0xbc, 0x24, 0x17, 0x6e, 0x9a, 0xd0,
+	0x73, 0xe6, 0x8d, 0x5d, 0x6f, 0x22, 0x9a, 0x4d, 0x82, 0xc6, 0x3e, 0x76, 0x87, 0xe8, 0xeb, 0xf5,
+	0xa0, 0x78, 0x06, 0x33, 0xf4, 0xf0, 0xe0, 0x29, 0x68, 0xbc, 0x13, 0x88, 0x0e, 0xd5, 0x81, 0xfd,
+	0xdc, 0xee, 0x9c, 0xda, 0x2f, 0x69, 0xa7, 0x6d, 0xe9, 0xd7, 0x48, 0x11, 0x54, 0xd3, 0xfe, 0x8d,
+	0xae, 0x90, 0x0a, 0x14, 0x8f, 0x2d, 0xbb, 0x4f, 0xcd, 0xb6, 0x9e, 0x23, 0x00, 0x85, 0x76, 0xc7,
+	0x6c, 0x5a, 0x54, 0x57, 0x49, 0x15, 0x4a, 0x4d, 0xb3, 0x6f, 0x1e, 0x99, 0x3d, 0x4b, 0xd7, 0x0e,
+	0xfe, 0xaa, 0x40, 0x29, 0xf9, 0x2e, 0xdd, 0x05, 0x5d, 0xaa, 0xeb, 0xd2, 0xce, 0x8b, 0x16, 0x17,
+	0xb8, 0x46, 0x08, 0x6c, 0xb7, 0x3b, 0xc7, 0x66, 0x3b, 0xc5, 0x29, 0x9c, 0xf3, 0x85, 0x79, 0x42,
+	0x4d, 0xbb, 0x9f, 0x62, 0x73, 0xdc, 0x1d, 0xb3, 0xdd, 0x4a, 0x31, 0x2a, 0x62, 0x4e, 0x7b, 0x29,
+	0x46, 0xe3, 0xda, 0xcc, 0x6f, 0x07, 0xd4, 0x4a, 0x71, 0x79, 0xce, 0x75, 0x72, 0xdc, 0x4d, 0x31,
+	0x05, 0x72, 0x03, 0x76, 0xba, 0xe6, 0xf1, 0x73, 0x2b, 0xa3, 0xbe, 0x78, 0xf0, 0x37, 0x05, 0xca,
+	0xc9, 0x07, 0x2d, 0xd9, 0x03, 0x22, 0x9d, 0xb5, 0x3b, 0x4d, 0xeb, 0x65, 0xaf, 0x6f, 0xf6, 0x79,
+	0x06, 0x6a, 0xb0, 0x8b, 0xf0, 0x93, 0x96, 0xdd, 0x6c, 0xd9, 0x27, 0x2f, 0x65, 0x16, 0x14, 0xb2,
+	0x05, 0x65, 0xa4, 0xb4, 0x9a, 0x6d, 0x4b, 0xcf, 0xf1, 0x18, 0x10, 0x7c, 0xd6, 0x39, 0x7a, 0x49,
+	0x07, 0xb6, 0xdd, 0xb2, 0x4f, 0x74, 0x95, 0xdc, 0x86, 0xbd, 0x04, 0x7b, 0x6a, 0xb6, 0xfa, 0x5c,
+	0x45, 0xd7, 0xb2, 0x68, 0x4f, 0xcf, 0x73, 0x93, 0xa9, 0x84, 0xd5, 0xed, 0x50, 0x4e, 0xd5, 0x0b,
+	0x4b, 0x9a, 0x8e, 0xdb, 0x96, 0x69, 0x0f, 0xba, 0x7a, 0xf1, 0xe0, 0x2b, 0x28, 0x27, 0x5f, 0xcb,
+	0xe4, 0x3a, 0x6c, 0x49, 0x6f, 0x3b, 0xa7, 0x36, 0xe6, 0xb5, 0x04, 0xda, 0xa0, 0x87, 0xd9, 0x2c,
+	0x82, 0xda, 0xa1, 0x27, 0x7a, 0xee, 0x80, 0x02, 0xa4, 0xdb, 0x67, 0x36, 0xc2, 0xbe, 0xd9, 0x7b,
+	0xde, 0xa4, 0xad, 0x17, 0x28, 0x58, 0x81, 0x62, 0xaf, 0xdf, 0xe9, 0x76, 0x51, 0xb6, 0x0c, 0xf9,
+	0xde, 0x53, 0xab, 0xcd, 0x6f, 0xb9, 0x04, 0x9a, 0xf5, 0x6b, 0xeb, 0x58, 0x57, 0xf9, 0x7d, 0x37,
+	0x3b, 0xc7, 0xcf, 0x79, 0xc2, 0x0f, 0x1e, 0x42, 0x35, 0xbb, 0xa4, 0x70, 0x69, 0xa1, 0x35, 0xf6,
+	0xa1, 0x3b, 0x68, 0xb7, 0x63, 0x1f, 0xe8, 0xc0, 0xd6, 0x73, 0x07, 0x13, 0x28, 0x27, 0xb5, 0x96,
+	0x75, 0x81, 0x07, 0xc7, 0x73, 0x3c, 0xe8, 0xe9, 0xd7, 0xc8, 0x36, 0x00, 0x87, 0xbf, 0x19, 0x58,
+	0x03, 0xab, 0xa9, 0x2b, 0x64, 0x07, 0x2a, 0xd9, 0x34, 0x62, 0x29, 0x70, 0xc4, 0x93, 0x96, 0xdd,
+	0xea, 0x3d, 0xb5, 0x9a, 0xba, 0x2a, 0x59, 0xcc, 0xa3, 0x0e, 0xed, 0x5b, 0x4d, 0x5d, 0x3b, 0xf8,
+	0x93, 0x02, 0xd7, 0xd7, 0x5e, 0x35, 0x72, 0x17, 0xee, 0x64, 0x2d, 0x76, 0x5b, 0x5d, 0xab, 0xdd,
+	0xb2, 0xad, 0xd4, 0xf4, 0x2d, 0xb8, 0xb1, 0x44, 0x48, 0x7c, 0xa8, 0xc1, 0xee, 0x12, 0x21, 0x75,
+	0xe6, 0x13, 0xb8, 0xb9, 0x44, 0xc9, 0x78, 0x75, 0x07, 0x6e, 0x2d, 0x91, 0x8e, 0xcc, 0xe3, 0xe7,
+	0x27, 0xb4, 0x33, 0xb0, 0x9b, 0xba, 0x76, 0xb4, 0xf7, 0xf6, 0x3f, 0xfb, 0xd7, 0xde, 0xbe, 0xdf,
+	0x57, 0xbe, 0x7b, 0xbf, 0xaf, 0xfc, 0xfb, 0xfd, 0xbe, 0xf2, 0xad, 0x36, 0x3c, 0x9f, 0x0f, 0x87,
+	0x05, 0xfc, 0x8f, 0xf8, 0xd3, 0xff, 0x06, 0x00, 0x00, 0xff, 0xff, 0x50, 0xe9, 0x28, 0x09, 0x89,
+	0x14, 0x00, 0x00,
 }
