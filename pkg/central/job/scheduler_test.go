@@ -3,9 +3,10 @@ package job
 import (
 	"testing"
 
-	pb "github.com/benchhub/benchhub/pkg/bhpb"
 	"github.com/dyweb/gommon/util/testutil"
 	asst "github.com/stretchr/testify/assert"
+
+	pb "github.com/benchhub/benchhub/pkg/bhpb"
 )
 
 func TestScheduler_AssignNode(t *testing.T) {
@@ -36,5 +37,9 @@ func TestScheduler_AssignNode(t *testing.T) {
 		// the result is in the order of specification
 		assert.Equal(spec1Loader1Db[0].Name, res[0].Spec.Name)
 		assert.Equal(spec1Loader1Db[1].Name, res[1].Spec.Name)
+		// node role is updated
+		for _, r := range res {
+			assert.Equal(r.Spec.Role, r.Node.Role)
+		}
 	})
 }

@@ -45,10 +45,7 @@ func (s *Scheduler) AssignNode(nodes []pb.Node, specs []pb.NodeAssignmentSpec) (
 			}
 			// exact match of role or any
 			if spec.Role == node.Info.Role || node.Info.Role == pb.Role_ANY {
-				if node.Info.Role == pb.Role_ANY {
-					node.Role = spec.Role
-					s.log.Debugf("update node %s from any to %s", node.Id, spec.Role)
-				}
+				node.Role = spec.Role
 				assignedNodes[node.Id] = &pb.AssignedNode{
 					Node: node,
 					Spec: spec,
