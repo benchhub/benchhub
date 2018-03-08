@@ -1,14 +1,33 @@
 # start a server, wait for it, ping it
 name: pingpong
-reason: pingpong
-framework: na
-workload: na
-database: na
-nodes:
+owner:
+  id: "1"
+  name: "at15"
+  # NOTE: custom yaml unmarshaler
+  type: "user"
+workload:
+  framework: pingpong
+  frameworkVersion: "0.0.1"
+  database: pingpong
+  databaseVersion: "0.0.1"
+# NOTE: extra tag is specified in proto file using (gogoproto.moretags) = "yaml:\"nodeAssignments\""
+nodeAssignments:
   - name: srv
-    type: database
+    # NOTE: custom yaml unmarshaler
+    role: database
   - name: cli
-    type: loader
+    role: loader
+pipelines:
+  - name: download
+    stages:
+      - download_client
+      - download_server
+  - name: run_server
+    stages:
+      - start_server
+  - name: run_workload
+    stages:
+      - ping_server
 stages:
   - name: download_client
     selectors:
@@ -25,6 +44,7 @@ stages:
         shell:
           command: "wget https://github.com/benchhub/benchhub/releases/download/v0.0.1/pingserver-0.0.1.zip && unzip pingserver-0.0.1.zip"
   - name: start_server
+    background: true
     selectors:
       - name: srv
     tasks:
@@ -33,9 +53,10 @@ stages:
         shell:
           command: "pingserver 8080"
         ready:
-          - driver: shell
-            shell:
-              command: "waitforit -w http://localhost:8080/ping"
+          tasks:
+            - driver: shell
+              shell:
+                command: "waitforit -w http://localhost:8080/ping"
   - name: ping_server
     selectors:
       - name: cli
@@ -43,11 +64,3 @@ stages:
       - driver: shell
         shell:
           command: "pingclient http://{{.Nodes.srv.Ip}}:8080"
-pipelines:
-  - stages:
-    - download_client
-    - download_server
-  - stages:
-    - start_server
-  - stages:
-    - ping_server

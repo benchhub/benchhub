@@ -17,7 +17,7 @@
     "ice/transport/http",
     "ice/util/logutil"
   ]
-  revision = "c8561aa9ce40b5223941dbc8e87552a574f18694"
+  revision = "1eae51f02b6b9b0e8adf781c6dc570458c18db77"
 
 [[projects]]
   name = "github.com/davecgh/go-spew"
@@ -90,7 +90,13 @@
     "util/runtimeutil",
     "util/testutil"
   ]
-  revision = "53e22d4a2ffeca607462026a8867f90365065f94"
+  revision = "9205d0bbac41b6bc0d3430d077595e178bb4374c"
+
+[[projects]]
+  name = "github.com/ghodss/yaml"
+  packages = ["."]
+  revision = "0ca9ea5df5451ffdf184b4428c902747c2c11cd7"
+  version = "v1.0.0"
 
 [[projects]]
   name = "github.com/gogo/protobuf"
@@ -181,7 +187,7 @@
     "proxy",
     "trace"
   ]
-  revision = "22ae77b79946ea320088417e4d50825671d82d57"
+  revision = "d25186b37f34ebdbbea8f488ef055638dfab272d"
 
 [[projects]]
   branch = "master"
@@ -214,7 +220,7 @@
   branch = "master"
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
-  revision = "2c5e7ac708aaa719366570dd82bda44541ca2a63"
+  revision = "df60624c1e9b9d2973e889c7a1cff73155da81c4"
 
 [[projects]]
   name = "google.golang.org/grpc"
@@ -257,6 +263,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "1463035729fdbe6cd942b7369788c0ea5651a90ebee8035d73dc6ffeeaccb084"
+  inputs-digest = "78353b4c0968c10a2e3d3621a745bee6adaf759f17ba09afa11e8fdbac523cf1"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -10,15 +10,15 @@ import (
 	"github.com/docker/docker/client"
 	"github.com/dyweb/gommon/errors"
 
-	"github.com/benchhub/benchhub/pkg/common/spec"
+	pb "github.com/benchhub/benchhub/pkg/bhpb"
 )
 
 type Docker struct {
-	spec spec.Docker
+	spec pb.DockerSpec
 	c    *client.Client
 }
 
-func NewDocker(s spec.Docker, c *client.Client) (*Docker, error) {
+func NewDocker(s pb.DockerSpec, c *client.Client) (*Docker, error) {
 	var err error
 	if c == nil {
 		if c, err = client.NewEnvClient(); err != nil {
@@ -33,9 +33,9 @@ func NewDocker(s spec.Docker, c *client.Client) (*Docker, error) {
 
 func (d *Docker) Run(ctx context.Context) error {
 	switch d.spec.Action {
-	case spec.DockerPull:
+	case pb.DockerAction_PULL:
 		return d.Pull(ctx)
-	case spec.DockerRun:
+	case pb.DockerAction_RUN:
 		return d.Start(ctx)
 	}
 	return errors.New("unknown docker action")

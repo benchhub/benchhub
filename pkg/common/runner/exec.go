@@ -9,18 +9,18 @@ import (
 
 	"github.com/dyweb/gommon/errors"
 
-	"github.com/benchhub/benchhub/pkg/common/spec"
+	pb "github.com/benchhub/benchhub/pkg/bhpb"
 )
 
 type Exec struct {
-	spec   spec.Exec
+	spec   pb.ExecSpec
 	stdout io.Writer
 	stderr io.Writer
 }
 
 // NewExec use os.Stdout and os.Stderr as default redirect
 // TODO: should return error and creates the cmd here, for shell, split shell quote is also needed
-func NewExec(s spec.Exec) *Exec {
+func NewExec(s pb.ExecSpec) *Exec {
 	return &Exec{spec: s, stdout: os.Stdout, stderr: os.Stderr}
 }
 

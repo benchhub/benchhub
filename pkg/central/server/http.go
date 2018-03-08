@@ -10,9 +10,9 @@ import (
 	"github.com/dyweb/gommon/errors"
 	dlog "github.com/dyweb/gommon/log"
 
+	pb "github.com/benchhub/benchhub/pkg/bhpb"
 	"github.com/benchhub/benchhub/pkg/central/config"
 	"github.com/benchhub/benchhub/pkg/central/store/meta"
-	pb "github.com/benchhub/benchhub/pkg/common/commonpb"
 )
 
 type HttpServer struct {
@@ -42,7 +42,7 @@ func (srv *HttpServer) Ping(ctx context.Context, ping *pb.Ping) (*pb.Pong, error
 }
 
 func (srv *HttpServer) NodeInfo(ctx context.Context) (*pb.NodeInfoRes, error) {
-	node, err := Node(srv.globalConfig)
+	node, err := NodeInfo(srv.globalConfig)
 	if err != nil {
 		log.Warnf("failed to get central node info %v", err)
 		return nil, err

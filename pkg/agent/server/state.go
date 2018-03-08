@@ -5,7 +5,7 @@ import (
 
 	dlog "github.com/dyweb/gommon/log"
 
-	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
+	pbc "github.com/benchhub/benchhub/pkg/bhpb"
 )
 
 // TODO: handle state of server
@@ -18,7 +18,7 @@ type StateMachine struct {
 
 func NewStateMachine() (*StateMachine, error) {
 	s := &StateMachine{
-		current: pbc.NodeState_FINDING_CENTRAL,
+		current: pbc.NodeState_NODE_FINDING_CENTRAL,
 	}
 	dlog.NewStructLogger(log, s)
 	return s, nil
@@ -32,10 +32,10 @@ func (s *StateMachine) Current() pbc.NodeState {
 }
 func (s *StateMachine) RegisterSuccess() {
 	s.mu.Lock()
-	if s.current != pbc.NodeState_FINDING_CENTRAL {
+	if s.current != pbc.NodeState_NODE_FINDING_CENTRAL {
 		s.log.Warnf("previous state is not finding central but %s when register success", s.current)
 	}
-	s.updateState(pbc.NodeState_IDLE)
+	s.updateState(pbc.NodeState_NODE_IDLE)
 	s.mu.Unlock()
 }
 

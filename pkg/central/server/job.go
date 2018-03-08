@@ -6,9 +6,8 @@ import (
 
 	dlog "github.com/dyweb/gommon/log"
 
-	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
+	pb "github.com/benchhub/benchhub/pkg/bhpb"
 
-	"github.com/benchhub/benchhub/pkg/common/spec"
 	"github.com/dyweb/gommon/errors"
 )
 
@@ -18,8 +17,8 @@ type JobController struct {
 }
 
 type AssignResult struct {
-	Spec spec.Node
-	Node pbc.Node
+	Spec pb.NodeSelectorSpec
+	Node pb.Node
 }
 
 func NewJobController(r *Registry) (*JobController, error) {
@@ -48,19 +47,19 @@ func (j *JobController) RunWithContext(ctx context.Context) error {
 				log.Warnf("failed to get pending job %v", err)
 			} else {
 				// TODO: spec should contains id ...
-				nodes, err := meta.ListNodes()
+				_, err := meta.ListNodes()
 				if err != nil {
 					log.Warnf("can't list nodes %s", err.Error())
 				}
 				// TODO: acquire node resource based on node selector
-				results, err := j.AcquireNodes(nodes, job.Nodes)
-				if err != nil {
-					log.Warnf("can't acquire nodes %s", err.Error())
-				}
-				for _, r := range results {
-					// TODO: print it or? ...
-					log.Infof("result is %v", r)
-				}
+				//results, err := j.AcquireNodes(nodes, job.NodeAssignments)
+				//if err != nil {
+				//	log.Warnf("can't acquire nodes %s", err.Error())
+				//}
+				//for _, r := range results {
+				//	// TODO: print it or? ...
+				//	log.Infof("result is %v", r)
+				//}
 				log.Infof("TODO: process job %s", job.Name)
 			}
 			// TODO: poll duration should be configurable
@@ -69,7 +68,7 @@ func (j *JobController) RunWithContext(ctx context.Context) error {
 	}
 }
 
-func (j *JobController) AcquireNodes(nodes []pbc.Node, specs []spec.Node) ([]AssignResult, error) {
+func (j *JobController) AcquireNodes(nodes []pb.Node, specs []pb.NodeSelectorSpec) ([]AssignResult, error) {
 	if len(nodes) == 0 {
 		return nil, errors.New("0 agent no node to acquire")
 	}
@@ -85,14 +84,14 @@ func (j *JobController) AcquireNodes(nodes []pbc.Node, specs []spec.Node) ([]Ass
 			if used[j] > 0 {
 				continue
 			}
-			if (s.Type == spec.NodeTypeDatabase && node.Role == pbc.Role_DATABASE) ||
-				(s.Type == spec.NodeTypeLoader && node.Role == pbc.Role_LOADER) {
+			if (s.Role == pb.Role_DATABASE && node.Info.Role == pb.Role_DATABASE) ||
+				(s.Role == pb.Role_LOADER && node.Info.Role == pb.Role_LOADER) {
 				// NOTE: +1 so we can check if the spec has acquired node with > 0
 				acquired[i] = j + 1
 				used[j]++
 				break
 			}
-			if node.Role == pbc.Role_ANY {
+			if node.Info.Role == pb.Role_ANY {
 				acquired[i] = j + 1
 				used[j]++
 				break
@@ -121,13 +120,13 @@ func (j *JobController) AcquireNodes(nodes []pbc.Node, specs []spec.Node) ([]Ass
 	results := make([]AssignResult, 0, len(specs))
 	for i, spc := range specs {
 		if acquired[i] > 0 {
-			j.log.Infof("plan: assign %s %s to node %s", spc.Name, spc.Type, nodes[acquired[i]-1].Uid)
+			j.log.Infof("plan: assign %s %s to node %s", spc.Name, spc.Role, nodes[acquired[i]-1].Id)
 			results = append(results, AssignResult{
 				Spec: spc,
 				Node: nodes[acquired[i]-1],
 			})
 		} else {
-			merr.Append(errors.Errorf("spec %s %s has no node", spc.Name, spc.Type))
+			merr.Append(errors.Errorf("spec %s %s has no node", spc.Name, spc.Role))
 		}
 	}
 	return results, merr.ErrorOrNil()

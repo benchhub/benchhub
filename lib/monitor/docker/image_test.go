@@ -7,10 +7,13 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
+	"github.com/dyweb/gommon/util/testutil"
 )
 
 // https://docs.docker.com/develop/sdk/examples/#list-all-images
 func TestImage_List(t *testing.T) {
+	testutil.RunIf(t, testutil.IsTravis())
+
 	c, err := client.NewEnvClient()
 	if err != nil {
 		t.Fatalf("failed to create docker client %v", err)

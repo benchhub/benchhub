@@ -1,0 +1,10 @@
+s: "1s"
+# go-yaml use all lower case ...
+camelCase: "camel"
+camelcase: "camelallsmall"
+t: "10s"
+owner:
+  id: "1"
+  name: "at15"
+  # NOTE: enum in proto requires custom yaml unmarshaler
+  type: "org"

@@ -8,8 +8,8 @@ import (
 	dlog "github.com/dyweb/gommon/log"
 
 	"github.com/benchhub/benchhub/pkg/agent/config"
+	pb "github.com/benchhub/benchhub/pkg/bhpb"
 	"github.com/benchhub/benchhub/pkg/central/transport/grpc"
-	pb "github.com/benchhub/benchhub/pkg/common/commonpb"
 )
 
 const (
@@ -85,7 +85,7 @@ func (b *Beater) Register() error {
 	c := b.client
 	ctx, cancel := context.WithTimeout(context.Background(), registerTimeout)
 	defer cancel()
-	node, err := Node(b.globalConfig)
+	node, err := NodeInfo(b.globalConfig)
 	if err != nil {
 		return err
 	}

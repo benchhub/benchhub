@@ -1,0 +1,4 @@
+framework: xephon-b
+frameworkVersion: "0.0.1"
+database: xephon-k
+databaseVersion: "0.0.1"

@@ -13,11 +13,10 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	pb "github.com/benchhub/benchhub/pkg/bhpb"
 	"github.com/benchhub/benchhub/pkg/central/config"
 	"github.com/benchhub/benchhub/pkg/central/store/meta"
 	rpc "github.com/benchhub/benchhub/pkg/central/transport/grpc"
-	pb "github.com/benchhub/benchhub/pkg/common/commonpb"
-	"github.com/benchhub/benchhub/pkg/common/spec"
 )
 
 var _ rpc.BenchHubCentralServer = (*GrpcServer)(nil)
@@ -47,7 +46,7 @@ func (srv *GrpcServer) Ping(ctx context.Context, ping *pb.Ping) (*pb.Pong, error
 }
 
 func (srv *GrpcServer) NodeInfo(ctx context.Context, _ *pb.NodeInfoReq) (*pb.NodeInfoRes, error) {
-	node, err := Node(srv.globalConfig)
+	node, err := NodeInfo(srv.globalConfig)
 	if err != nil {
 		log.Warnf("failed to get central node info %v", err)
 		return nil, status.Errorf(codes.Internal, "failed to get central node info %v", err)
@@ -60,22 +59,26 @@ func (srv *GrpcServer) NodeInfo(ctx context.Context, _ *pb.NodeInfoReq) (*pb.Nod
 func (srv *GrpcServer) RegisterAgent(ctx context.Context, req *pb.RegisterAgentReq) (*pb.RegisterAgentRes, error) {
 	remoteAddr := igrpc.RemoteAddr(ctx)
 	srv.log.Infof("register agent req from %s %s", remoteAddr, req.Node.Host)
-	req.Node.RemoteAddr = remoteAddr
-	req.Node.Ip, _ = igrpc.SplitHostPort(remoteAddr)
+	req.Node.Addr.RemoteAddr = remoteAddr
+	req.Node.Addr.Ip, _ = igrpc.SplitHostPort(remoteAddr)
 
-	err := srv.meta.AddNode(req.Node.Uid, req.Node)
+	err := srv.meta.AddNode(req.Node.Id, pb.Node{
+		Id: req.Node.Id,
+		// TODO: state ... it is not passed in request, also change req.Node to req.Info ?...
+		Info: req.Node,
+	})
 	if err != nil {
 		log.Warnf("failed to add node %v", err)
 		// TODO: already exists may not be the only cause .... though for in memory, it should be ...
 		return nil, status.Errorf(codes.AlreadyExists, "failed to add node %v", err)
 	}
-	node, err := Node(srv.globalConfig)
+	node, err := NodeInfo(srv.globalConfig)
 	if err != nil {
 		log.Warnf("failed to get central node info %v", err)
 		return nil, status.Errorf(codes.Internal, "failed to get central node info %v", err)
 	}
 	res := &pb.RegisterAgentRes{
-		Id:      req.Node.Uid,
+		Id:      req.Node.Id,
 		Node:    req.Node,
 		Central: *node,
 	}
@@ -101,13 +104,15 @@ func (srv *GrpcServer) ListAgent(ctx context.Context, req *pb.ListAgentReq) (*pb
 }
 
 func (srv *GrpcServer) SubmitJob(ctx context.Context, req *pb.SubmitJobReq) (*pb.SubmitJobRes, error) {
-	var job spec.Job
-	if err := dconfig.LoadYAMLDirectFrom(bytes.NewReader([]byte(req.Spec)), &job); err != nil {
+	var job pb.JobSpec
+	if err := dconfig.LoadYAMLDirectFromStrict(bytes.NewReader([]byte(req.Spec)), &job); err != nil {
 		return nil, errors.Wrap(err, "can't parse YAML job spec")
 	}
-	if err := job.Validate(); err != nil {
-		return nil, errors.Wrap(err, "invalid job spec")
-	}
+	// TODO: implement the validate logic
+	//if err := job.Validate(); err != nil {
+	//	return nil, errors.Wrap(err, "invalid job spec")
+	//}
+	// TODO: wrap this in store
 	// FIXME: we are just using project name + a global counter ...
 	atomic.AddInt64(&srv.c, 1)
 	id := fmt.Sprintf("%s-%d", job.Name, atomic.LoadInt64(&srv.c))

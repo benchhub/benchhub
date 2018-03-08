@@ -1,0 +1,414 @@
+// protoc --proto_path=/home/at15/workspace/src/:. --gogo_out=. types.proto
+syntax = "proto3";
+package bh;
+
+option go_package = "bhpb";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.sizer_all) = true;
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+option (gogoproto.goproto_getters_all) = false;
+
+// ---------------------------
+//           <node>
+// ---------------------------
+message Node {
+    string id = 1;
+    NodeState state = 2;
+    NodeInfo info = 3 [(gogoproto.nullable) = false];
+}
+
+// provided to central when agent register
+message NodeInfo {
+    // self generated uid, used through a node agent's lifetime, change after process restart https://github.com/benchhub/benchhub/issues/17
+    string id = 1;
+    // hostname
+    string host = 2;
+    Addr addr = 3 [(gogoproto.nullable) = false];
+    // unix timestamp when process start
+    int64 startTime = 4;
+    int64 bootTime = 5;
+    // preffered role set in config file
+    Role role = 10;
+    // machine (physical, vm) provider
+    NodeProvider provider = 11 [(gogoproto.nullable) = false];
+    // capacity when register
+    NodeCapacity capacity = 12 [(gogoproto.nullable) = false];
+}
+
+message Addr {
+    // set when node start or obtain from remoteAddr
+    // TODO: this is a workaround because I don't know how a client can know its ip without calling external service
+    // TODO: https://github.com/benchhub/benchhub/issues/18 track this, hashicorp has https://github.com/hashicorp/go-sockaddr
+    string ip = 1;
+    // addr grpc server listens on i.e. :6081, from node config file
+    string bindAddr = 2;
+    // remoteAddr that server sees when this node act as client, the ip is accurate, but the port is random, not the listen port
+    string remoteAddr = 3;
+}
+
+enum Role {
+    UNKNOWN_ROLE = 0;
+    ANY = 1; // 随便 都行
+    CENTRAL = 2;
+    LOADER = 3;
+    DATABASE = 4;
+}
+
+message NodeCapacity {
+    // number of cpu cores
+    int32 cores = 1;
+    // free memory in MB
+    int32 memoryFree = 2;
+    // total memory in MB
+    int32 memoryTotal = 3;
+    // free disk space in MB
+    int32 diskFree = 4;
+    // total disk space in MB
+    int32 diskTotal = 5;
+}
+
+enum Provider {
+    UNKNOWN_PROVIDER = 0;
+    LOCAL_PROVIDER = 1; // local dev environment
+    VAGRANT_PROVIDER = 2; // vagrant, mostly local
+    ALI_PROVIDER = 3;
+    AWS_PROVIDER = 4;
+    AZURE_PROVIDER = 5;
+    GCP_PROVIDER = 6;
+    PACKET_PROVIDER = 7;
+}
+
+message NodeProvider {
+    string name = 1;
+    string region = 2;
+    string instance = 3;
+}
+
+message NodeStatus {
+    NodeState state = 1;
+    // TODO: need to include job information
+}
+
+enum NodeState {
+    UNKNOWN_NODE_STATE = 0;
+    NODE_FINDING_CENTRAL = 1;
+    NODE_IDLE = 2;
+    NODE_JOB_RUNNING = 3;
+    NODE_JOB_WAITING_PEERS = 5;
+    NODE_JOB_REPORTING = 6;
+    NODE_JOB_CLEANUP = 7;
+}
+
+// ---------------------------
+//           </node>
+// ---------------------------
+
+// ---------------------------
+//          <identity>
+// ---------------------------
+enum OwnerType {
+    UNKNOWN_OWNER = 0;
+    USER = 1;
+    ORG = 2;
+}
+
+message Owner {
+    string id = 1;
+    string name = 2;
+    OwnerType type = 3;
+}
+
+// ---------------------------
+//          </identity>
+// ---------------------------
+
+// ---------------------------
+//        <job spec>
+// ---------------------------
+
+message JobSpec {
+    string id = 1;
+    string name = 2;
+    Owner owner = 3 [(gogoproto.nullable) = false];
+    WorkloadSpec workload = 4 [(gogoproto.nullable) = false];
+    repeated NodeAssignmentSpec nodeAssignments = 5 [(gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"nodeAssignments\""];
+    repeated StagePipelineSpec pipelines = 6 [(gogoproto.nullable) = false];
+    repeated StageSpec stages = 7 [(gogoproto.nullable) = false];
+}
+
+message WorkloadSpec {
+    string framework = 1;
+    string frameworkVersion = 2 [(gogoproto.moretags) = "yaml:\"frameworkVersion\""];
+    string database = 3;
+    string databaseVersion = 4 [(gogoproto.moretags) = "yaml:\"databaseVersion\""];
+}
+
+message NodeSelectorSpec {
+    bool all = 1; // all is used for install util packages in the whole cluster
+    bool none = 2; // none is used for stages like stopper, where central tell all the nodes to stop long running tasks
+    string name = 3;
+    Role role = 4;
+    // TODO: label support
+}
+
+message NodeAssignmentSpec {
+    string name = 1; // unique in job, used to refer assigned node in rest of the config
+    Role role = 2; // role assign to the node after selection, MUST be either database or loader # TODO: update node role in status, info.role is node's preferred role
+    repeated NodeSelectorSpec selectors = 3 [(gogoproto.nullable) = false]; // select by label, resource TODO: not used in assignment
+}
+
+message StagePipelineSpec {
+    string name = 1; // unqiue in piplines
+    repeated string stages = 2; // stages that can run in parallel
+}
+
+message StageSpec {
+    string name = 1; // unqiue in job, used by rest of the config
+    bool background = 2; // if true, there MUST be one task that is background
+    // selct by name, role, the relation between multiple selector is OR, NOT AND
+    repeated NodeSelectorSpec selectors = 3 [(gogoproto.nullable) = false];
+    repeated TaskPipelineSpec pipelines = 4 [(gogoproto.nullable) = false];
+    repeated TaskSpec tasks = 5 [(gogoproto.nullable) = false];
+}
+
+message TaskPipelineSpec {
+    string name = 1; // unique in pipelines
+    repeated string tasks = 2; // tasks that can run in parallel
+}
+
+enum TaskDriver {
+    UNKNOWN_TASKDRIVER = 0;
+    STOPPER = 1;
+    SHELL = 2;
+    EXEC = 3;
+    DOCKER = 4;
+}
+
+message TaskSpec {
+    string name = 1; // unique in stage, MUST be specified if pipeline is used or is longRunning
+    bool background = 2; // the container stage MUST also be background
+    TaskDriver driver = 3;
+    repeated Env env = 4;
+
+    // NOTE: we intentionly don't use [(gogoproto.nullable) = false], so we can check nil to see if config match driver
+    StopperSpec stopper = 5;
+    ShellSpec shell = 6;
+    ExecSpec exec = 7;
+    DockerSpec docker = 8;
+
+    // for long running task
+    ReadySpec ready = 9 [(gogoproto.nullable) = false];
+    // TODO: liveness check ...
+}
+
+message Env {
+    string k = 1;
+    string v = 2;
+}
+
+message StopperSpec {
+    string stage = 1;
+    string task = 2;
+    bool all = 3; // stop all long running tasks in a stage
+}
+
+message ShellSpec {
+    string command = 1;
+}
+
+message ExecSpec {
+    string command = 1;
+    repeated string args = 2;
+}
+
+enum DockerAction {
+    UNKNOWN = 0;
+    PULL = 1;
+    RUN = 2;
+}
+
+message Port {
+    int32 guest = 1;
+    int32 host = 2;
+}
+
+message DockerSpec {
+    string image = 1;
+    DockerAction action = 2;
+    repeated Port ports = 3 [(gogoproto.nullable) = false];
+}
+
+message ReadySpec {
+    // at least one task, MUST NOT have long running task
+    repeated TaskSpec tasks = 1 [(gogoproto.nullable) = false];
+}
+
+// ---------------------------
+//        </job spec>
+// ---------------------------
+
+// ---------------------------
+//           <job>
+// ---------------------------
+
+message Job {
+    string id = 1;
+    string rawSpec = 2; // original job spec file content
+    JobSpec spec = 3;
+
+    int64 createTime = 4;
+    int64 startTime = 5;
+    int64 stopTime = 6;
+
+    JobStatus status = 7;
+    int64 currentPipeline = 8; // array index in pipelines
+    repeated int64 foregroundStages = 9; // stages running in foreground
+    repeated int64 backgroundStages = 10; // stages running in background
+    repeated int64 finishedStages = 11; // finished stages, foreground or stopped background
+
+    repeated JobPipeline pipelines = 12;
+    repeated JobStage stages = 13;
+
+}
+
+// TODO: the state of waiting for central to ack ?
+
+enum JobStatus {
+    UNKNOWN_JOB_STATUS = 0;
+    JOB_QUEUED = 1;
+    JOB_RUNNING = 2;
+    JOB_FINISHED = 3;
+    JOB_ABORTED = 4;
+}
+
+message JobPipeline {
+    JobPipelineStatus status = 1;
+    repeated int64 stages = 2; // index in stages
+}
+
+enum JobPipelineStatus {
+    UNKNOWN_JOB_PIPELINE_STATUS = 0;
+    JOB_PIPELINE_QUEUED = 1;
+    JOB_PIPELINE_RUNNING = 2;
+    JOB_PIPELINE_FINISHED = 3;
+    JOB_PIPELINE_BACKGROUND = 4;
+}
+
+
+message JobStage {
+    int64 index = 1; // array index in stages
+    int64 pipeline = 2; // array index in piplines
+    StageSpec spec = 3; // TODO: rendered stage spec
+    repeated JobNodeStage stages = 4;
+}
+
+message JobNodeStage {
+    string id = 1; // node id when agent register
+    string name = 2; // name assigned in spec
+    Role role = 3; // role specified when got assigned
+    NodeInfo info = 4; // node info when agent register
+    repeated StagePipeline pipelines = 5;
+}
+
+message StagePipeline {
+
+}
+
+//enum JobResult {
+//    UNKNOWN_RESULT = 0;
+//    SUCCESS = 1;
+//    ERROR = 2;
+//}
+
+//message JobStatus {
+//    int64 stage = 1;
+//    int64 task = 2;
+//}
+
+// ---------------------------
+//           <job>
+// ---------------------------
+
+// ---------------------------
+//       <common rpc>
+// ---------------------------
+message Ping {
+    string message = 1;
+}
+
+message Pong {
+    string message = 1;
+}
+
+message EmptyReq {
+}
+
+message NodeInfoReq {
+}
+
+message NodeInfoRes {
+    NodeInfo node = 1;
+}
+// ---------------------------
+//       </common rpc>
+// ---------------------------
+
+// ---------------------------
+//       <node rpc>
+// ---------------------------
+message RegisterAgentReq {
+    NodeInfo node = 1 [(gogoproto.nullable) = false];
+}
+
+message RegisterAgentRes {
+    string id = 1; // uinque id for this agent assigned by central
+    NodeInfo node = 2 [(gogoproto.nullable) = false]; // addr, ip, port would be added TODO: node should be able to find this out locally
+    NodeInfo central = 3 [(gogoproto.nullable) = false]; // all the information about the central
+}
+
+message ListAgentReq {
+}
+
+message ListAgentRes {
+    repeated Node agents = 1 [(gogoproto.nullable) = false];
+}
+
+message AgentHeartbeatReq {
+    string id = 1;
+    NodeStatus status = 2 [(gogoproto.nullable) = false];
+}
+
+message AgentHeartbeatRes {
+    //    Job job = 1 [(gogoproto.nullable) = false];
+}
+
+// ---------------------------
+//       </node rpc>
+// ---------------------------
+
+// ---------------------------
+//       <job rpc>
+// ---------------------------
+message SubmitJobReq {
+    string user = 1;
+    string spec = 2;
+}
+
+message SubmitJobRes {
+    string id = 1;
+    int64 pending = 2;
+}
+
+message JobStatusReq {
+    string id = 1;
+}
+
+message JobStatusRes {
+
+}
+// ---------------------------
+//       </job rpc>
+// ---------------------------

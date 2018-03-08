@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc"
 
 	mygrpc "github.com/benchhub/benchhub/pkg/agent/transport/grpc"
-	pbc "github.com/benchhub/benchhub/pkg/common/commonpb"
+	pb "github.com/benchhub/benchhub/pkg/bhpb"
 )
 
 const (
@@ -30,7 +30,7 @@ func (c *AgentCommand) PingCmd() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			c.mustCreateClient()
 			host, _ := os.Hostname()
-			if res, err := c.client.Ping(context.Background(), &pbc.Ping{Message: "ping from " + host}); err != nil {
+			if res, err := c.client.Ping(context.Background(), &pb.Ping{Message: "ping from " + host}); err != nil {
 				log.Fatal(err)
 			} else {
 				log.Infof("ping finished agent response is %s", res.Message)
