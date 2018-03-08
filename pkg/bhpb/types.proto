@@ -16,8 +16,9 @@ option (gogoproto.goproto_getters_all) = false;
 // ---------------------------
 message Node {
     string id = 1;
-    NodeState state = 2;
-    NodeInfo info = 3 [(gogoproto.nullable) = false];
+    Role role = 2; // current role, could be different from info.role due to updated when assign node in job
+    NodeState state = 3;
+    NodeInfo info = 4 [(gogoproto.nullable) = false];
 }
 
 // provided to central when agent register
@@ -97,9 +98,10 @@ enum NodeState {
     NODE_FINDING_CENTRAL = 1;
     NODE_IDLE = 2;
     NODE_JOB_RUNNING = 3;
-    NODE_JOB_WAITING_PEERS = 5;
-    NODE_JOB_REPORTING = 6;
-    NODE_JOB_CLEANUP = 7;
+    // TODO: including peers?
+    NODE_JOB_WAITING_PEERS = 4;
+//    NODE_JOB_REPORTING = 6;
+//    NODE_JOB_CLEANUP = 7;
 }
 
 // ---------------------------

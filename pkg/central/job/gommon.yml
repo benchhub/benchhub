@@ -1,0 +1,5 @@
+loggers:
+  - struct: "*Scheduler"
+    receiver: "s"
+  - struct: "*Controller"
+    receiver: "c"
