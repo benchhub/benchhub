@@ -100,8 +100,8 @@ enum NodeState {
     NODE_JOB_RUNNING = 3;
     // TODO: including peers?
     NODE_JOB_WAITING_PEERS = 4;
-//    NODE_JOB_REPORTING = 6;
-//    NODE_JOB_CLEANUP = 7;
+    //    NODE_JOB_REPORTING = 6;
+    //    NODE_JOB_CLEANUP = 7;
 }
 
 // ---------------------------
@@ -345,6 +345,11 @@ enum TaskStatus {
     TASK_ABORTED = 5;
 }
 
+message AssignedNode {
+    Node node = 1 [(gogoproto.nullable) = false];
+    NodeAssignmentSpec spec = 2 [(gogoproto.nullable) = false];
+}
+
 // ---------------------------
 //           <job>
 // ---------------------------
@@ -428,4 +433,4 @@ message JobStatusRes {
 }
 // ---------------------------
 //       </job rpc>
-// ---------------------------
+// -------------------------

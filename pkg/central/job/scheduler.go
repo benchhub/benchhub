@@ -15,12 +15,6 @@ type Scheduler struct {
 	log *dlog.Logger
 }
 
-// TODO: just 1:1 mapping for now, should have binpack of loader
-type AssignedNode struct {
-	Node pb.Node
-	Spec pb.NodeAssignmentSpec
-}
-
 func NewScheduler() *Scheduler {
 	s := &Scheduler{}
 	dlog.NewStructLogger(log, s)
@@ -28,18 +22,21 @@ func NewScheduler() *Scheduler {
 }
 
 // AssignNode chose nodes based on spec
-// TODO: only exact match is supported
-func (s *Scheduler) AssignNode(nodes []pb.Node, specs []pb.NodeAssignmentSpec) ([]AssignedNode, error) {
+// TODO: only exact match is used, no binpack of loader, node state, node selector spec are all not used
+func (s *Scheduler) AssignNode(nodes []pb.Node, specs []pb.NodeAssignmentSpec) ([]pb.AssignedNode, error) {
 	if len(nodes) == 0 {
 		return nil, errors.New("0 nodes available")
 	}
 	if len(nodes) < len(specs) {
 		s.log.Warnf("only %d nodes available but requires %d nodes")
 	}
-	assignedNodes := make(map[string]*AssignedNode, len(nodes))
-	assignedSpecs := make(map[int]bool, len(specs))
-	// FIXME: node state is ignored as well ....
-	// FIXME: only role is used, other selector is ignored
+	assignedNodes := make(map[string]*pb.AssignedNode, len(nodes))
+	assignedSpecs := make(map[int]string, len(specs))
+
+	// FIXME: only node.info.role is used
+	// FIXME: node.role (current role) is ignored
+	// FIXME: node state is ignored
+	// FIXME: selector in spec is ignored
 	for i, spec := range specs {
 		for _, node := range nodes {
 			// skipp assigned node
@@ -52,26 +49,28 @@ func (s *Scheduler) AssignNode(nodes []pb.Node, specs []pb.NodeAssignmentSpec) (
 					node.Role = spec.Role
 					s.log.Debugf("update node %s from any to %s", node.Id, spec.Role)
 				}
-				assignedNodes[node.Id] = &AssignedNode{
+				assignedNodes[node.Id] = &pb.AssignedNode{
 					Node: node,
 					Spec: spec,
 				}
-				assignedSpecs[i] = true
+				assignedSpecs[i] = node.Id
 			}
 		}
 	}
-	// TODO: allow pack loader into one node
+
+	// TODO: allow binpack loader into one node
 	merr := errors.NewMultiErr()
 	if len(assignedSpecs) != len(specs) {
 		for i, spec := range specs {
-			if !assignedSpecs[i] {
+			if assignedSpecs[i] == "" {
 				merr.Append(errors.Errorf("spec name %s role %s not assigned", spec.Name, spec.Role))
 			}
 		}
 	}
-	// TODO: might use map[name]AssignedNode ...
-	res := make([]AssignedNode, 0, len(assignedNodes))
-	for id := range assignedNodes {
+
+	res := make([]pb.AssignedNode, 0, len(assignedNodes))
+	// the result is in the order of specification
+	for _, id := range assignedSpecs {
 		//s.log.Info(assignedNodes[id].Spec.Name)
 		res = append(res, *assignedNodes[id])
 	}
