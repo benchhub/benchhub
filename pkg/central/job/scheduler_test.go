@@ -31,8 +31,10 @@ func TestScheduler_AssignNode(t *testing.T) {
 		testutil.ReadYAMLToStrict(t, "testdata/nodes_1l1d.yml", &nodes1Loader1Db)
 		assert.Equal(2, len(nodes1Loader1Db))
 		assert.Equal(pb.Role_LOADER, nodes1Loader1Db[0].Info.Role)
+
 		res, err := s.AssignNode(nodes1Loader1Db, spec1Loader1Db)
 		assert.Nil(err)
+
 		assert.Equal(2, len(res))
 		// the result is in the order of specification
 		assert.Equal(spec1Loader1Db[0].Name, res[0].Spec.Name)

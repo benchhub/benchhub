@@ -140,3 +140,226 @@ After node assignment, result is returned in the order of spec
     }
 ]
 ````
+
+Copied from planner_test using json format
+
+````json
+{
+   "pipelines":[
+      {
+         "name":"download",
+         "stages":[
+            {
+               "nodes":[
+                  {
+                     "node":{
+                        "id":"id-loader",
+                        "role":3,
+                        "state":2,
+                        "info":{
+                           "id":"id-loader",
+                           "addr":{
+
+                           },
+                           "role":3,
+                           "provider":{
+
+                           },
+                           "capacity":{
+
+                           }
+                        }
+                     },
+                     "spec":{
+                        "name":"cli",
+                        "role":3,
+                        "selectors":null
+                     }
+                  }
+               ],
+               "pipelines":[
+                  {
+                     "name":"autogen-0",
+                     "tasks":[
+                        {
+                           "spec":{
+                              "driver":2,
+                              "shell":{
+                                 "command":"wget https://github.com/benchhub/benchhub/releases/download/v0.0.1/pingclient-0.0.1.zip \u0026\u0026 unzip pingclient-0.0.1.zip"
+                              },
+                              "ready":{
+                                 "tasks":null
+                              }
+                           }
+                        }
+                     ]
+                  }
+               ]
+            },
+            {
+               "nodes":[
+                  {
+                     "node":{
+                        "id":"id-database",
+                        "role":4,
+                        "state":2,
+                        "info":{
+                           "id":"id-database",
+                           "addr":{
+
+                           },
+                           "role":4,
+                           "provider":{
+
+                           },
+                           "capacity":{
+
+                           }
+                        }
+                     },
+                     "spec":{
+                        "name":"srv",
+                        "role":4,
+                        "selectors":null
+                     }
+                  }
+               ],
+               "pipelines":[
+                  {
+                     "name":"autogen-0",
+                     "tasks":[
+                        {
+                           "spec":{
+                              "driver":2,
+                              "shell":{
+                                 "command":"wget https://github.com/benchhub/benchhub/releases/download/v0.0.1/pingserver-0.0.1.zip \u0026\u0026 unzip pingserver-0.0.1.zip"
+                              },
+                              "ready":{
+                                 "tasks":null
+                              }
+                           }
+                        }
+                     ]
+                  }
+               ]
+            }
+         ]
+      },
+      {
+         "name":"run_server",
+         "stages":[
+            {
+               "nodes":[
+                  {
+                     "node":{
+                        "id":"id-database",
+                        "role":4,
+                        "state":2,
+                        "info":{
+                           "id":"id-database",
+                           "addr":{
+
+                           },
+                           "role":4,
+                           "provider":{
+
+                           },
+                           "capacity":{
+
+                           }
+                        }
+                     },
+                     "spec":{
+                        "name":"srv",
+                        "role":4,
+                        "selectors":null
+                     }
+                  }
+               ],
+               "pipelines":[
+                  {
+                     "name":"autogen-0",
+                     "tasks":[
+                        {
+                           "spec":{
+                              "background":true,
+                              "driver":2,
+                              "shell":{
+                                 "command":"pingserver 8080"
+                              },
+                              "ready":{
+                                 "tasks":[
+                                    {
+                                       "driver":2,
+                                       "shell":{
+                                          "command":"waitforit -w http://localhost:8080/ping"
+                                       },
+                                       "ready":{
+                                          "tasks":null
+                                       }
+                                    }
+                                 ]
+                              }
+                           }
+                        }
+                     ]
+                  }
+               ]
+            }
+         ]
+      },
+      {
+         "name":"run_workload",
+         "stages":[
+            {
+               "nodes":[
+                  {
+                     "node":{
+                        "id":"id-loader",
+                        "role":3,
+                        "state":2,
+                        "info":{
+                           "id":"id-loader",
+                           "addr":{
+
+                           },
+                           "role":3,
+                           "provider":{
+
+                           },
+                           "capacity":{
+
+                           }
+                        }
+                     },
+                     "spec":{
+                        "name":"cli",
+                        "role":3,
+                        "selectors":null
+                     }
+                  }
+               ],
+               "pipelines":[
+                  {
+                     "name":"autogen-0",
+                     "tasks":[
+                        {
+                           "spec":{
+                              "driver":2,
+                              "shell":{
+                                 "command":"pingclient http://{{.Nodes.srv.Ip}}:8080"
+                              },
+                              "ready":{
+                                 "tasks":null
+                              }
+                           }
+                        }
+                     ]
+                  }
+               ]
+            }
+         ]
+      }
+   ]
+}
+````

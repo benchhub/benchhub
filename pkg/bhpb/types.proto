@@ -382,7 +382,7 @@ message TaskPipelinePlan {
 }
 
 message TaskPlan {
-    TaskSpec spec = 1;
+    TaskSpec spec = 1 [(gogoproto.nullable) = false];
     // TODO: something else? render or expand etc.?
 }
 
