@@ -27,3 +27,15 @@ func (c *Controller) GetLogger() *dlog.Logger {
 func (c *Controller) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
 	return justCallMe()
 }
+
+func (p *Planner) SetLogger(logger *dlog.Logger) {
+	p.log = logger
+}
+
+func (p *Planner) GetLogger() *dlog.Logger {
+	return p.log
+}
+
+func (p *Planner) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
+	return justCallMe()
+}

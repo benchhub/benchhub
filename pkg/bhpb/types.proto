@@ -253,7 +253,7 @@ message ReadySpec {
 // ---------------------------
 
 // ---------------------------
-//           <job>
+//        <job store>
 // ---------------------------
 
 message Job {
@@ -271,8 +271,8 @@ message Job {
     repeated int64 backgroundStages = 10; // stages running in background
     repeated int64 finishedStages = 11; // finished stages, foreground or stopped background
 
-    repeated JobStagePipeline pipelines = 12 [(gogoproto.nullable) = false];
-    repeated JobStage stages = 13 [(gogoproto.nullable) = false];
+    repeated StagePipeline pipelines = 12 [(gogoproto.nullable) = false];
+    repeated Stage stages = 13 [(gogoproto.nullable) = false];
 
 }
 
@@ -286,46 +286,46 @@ enum JobStatus {
     JOB_ABORTED = 4;
 }
 
-message JobStagePipeline {
-    JobStagePipelineStatus status = 1;
+message StagePipeline {
+    StagePipelineStatus status = 1;
     repeated int64 stages = 2; // index in stages
 }
 
-enum JobStagePipelineStatus {
-    UNKNOWN_JOB_STAGE_PIPELINE_STATUS = 0;
-    JOB_STAGE_PIPELINE_QUEUED = 1;
-    JOB_STAGE_PIPELINE_RUNNING = 2;
-    JOB_STAGE_PIPELINE_FINISHED = 3;
-    JOB_STAGE_PIPELINE_BACKGROUND = 4;
+enum StagePipelineStatus {
+    UNKNOWN_STAGE_PIPELINE_STATUS = 0;
+    STAGE_PIPELINE_QUEUED = 1;
+    STAGE_PIPELINE_RUNNING = 2;
+    STAGE_PIPELINE_FINISHED = 3;
+    STAGE_PIPELINE_BACKGROUND = 4;
 }
 
-message JobStage {
+message Stage {
     int64 index = 1; // array index in stages
     int64 pipeline = 2; // array index in piplines
     StageSpec spec = 3 [(gogoproto.nullable) = false]; // TODO: rendered stage spec
-    repeated NodeJobStage nodes = 4 [(gogoproto.nullable) = false];
+    repeated NodeStage nodes = 4 [(gogoproto.nullable) = false];
 }
 
-message NodeJobStage {
+message NodeStage {
     string id = 1; // node id when agent register
     string name = 2; // name assigned in spec
     Role role = 3; // role specified when got assigned
     NodeInfo info = 4 [(gogoproto.nullable) = false]; // node info when agent register
-    repeated StageTaskPipeline pipelines = 5 [(gogoproto.nullable) = false];
+    repeated TaskPipeline pipelines = 5 [(gogoproto.nullable) = false];
     repeated Task tasks = 6 [(gogoproto.nullable) = false];
 }
 
-message StageTaskPipeline {
-    StageTaskPipelineStatus status = 1;
+message TaskPipeline {
+    TaskPipelineStatus status = 1;
     repeated int64 tasks = 2;
 }
 
-enum StageTaskPipelineStatus {
-    UNKNOWN_STAGE_TASK_PIPELINE_STATUS = 0;
-    STAGE_TASK_PIPELINE_QUEUED = 1;
-    STAGE_TASK_PIPELINE_RUNNING = 2;
-    STAGE_TASK_PIPELINE_FINISHED = 3;
-    STAGE_TASK_PIPELINE_BACKGROUND = 4;
+enum TaskPipelineStatus {
+    UNKNOWN_TASK_PIPELINE_STATUS = 0;
+    TASK_PIPELINE_QUEUED = 1;
+    TASK_PIPELINE_RUNNING = 2;
+    TASK_PIPELINE_FINISHED = 3;
+    TASK_PIPELINE_BACKGROUND = 4;
 }
 
 message Task {
@@ -344,14 +344,50 @@ enum TaskStatus {
     TASK_FINISHED = 4;
     TASK_ABORTED = 5;
 }
+// ---------------------------
+//        </job store>
+// ---------------------------
 
+// ---------------------------
+//       <job scheduler>
+// ---------------------------
 message AssignedNode {
     Node node = 1 [(gogoproto.nullable) = false];
     NodeAssignmentSpec spec = 2 [(gogoproto.nullable) = false];
 }
+// ---------------------------
+//       </job scheduler>
+// ---------------------------
 
 // ---------------------------
-//           <job>
+//       <job plan>
+// ---------------------------
+message JobPlan {
+    repeated StagePipelinePlan pipelines = 1 [(gogoproto.nullable) = false];
+}
+
+message StagePipelinePlan {
+    string name = 1;
+    repeated StagePlan stages = 2 [(gogoproto.nullable) = false];
+}
+
+message StagePlan {
+    repeated AssignedNode nodes = 1 [(gogoproto.nullable) = false];
+    repeated TaskPipelinePlan pipelines = 2 [(gogoproto.nullable) = false];
+}
+
+message TaskPipelinePlan {
+    string name = 1;
+    repeated TaskPlan tasks = 2 [(gogoproto.nullable) = false];
+}
+
+message TaskPlan {
+    TaskSpec spec = 1;
+    // TODO: something else? render or expand etc.?
+}
+
+// ---------------------------
+//       </job plan>
 // ---------------------------
 
 // ---------------------------

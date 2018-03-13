@@ -1,6 +1,6 @@
 # Job
 
-spec
+## Spec
 
 ````text
 {
@@ -97,4 +97,46 @@ spec
         }
     ]
 }
+````
+
+## Scheduler (Node Assignment)
+
+- currently just using role
+
+TODO
+
+- use node state
+- use node label
+
+After node assignment, result is returned in the order of spec
+
+## Planner 
+
+- a serial of execution
+
+````text
+[
+    {
+        name: pipelinename
+        stages: [
+            {
+                nodes: [{ip: xxx, name: xxx} ... ]
+                pipelines: [
+                    {
+                      name:
+                      tasks: [
+                      
+                      ]
+                    },
+                 ]
+            },
+            {
+            
+            }
+        ]
+    },
+    {
+    
+    }
+]
 ````
