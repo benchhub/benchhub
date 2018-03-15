@@ -1,0 +1,50 @@
+nodeAssignments:
+  - name: first
+    role: database
+  - name: second
+    role: database
+  - name: third
+    role: database
+pipelines:
+  - name: start_first
+    stages:
+      - start_cassandra_first
+  - name: start_rest
+    stages:
+      - start_cassandra_second
+stages:
+  - name: start_cassandra_first
+    selelectors:
+      - name: first
+    tasks:
+      - driver: docker
+        background: true
+# docker run --name some-cassandra -d -e CASSANDRA_BROADCAST_ADDRESS=10.42.42.42 -p 7000:7000 cassandra:tag
+        docker:
+          image: cassandra:3.11
+          action: run
+          env:
+            - k: CASSANDRA_BROADCAST_ADDRESS
+              v: "{{.Node.Ip}}"
+          port:
+            - guest: 7000
+              host: 7000
+  - name: start_cassandra_second
+    selectors:
+      - name: second
+      - name: third
+    tasks:
+      - driver: docker
+        background: true
+#  docker run --name some-cassandra -d -e CASSANDRA_BROADCAST_ADDRESS=10.43.43.43 -p 7000:7000 -e CASSANDRA_SEEDS=10.42.42.42 cassandra:tag
+        docker:
+          image: cassandra:3.11
+          action: run
+          env:
+            - k: CASSANDRA_BROADCAST_ADDRESS
+              v: "{{.Node.Ip}}"
+            - k: CASSANDRA_SEEDS
+              v: "{{.Nodes.first.Ip}}"
+          port:
+            - guest: 7000
+              host: 7000

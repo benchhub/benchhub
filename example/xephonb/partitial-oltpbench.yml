@@ -1,0 +1,60 @@
+framework: oltpbench
+workload: tpcc
+database: mysql
+databaseVersion: 5.7
+stages:
+  - name: start_mysql
+    selelectors:
+      - role: database
+    background: true
+    tasks:
+      - driver: docker
+        background: true
+        docker:
+          image: mysql5.7
+          action: run
+          env:
+            - k: MYSQL_ROOT_PASSWORD
+              v: oltpbenchpassword
+          port:
+            - guest: 3306
+              host: 3306
+      - driver: shell
+        shell:
+          command: "docker exec mysql bash -c 'mysql -u root -poltpbenchpassword -e \"CREATE DATABASE IF NOT EXISTS tpcc\""
+  - name: create_database
+    selelectors:
+      - role: database
+    tasks:
+      - driver: shell
+        shell:
+          command: "./config/config.py generate --bench=${BENCH} --db=${DB}"
+          env:
+            - k: BENCH
+              v: tpcc
+            - k: DB
+              v: mysql
+  - name: generate_config
+    selectors:
+      - role: loader
+    takss:
+      - driver: shell
+        shell:
+          command: "./config/config.py generate --bench=${BENCH} --db=${DB}"
+          env:
+            - k: BENCH
+              v: tpcc
+            - k: DB
+              v: mysql
+  - name: run_workload
+    selectors:
+      - role: loader
+    tasks:
+      - driver: shell
+        shell:
+          command: "./oltpbenchmark --bench ${BENCH} --config config/generated_${BENCH}_${DB}_config.xml --create true --load true --execute true"
+          env:
+            - k: BENCH
+              v: tpcc
+            - k: DB
+              v: mysql
