@@ -3,6 +3,7 @@ package mem
 import (
 	"github.com/dyweb/gommon/errors"
 
+	"fmt"
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
 	"github.com/benchhub/benchhub/pkg/central/store/meta"
 )
@@ -24,8 +25,10 @@ func (s *MetaStore) FindNodeById(id string) (pb.Node, error) {
 	if n, ok := s.nodes[id]; ok {
 		return n, nil
 	} else {
-		// TODO: might share a common error value, or use error code
-		return emptyNode, errors.New("not found")
+		return emptyNode, &pb.Error{
+			Code:    pb.ErrorCode_NOT_FOUND,
+			Message: fmt.Sprintf("node %s not found", id),
+		}
 	}
 }
 
@@ -57,7 +60,10 @@ func (s *MetaStore) AddNode(id string, node pb.Node) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if _, ok := s.nodes[id]; ok {
-		return errors.Errorf("node %s already exists", id)
+		return &pb.Error{
+			Code:    pb.ErrorCode_ALREADY_EXISTS,
+			Message: fmt.Sprintf("node %s already exists", id),
+		}
 	}
 	s.nodes[id] = node
 	return nil
@@ -67,7 +73,10 @@ func (s *MetaStore) UpdateNode(id string, node pb.Node) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if _, ok := s.nodes[id]; !ok {
-		return errors.Errorf("node %s does not exists", id)
+		return &pb.Error{
+			Code:    pb.ErrorCode_NOT_FOUND,
+			Message: fmt.Sprintf("node %s not found", id),
+		}
 	}
 	s.nodes[id] = node
 	return nil

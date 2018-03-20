@@ -16,7 +16,8 @@ option (gogoproto.goproto_getters_all) = false;
 // ---------------------------
 enum ErrorCode {
     UNKNOWN_ERROR = 0;
-    AGENT_ALREADY_REGISTED = 1;
+    ALREADY_EXISTS = 1;
+    NOT_FOUND = 2;
 }
 
 // TODO: might include node info, central/agent?
@@ -459,6 +460,7 @@ message AgentHeartbeatReq {
 
 message AgentHeartbeatRes {
     //    Job job = 1 [(gogoproto.nullable) = false];
+    Error error = 1;
 }
 
 // ---------------------------

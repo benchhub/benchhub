@@ -11,6 +11,17 @@ func GetErrorCode(err error) ErrorCode {
 	return ErrorCode_UNKNOWN_ERROR
 }
 
-func IsAgentAlreadyReigstered(err error) bool {
-	return GetErrorCode(err) == ErrorCode_AGENT_ALREADY_REGISTED
+func ToError(err error) *Error {
+	if e, ok := err.(*Error); ok {
+		return e
+	}
+	return nil
+}
+
+func IsAlreadyExist(err error) bool {
+	return GetErrorCode(err) == ErrorCode_ALREADY_EXISTS
+}
+
+func IsNotFound(err error) bool {
+	return GetErrorCode(err) == ErrorCode_NOT_FOUND
 }
