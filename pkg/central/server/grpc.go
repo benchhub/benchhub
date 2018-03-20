@@ -1,14 +1,9 @@
 package server
 
 import (
-	"bytes"
 	"context"
 	"fmt"
-	"sync/atomic"
-
 	igrpc "github.com/at15/go.ice/ice/transport/grpc"
-	dconfig "github.com/dyweb/gommon/config"
-	"github.com/dyweb/gommon/errors"
 	dlog "github.com/dyweb/gommon/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -100,24 +95,4 @@ func (srv *GrpcServer) ListAgent(ctx context.Context, req *pb.ListAgentReq) (*pb
 	return &pb.ListAgentRes{
 		Agents: node,
 	}, nil
-}
-
-func (srv *GrpcServer) SubmitJob(ctx context.Context, req *pb.SubmitJobReq) (*pb.SubmitJobRes, error) {
-	var job pb.JobSpec
-	if err := dconfig.LoadYAMLDirectFromStrict(bytes.NewReader([]byte(req.Spec)), &job); err != nil {
-		return nil, errors.Wrap(err, "can't parse YAML job spec")
-	}
-	// TODO: implement the validate logic
-	//if err := job.Validate(); err != nil {
-	//	return nil, errors.Wrap(err, "invalid job spec")
-	//}
-	// TODO: wrap this in store
-	// FIXME: we are just using project name + a global counter ...
-	atomic.AddInt64(&srv.c, 1)
-	id := fmt.Sprintf("%s-%d", job.Name, atomic.LoadInt64(&srv.c))
-	srv.log.Infof("got job %s id %s", job.Name, id)
-	if err := srv.meta.AddJobSpec(id, job); err != nil {
-		return nil, errors.Wrap(err, "can't add job spec to store")
-	}
-	return &pb.SubmitJobRes{Id: id}, nil
 }
