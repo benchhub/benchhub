@@ -90,7 +90,7 @@
     "util/runtimeutil",
     "util/testutil"
   ]
-  revision = "9205d0bbac41b6bc0d3430d077595e178bb4374c"
+  revision = "ae7701f9d583472626a924dd9ce761157fc7ee05"
 
 [[projects]]
   name = "github.com/ghodss/yaml"
@@ -187,13 +187,13 @@
     "proxy",
     "trace"
   ]
-  revision = "d25186b37f34ebdbbea8f488ef055638dfab272d"
+  revision = "803fdb99c0f72e493c28ef2099d250a9c989d8ff"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["windows"]
-  revision = "dd2ff4accc098aceecb86b36eaa7829b2a17b1c9"
+  revision = "c28acc882ebcbfbe8ce9f0f14b9ac26ee138dd51"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -263,6 +263,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "78353b4c0968c10a2e3d3621a745bee6adaf759f17ba09afa11e8fdbac523cf1"
+  inputs-digest = "da1a4301ab0f9c8f63abcbd3cf52985c18cb69b6917e733759b333631ed33751"
   solver-name = "gps-cdcl"
   solver-version = 1

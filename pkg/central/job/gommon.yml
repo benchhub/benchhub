@@ -3,3 +3,5 @@ loggers:
     receiver: "s"
   - struct: "*Controller"
     receiver: "c"
+  - struct: "*Planner"
+    receiver: "p"
