@@ -27,6 +27,8 @@ var (
 var buildInfo = icli.BuildInfo{Version: version, Commit: commit, BuildTime: buildTime, BuildUser: buildUser, GoVersion: goVersion}
 var cli *icli.Root
 var cfg config.ServerConfig
+var grpcAddr string
+var httpAddr string
 
 func main() {
 	cli = icli.New(
@@ -37,6 +39,8 @@ func main() {
 		icli.IsServer(),
 	)
 	root := cli.Command()
+	serveCmd.PersistentFlags().StringVar(&grpcAddr, "gaddr", ":6082", "grpc listen address")
+	serveCmd.PersistentFlags().StringVar(&httpAddr, "haddr", ":6092", "http listen address")
 	root.AddCommand(serveCmd)
 	if err := root.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)

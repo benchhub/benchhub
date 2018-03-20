@@ -15,6 +15,8 @@ var serveCmd = &cobra.Command{
 		log.Infof("node id is %s", nodeutil.UID())
 		mustLoadConfig()
 		log.Infof("node is %s", cfg.Node)
+		cfg.Grpc.Addr = grpcAddr
+		cfg.Http.Addr = httpAddr
 		mgr, err := server.NewManager(cfg)
 		if err != nil {
 			log.Fatal(err)
