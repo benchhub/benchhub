@@ -58,12 +58,8 @@ func (b *Beater) RunWithContext(ctx context.Context) error {
 			if !b.registered {
 				err := b.Register()
 				if err != nil {
-					if pb.IsAlreadyExist(err) {
-						b.log.Warnf("node is already registered")
-					} else {
-						b.log.Warnf("register failed %s, retry in %s", err.Error(), b.interval)
-						goto SLEEP
-					}
+					b.log.Warnf("register failed %s, retry in %s", err.Error(), b.interval)
+					goto SLEEP
 				}
 				b.log.Infof("register success")
 				b.registered = true
@@ -74,7 +70,7 @@ func (b *Beater) RunWithContext(ctx context.Context) error {
 				// keep a counter for it, zap seems to have it
 				err := b.Beat()
 				if err != nil {
-					b.log.Warnf("heart beat failed %s switch to register mode", err.Error())
+					b.log.Warnf("switch to register mode %s", err.Error())
 					b.registered = false
 					b.registry.State.HeartbeatFailed()
 				}
@@ -99,9 +95,6 @@ func (b *Beater) Register() error {
 	}
 	res, err := c.RegisterAgent(ctx, req)
 	if err != nil {
-		if res != nil && res.Error != nil {
-			return res.Error
-		}
 		return errors.Wrap(err, "register failed")
 	}
 	b.id = res.Id
