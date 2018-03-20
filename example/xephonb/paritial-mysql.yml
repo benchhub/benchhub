@@ -1,0 +1,21 @@
+stages:
+  - name: start_mysql
+    selelectors:
+      - role: database
+    tasks:
+      - driver: docker
+        background: true
+        ready:
+          tasks:
+            - driver: shell
+              shell:
+                command: waitforit -w tcp://localhost:3306
+        docker:
+          image: mysql:5.7
+          action: run
+          env:
+            - k: MYSQLPASSWORD
+              v: "Dolphin"
+          port:
+            - guest: 3306
+              host: 3306

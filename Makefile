@@ -23,7 +23,7 @@ clean:
 
 .PHONY: loc
 loc:
-	cloc --exclude-dir=vendor,.idea,playground,vagrant,node_modules,commonpb, --exclude-list-file=script/cloc_exclude.txt .
+	cloc --exclude-dir=vendor,.idea,playground,vagrant,node_modules,bhpb, --exclude-list-file=script/cloc_exclude.txt .
 
 .PHONY: generate
 generate:
