@@ -1,4 +1,4 @@
-package job
+package scheduler
 
 import (
 	"github.com/dyweb/gommon/errors"
@@ -11,19 +11,19 @@ const (
 	maxLoaderPack = 3 // at most 3 loader on a machine
 )
 
-type Scheduler struct {
+var _ Scheduler = (*DbBench)(nil)
+
+type DbBench struct {
 	log *dlog.Logger
 }
 
-func NewScheduler() *Scheduler {
-	s := &Scheduler{}
+func NewDbBench() *DbBench {
+	s := &DbBench{}
 	dlog.NewStructLogger(log, s)
 	return s
 }
 
-// AssignNode chose nodes based on spec
-// TODO: only exact match is used, no binpack of loader, node state, node selector spec are all not used
-func (s *Scheduler) AssignNode(nodes []pb.Node, specs []pb.NodeAssignmentSpec) ([]pb.AssignedNode, error) {
+func (s *DbBench) AssignNode(nodes []pb.Node, specs []pb.NodeAssignmentSpec) ([]pb.AssignedNode, error) {
 	if len(nodes) == 0 {
 		return nil, errors.New("0 nodes available")
 	}

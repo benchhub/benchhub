@@ -29,7 +29,7 @@ func (s *MetaStore) AddJobSpec(job pb.JobSpec) (string, error) {
 	return id, nil
 }
 
-func (s *MetaStore) GetPendingJob() (job pb.JobSpec, empty bool, err error) {
+func (s *MetaStore) GetPendingJobSpec() (job pb.JobSpec, empty bool, err error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	// FIFO
@@ -42,7 +42,7 @@ func (s *MetaStore) GetPendingJob() (job pb.JobSpec, empty bool, err error) {
 	return job, false, nil
 }
 
-func (s *MetaStore) PushbackJob(id string, job pb.JobSpec) error {
+func (s *MetaStore) PushbackJobSpec(id string, job pb.JobSpec) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.specs[id] = job

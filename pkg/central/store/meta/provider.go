@@ -37,9 +37,9 @@ type JobProvider interface {
 	AddJobSpec(job pb.JobSpec) (id string, err error)
 	GetJobSpec(id string) (pb.JobSpec, error)
 	// GetPending job get a spec from start of a queue
-	GetPendingJob() (job pb.JobSpec, empty bool, err error)
+	GetPendingJobSpec() (job pb.JobSpec, empty bool, err error)
 	// PushbackJob put a spec to the end of queue after it is retrieved using GetPendingJob TODO: put to head of queue instead?
-	PushbackJob(id string, job pb.JobSpec) error
+	PushbackJobSpec(id string, job pb.JobSpec) error
 	// TODO: API for both spec and job status ...
 }
 

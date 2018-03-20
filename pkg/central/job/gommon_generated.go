@@ -16,18 +16,6 @@ func (m *Manager) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identit
 	return justCallMe()
 }
 
-func (s *Scheduler) SetLogger(logger *dlog.Logger) {
-	s.log = logger
-}
-
-func (s *Scheduler) GetLogger() *dlog.Logger {
-	return s.log
-}
-
-func (s *Scheduler) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
-	return justCallMe()
-}
-
 func (p *Planner) SetLogger(logger *dlog.Logger) {
 	p.log = logger
 }

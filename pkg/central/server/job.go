@@ -10,6 +10,7 @@ import (
 	dlog "github.com/dyweb/gommon/log"
 
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
+	"github.com/benchhub/benchhub/pkg/central/job"
 )
 
 const minPollInterval = time.Second / 2
@@ -72,16 +73,16 @@ func (j *JobPoller) RunWithContext(ctx context.Context) error {
 			j.log.Infof("job poller stop due to context finished, its error is %v", ctx.Err())
 			return nil
 		default:
-			job, empty, err := meta.GetPendingJob()
+			spec, empty, err := meta.GetPendingJobSpec()
 			if err != nil {
 				log.Warnf("failed to get pending job %v", err)
-				goto SLEEP
+			} else if empty {
+				// noop
+			} else {
+				log.Infof("TODO: deal with job %s", spec.Id)
+				mgr := job.NewManager()
+				log.Infof("mgr %v", mgr)
 			}
-			if empty {
-				goto SLEEP
-			}
-			log.Infof("TODO: deal with job %s", job.Id)
-		SLEEP:
 			time.Sleep(interval)
 		}
 	}

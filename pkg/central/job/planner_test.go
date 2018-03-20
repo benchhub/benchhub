@@ -8,6 +8,7 @@ import (
 
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
 	"os"
+	"github.com/benchhub/benchhub/pkg/central/scheduler"
 )
 
 func TestPlanner_Job(t *testing.T) {
@@ -19,7 +20,7 @@ func TestPlanner_Job(t *testing.T) {
 	var nodes1Loader1Db []pb.Node
 	testutil.ReadYAMLToStrict(t, "testdata/nodes_1l1d.yml", &nodes1Loader1Db)
 
-	s := NewScheduler()
+	s := scheduler.NewDbBench()
 	assigned, err := s.AssignNode(nodes1Loader1Db, job.NodeAssignments)
 	assert.Nil(err)
 	assert.Equal(2, len(assigned))
