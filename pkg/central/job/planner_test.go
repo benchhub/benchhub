@@ -1,13 +1,13 @@
 package job
 
 import (
+	"os"
 	"testing"
 
 	"github.com/dyweb/gommon/util/testutil"
 	asst "github.com/stretchr/testify/assert"
 
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
-	"os"
 	"github.com/benchhub/benchhub/pkg/central/scheduler"
 )
 

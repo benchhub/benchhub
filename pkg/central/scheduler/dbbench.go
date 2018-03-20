@@ -28,7 +28,7 @@ func (s *DbBench) AssignNode(nodes []pb.Node, specs []pb.NodeAssignmentSpec) ([]
 		return nil, errors.New("0 nodes available")
 	}
 	if len(nodes) < len(specs) {
-		s.log.Warnf("only %d nodes available but requires %d nodes")
+		s.log.Warnf("only %d nodes available but requires %d nodes", len(nodes), len(specs))
 	}
 	assignedNodes := make(map[string]*pb.AssignedNode, len(nodes))
 	assignedSpecs := make(map[int]string, len(specs))
@@ -55,6 +55,8 @@ func (s *DbBench) AssignNode(nodes []pb.Node, specs []pb.NodeAssignmentSpec) ([]
 		}
 	}
 
+	//s.log.Info("assign finished")
+
 	// TODO: allow binpack loader into one node
 	merr := errors.NewMultiErr()
 	if len(assignedSpecs) != len(specs) {
@@ -63,10 +65,15 @@ func (s *DbBench) AssignNode(nodes []pb.Node, specs []pb.NodeAssignmentSpec) ([]
 				merr.Append(errors.Errorf("spec name %s role %s not assigned", spec.Name, spec.Role))
 			}
 		}
+		return nil, merr.ErrorOrNil()
 	}
+
+	//s.log.Info("combine assign result")
 
 	res := make([]pb.AssignedNode, 0, len(assignedNodes))
 	// the result is in the order of specification
+	// FIXME: this would cause panic: runtime error: invalid memory address or nil pointer dereference
+	// because not all specs are assigned
 	for i := 0; i < len(specs); i++ {
 		res = append(res, *assignedNodes[assignedSpecs[i]])
 	}

@@ -66,6 +66,7 @@ func (j *JobPoller) RunWithContext(ctx context.Context) error {
 	start := time.Now()
 	meta := j.registry.Meta
 	interval := j.interval
+	scheduler := j.registry.Scheduler
 	for {
 		select {
 		case <-ctx.Done():
@@ -75,14 +76,37 @@ func (j *JobPoller) RunWithContext(ctx context.Context) error {
 		default:
 			spec, empty, err := meta.GetPendingJobSpec()
 			if err != nil {
-				log.Warnf("failed to get pending job %v", err)
+				j.log.Warnf("failed to get pending job %v", err)
+				goto SLEEP
 			} else if empty {
-				// noop
+				goto SLEEP
 			} else {
-				log.Infof("TODO: deal with job %s", spec.Id)
+				log.Infof("start processing job %s", spec.Id)
+				nodes, err := meta.ListNodes()
+				if err != nil {
+					j.log.Warnf("failed to list nodes %v", err)
+					meta.PushbackJobSpec(spec.Id, spec)
+					goto SLEEP
+				}
 				mgr := job.NewManager()
-				log.Infof("mgr %v", mgr)
+				mgr.SetSpec(spec)
+				assigned, err := scheduler.AssignNode(nodes, spec.NodeAssignments)
+				if err != nil {
+					j.log.Warnf("failed to assign nodes %v", err)
+					meta.PushbackJobSpec(spec.Id, spec)
+					goto SLEEP
+				}
+				j.log.Infof("assign finished")
+				mgr.SetAssignedNodes(assigned)
+				// TODO: need to start the job manager in background
+				if err := j.registry.AddJob(mgr); err != nil {
+					j.log.Warnf("failed to add job to registry %v", err)
+					meta.PushbackJobSpec(spec.Id, spec)
+					goto SLEEP
+				}
+				j.log.Infof("stop processing job %s", spec.Id)
 			}
+		SLEEP:
 			time.Sleep(interval)
 		}
 	}
