@@ -18,6 +18,8 @@ enum ErrorCode {
     UNKNOWN_ERROR = 0;
     ALREADY_EXISTS = 1;
     NOT_FOUND = 2;
+    INVALID_CONFIG = 3;
+    STORE_ERROR = 4;
 }
 
 // TODO: might include node info, central/agent?
@@ -476,8 +478,8 @@ message SubmitJobReq {
 }
 
 message SubmitJobRes {
-    string id = 1;
-    int64 pending = 2;
+    Error error = 1;
+    string id = 2;
 }
 
 message JobStatusReq {

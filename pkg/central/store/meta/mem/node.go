@@ -5,10 +5,8 @@ import (
 
 	"fmt"
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
-	"github.com/benchhub/benchhub/pkg/central/store/meta"
 )
 
-var _ meta.Provider = (*MetaStore)(nil)
 var emptyNode = pb.Node{}
 
 // -- start of read --

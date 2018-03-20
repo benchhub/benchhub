@@ -56,14 +56,21 @@ func (c *CentralCommand) SubmitCmd() *cobra.Command {
 			if err != nil {
 				log.Fatalf("failed to read file %s %v", args[0], err)
 			}
-			if res, err := c.client.SubmitJob(context.Background(), &pb.SubmitJobReq{
+			res, err := c.client.SubmitJob(context.Background(), &pb.SubmitJobReq{
 				User: username(),
 				Spec: string(b),
-			}); err != nil {
+			})
+			if err != nil {
 				log.Fatalf("submit job failed %v", err)
-			} else {
-				log.Infof("job submitted id is %s", res.Id)
 			}
+			if res.Error != nil {
+				if pb.IsInvalidConfig(res.Error) {
+					log.Fatalf("submit job failed invalid config %s", res.Error.Message)
+				} else {
+					log.Fatalf("submit job failed %s", res.Error.Error())
+				}
+			}
+			log.Infof("job submitted id is %s", res.Id)
 		},
 	}
 }

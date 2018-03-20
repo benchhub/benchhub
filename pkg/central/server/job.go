@@ -3,8 +3,6 @@ package server
 import (
 	"bytes"
 	"context"
-	"fmt"
-	"sync/atomic"
 	"time"
 
 	dconfig "github.com/dyweb/gommon/config"
@@ -28,21 +26,30 @@ func NewJobPoller(r *Registry) (*JobPoller, error) {
 	return j, nil
 }
 
+// SubmitJob handles job spec submitted by client and return an id to it
 func (srv *GrpcServer) SubmitJob(ctx context.Context, req *pb.SubmitJobReq) (*pb.SubmitJobRes, error) {
 	var job pb.JobSpec
 	if err := dconfig.LoadYAMLDirectFromStrict(bytes.NewReader([]byte(req.Spec)), &job); err != nil {
-		return nil, errors.Wrap(err, "can't parse YAML job spec")
+		errMsg := errors.Wrap(err, "can't parse YAML job spec").Error()
+		return &pb.SubmitJobRes{
+			Error: &pb.Error{
+				Code:    pb.ErrorCode_INVALID_CONFIG,
+				Message: errMsg,
+			},
+		}, nil
 	}
 	// TODO: validate job spec
-	// TODO: wrap this in store, store should return an id for job ...
-	// FIXME: we are just using project name + a global counter ...
-	atomic.AddInt64(&srv.c, 1)
-	id := fmt.Sprintf("%s-%d", job.Name, atomic.LoadInt64(&srv.c))
-	srv.log.Infof("got job %s id %s", job.Name, id)
-	if err := srv.meta.AddJobSpec(id, job); err != nil {
-		return nil, errors.Wrap(err, "can't add job spec to store")
+	if id, err := srv.meta.AddJobSpec(job); err != nil {
+		errMsg := errors.Wrap(err, "can't add job spec to meta store").Error()
+		return &pb.SubmitJobRes{
+			Error: &pb.Error{
+				Code:    pb.ErrorCode_STORE_ERROR,
+				Message: errMsg,
+			},
+		}, nil
+	} else {
+		return &pb.SubmitJobRes{Id: id}, nil
 	}
-	return &pb.SubmitJobRes{Id: id}, nil
 }
 
 func (j *JobPoller) RunWithContext(ctx context.Context) error {

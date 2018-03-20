@@ -5,6 +5,9 @@ func (m *Error) Error() string {
 }
 
 func GetErrorCode(err error) ErrorCode {
+	if err == nil {
+		return ErrorCode_UNKNOWN_ERROR
+	}
 	if e, ok := err.(*Error); ok {
 		return e.Code
 	}
@@ -24,4 +27,12 @@ func IsAlreadyExist(err error) bool {
 
 func IsNotFound(err error) bool {
 	return GetErrorCode(err) == ErrorCode_NOT_FOUND
+}
+
+func IsInvalidConfig(err error) bool {
+	return GetErrorCode(err) == ErrorCode_INVALID_CONFIG
+}
+
+func IsStoreError(err error) bool {
+	return GetErrorCode(err) == ErrorCode_STORE_ERROR
 }

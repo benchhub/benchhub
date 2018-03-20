@@ -90,6 +90,7 @@ func (mgr *Manager) Run() error {
 	wg.Add(3) // grpc + http + job controller
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+	// TODO: logic here are pretty duplicated
 	// grpc server
 	go func() {
 		go func() {

@@ -20,7 +20,6 @@ type GrpcServer struct {
 	meta         meta.Provider
 	registry     *Registry
 	globalConfig config.ServerConfig
-	c            int64
 	log          *dlog.Logger
 }
 
