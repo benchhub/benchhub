@@ -20,8 +20,6 @@ func NewPlanner() *Planner {
 	return p
 }
 
-// TODO: generate the execution plan
-// TODO: proto for plan
 func (p *Planner) Job(nodes []pb.AssignedNode, jobSpec pb.JobSpec) (pb.JobPlan, error) {
 	merr := errors.NewMultiErr()
 	job := pb.JobPlan{}
@@ -135,7 +133,7 @@ func (p *Planner) Stage(nodes []pb.AssignedNode, stageSpec pb.StageSpec) (pb.Sta
 		}
 	}
 	if stageSpec.Background && !hasBackground {
-		merr.Append(errors.Errorf("stage %s is marked as background but no background task is defined", ))
+		merr.Append(errors.Errorf("stage %s is marked as background but no background task is defined"))
 	}
 	stage := pb.StagePlan{
 		Nodes:     selectedNodes,

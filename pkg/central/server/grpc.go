@@ -69,8 +69,7 @@ func (srv *GrpcServer) RegisterAgent(ctx context.Context, req *pb.RegisterAgentR
 	})
 	if err != nil {
 		log.Warnf("failed to add node %v", err)
-		// TODO: already exists may not be the only cause .... though for in memory, it should be ...
-		return nil, status.Errorf(codes.AlreadyExists, "failed to add node %v", err)
+		return &pb.RegisterAgentRes{Error: pb.ToError(err)}, status.Errorf(codes.Internal, "failed to add node %v", err)
 	}
 	node, err := NodeInfo(srv.globalConfig)
 	if err != nil {

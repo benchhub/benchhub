@@ -41,6 +41,7 @@ func NewManager(cfg config.ServerConfig) (*Manager, error) {
 	r := &Registry{Config: cfg, Meta: metaStore}
 
 	// job controller
+	// TODO: use the new job controller in job package
 	job, err := NewJobController(r)
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create job controller")

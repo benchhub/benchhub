@@ -11,6 +11,7 @@ import (
 	"github.com/dyweb/gommon/errors"
 )
 
+// Deprecated
 type JobController struct {
 	registry *Registry
 	log      *dlog.Logger
@@ -21,6 +22,7 @@ type AssignResult struct {
 	Node pb.Node
 }
 
+// Deprecated
 func NewJobController(r *Registry) (*JobController, error) {
 	j := &JobController{
 		registry: r,

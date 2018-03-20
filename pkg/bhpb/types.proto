@@ -12,6 +12,24 @@ option (gogoproto.unmarshaler_all) = true;
 option (gogoproto.goproto_getters_all) = false;
 
 // ---------------------------
+//           <error>
+// ---------------------------
+enum ErrorCode {
+    UNKNOWN_ERROR = 0;
+    ALREADY_EXISTS = 1;
+    NOT_FOUND = 2;
+}
+
+// TODO: might include node info, central/agent?
+message Error {
+    ErrorCode code = 1;
+    string message = 2;
+}
+// ---------------------------
+//           </error>
+// ---------------------------
+
+// ---------------------------
 //           <node>
 // ---------------------------
 message Node {
@@ -422,9 +440,10 @@ message RegisterAgentReq {
 }
 
 message RegisterAgentRes {
-    string id = 1; // uinque id for this agent assigned by central
-    NodeInfo node = 2 [(gogoproto.nullable) = false]; // addr, ip, port would be added TODO: node should be able to find this out locally
-    NodeInfo central = 3 [(gogoproto.nullable) = false]; // all the information about the central
+    Error error = 1;
+    string id = 2; // uinque id for this agent assigned by central
+    NodeInfo node = 3 [(gogoproto.nullable) = false]; // addr, ip, port would be added TODO: node should be able to find this out locally
+    NodeInfo central = 4 [(gogoproto.nullable) = false]; // all the information about the central
 }
 
 message ListAgentReq {
@@ -441,6 +460,7 @@ message AgentHeartbeatReq {
 
 message AgentHeartbeatRes {
     //    Job job = 1 [(gogoproto.nullable) = false];
+    Error error = 1;
 }
 
 // ---------------------------

@@ -56,25 +56,30 @@ func (b *Beater) RunWithContext(ctx context.Context) error {
 			return nil
 		default:
 			if !b.registered {
-				// TODO: already exists error should be handled properly
 				err := b.Register()
 				if err != nil {
-					b.log.Warnf("register failed %s, retry in %s", err.Error(), b.interval)
-				} else {
-					b.log.Infof("register success")
-					b.registered = true
-					// TODO: publish event inside process? the state machine now is just a thread safe struct
-					b.registry.State.RegisterSuccess()
+					if pb.IsAlreadyExist(err) {
+						b.log.Warnf("node is already registered")
+					} else {
+						b.log.Warnf("register failed %s, retry in %s", err.Error(), b.interval)
+						goto SLEEP
+					}
 				}
+				b.log.Infof("register success")
+				b.registered = true
+				// TODO: publish event inside process? the state machine now is just a thread safe struct
+				b.registry.State.RegisterSuccess()
 			} else {
 				// TODO: log every 100 requests (sampled logger), this should be supported by logging library,
 				// keep a counter for it, zap seems to have it
 				err := b.Beat()
 				if err != nil {
-					b.log.Warnf("heart beat failed %s", err.Error())
+					b.log.Warnf("heart beat failed %s switch to register mode", err.Error())
+					b.registered = false
+					b.registry.State.HeartbeatFailed()
 				}
-				// TODO: need to switch to register
 			}
+		SLEEP:
 			time.Sleep(b.interval)
 		}
 	}
@@ -94,6 +99,9 @@ func (b *Beater) Register() error {
 	}
 	res, err := c.RegisterAgent(ctx, req)
 	if err != nil {
+		if res != nil && res.Error != nil {
+			return res.Error
+		}
 		return errors.Wrap(err, "register failed")
 	}
 	b.id = res.Id
@@ -111,8 +119,11 @@ func (b *Beater) Beat() error {
 			State: b.registry.State.Current(),
 		},
 	}
-	_, err := c.AgentHeartbeat(ctx, req)
+	res, err := c.AgentHeartbeat(ctx, req)
 	if err != nil {
+		if res != nil && res.Error != nil {
+			return res.Error
+		}
 		return errors.Wrap(err, "heart beat failed")
 	}
 	return nil
