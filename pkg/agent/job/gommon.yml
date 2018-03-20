@@ -1,9 +1,5 @@
 loggers:
   - struct: "*Manager"
     receiver: "m"
-  - struct: "*Scheduler"
-    receiver: "s"
-  - struct: "*Planner"
-    receiver: "p"
   - struct: "*Executor"
     receiver: "exc"

@@ -4,6 +4,18 @@ package job
 
 import dlog "github.com/dyweb/gommon/log"
 
+func (m *Manager) SetLogger(logger *dlog.Logger) {
+	m.log = logger
+}
+
+func (m *Manager) GetLogger() *dlog.Logger {
+	return m.log
+}
+
+func (m *Manager) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
+	return justCallMe()
+}
+
 func (s *Scheduler) SetLogger(logger *dlog.Logger) {
 	s.log = logger
 }
@@ -16,18 +28,6 @@ func (s *Scheduler) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Ident
 	return justCallMe()
 }
 
-func (c *Controller) SetLogger(logger *dlog.Logger) {
-	c.log = logger
-}
-
-func (c *Controller) GetLogger() *dlog.Logger {
-	return c.log
-}
-
-func (c *Controller) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
-	return justCallMe()
-}
-
 func (p *Planner) SetLogger(logger *dlog.Logger) {
 	p.log = logger
 }
@@ -37,5 +37,17 @@ func (p *Planner) GetLogger() *dlog.Logger {
 }
 
 func (p *Planner) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
+	return justCallMe()
+}
+
+func (exc *Executor) SetLogger(logger *dlog.Logger) {
+	exc.log = logger
+}
+
+func (exc *Executor) GetLogger() *dlog.Logger {
+	return exc.log
+}
+
+func (exc *Executor) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
 	return justCallMe()
 }
