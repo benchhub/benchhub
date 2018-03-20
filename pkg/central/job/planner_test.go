@@ -27,5 +27,8 @@ func TestPlanner_Job(t *testing.T) {
 	p := NewPlanner()
 	plan, err := p.Job(assigned, job)
 	assert.Nil(err)
-	testutil.PrintTidyJsonTo(t, plan, os.Stderr)
+
+	if testutil.Dump().B() {
+		testutil.PrintTidyJsonTo(t, plan, os.Stderr)
+	}
 }

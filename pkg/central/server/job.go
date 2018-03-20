@@ -33,10 +33,7 @@ func (srv *GrpcServer) SubmitJob(ctx context.Context, req *pb.SubmitJobReq) (*pb
 	if err := dconfig.LoadYAMLDirectFromStrict(bytes.NewReader([]byte(req.Spec)), &job); err != nil {
 		return nil, errors.Wrap(err, "can't parse YAML job spec")
 	}
-	// TODO: implement the validate logic
-	//if err := job.Validate(); err != nil {
-	//	return nil, errors.Wrap(err, "invalid job spec")
-	//}
+	// TODO: validate job spec
 	// TODO: wrap this in store, store should return an id for job ...
 	// FIXME: we are just using project name + a global counter ...
 	atomic.AddInt64(&srv.c, 1)
