@@ -45,7 +45,7 @@ func main() {
 }
 
 func mustLoadConfig() {
-	if err := cli.LoadConfigTo(&cfg); err != nil {
+	if err := cli.LoadConfigToStrict(&cfg); err != nil {
 		log.Fatal(err)
 	}
 }

@@ -42,7 +42,7 @@ func NewManager(cfg config.ServerConfig) (*Manager, error) {
 	r.Meta = metaStore
 
 	// job poller
-	job, err := NewJobPoller(r)
+	job, err := NewJobPoller(r, cfg.Job.PollInterval)
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create job controller")
 	}

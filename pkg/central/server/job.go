@@ -12,15 +12,23 @@ import (
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
 )
 
+const minPollInterval = time.Second / 2
+
 // JobPoller get job for store and create job managers to run them
 type JobPoller struct {
 	registry *Registry
-	log      *dlog.Logger
+	interval time.Duration
+
+	log *dlog.Logger
 }
 
-func NewJobPoller(r *Registry) (*JobPoller, error) {
+func NewJobPoller(r *Registry, pollInterval time.Duration) (*JobPoller, error) {
+	if pollInterval < minPollInterval {
+		pollInterval = minPollInterval
+	}
 	j := &JobPoller{
 		registry: r,
+		interval: pollInterval,
 	}
 	dlog.NewStructLogger(log, j)
 	return j, nil
@@ -53,8 +61,10 @@ func (srv *GrpcServer) SubmitJob(ctx context.Context, req *pb.SubmitJobReq) (*pb
 }
 
 func (j *JobPoller) RunWithContext(ctx context.Context) error {
-	j.log.Info("start job controller")
+	j.log.Infof("start job controller %s", time.Now())
+	start := time.Now()
 	meta := j.registry.Meta
+	interval := j.interval
 	for {
 		select {
 		case <-ctx.Done():
@@ -63,17 +73,18 @@ func (j *JobPoller) RunWithContext(ctx context.Context) error {
 			return nil
 		default:
 			job, empty, err := meta.GetPendingJob()
-			if empty {
-				// do nothing
-			} else if err != nil {
+			if err != nil {
 				log.Warnf("failed to get pending job %v", err)
-			} else {
-				// TODO: get nodes and assign jobs
-				// TODO: put back if failed to schedule
-				log.Infof("TODO: deal with job %s", job.Id)
+				goto SLEEP
 			}
-			// TODO: poll duration should be configurable
-			time.Sleep(1 * time.Second)
+			if empty {
+				goto SLEEP
+			}
+			log.Infof("TODO: deal with job %s", job.Id)
+		SLEEP:
+			time.Sleep(interval)
 		}
 	}
+	j.log.Infof("stop job controller %s duration %s", time.Now(), time.Now().Sub(start))
+	return nil
 }

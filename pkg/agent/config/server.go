@@ -16,7 +16,7 @@ type HeartbeatConfig struct {
 type ServerConfig struct {
 	Http      iconfig.HttpServerConfig `yaml:"http"`
 	Grpc      iconfig.GrpcServerConfig `yaml:"grpc"`
-	Central   CentralConfig            `yaml:"central"`
 	Node      cconfig.NodeConfig       `yaml:"node"`
+	Central   CentralConfig            `yaml:"central"`
 	Heartbeat HeartbeatConfig          `yaml:"heartbeat"`
 }
