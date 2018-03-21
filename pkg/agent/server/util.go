@@ -12,11 +12,6 @@ func NodeInfo(cfg config.ServerConfig) (*pb.NodeInfo, error) {
 	node.Addr = pb.Addr{
 		BindAddr: cfg.Grpc.Addr,
 	}
-	node.Provider = pb.NodeProvider{
-		Name:     cfg.Node.Provider.Name,
-		Region:   cfg.Node.Provider.Region,
-		Instance: cfg.Node.Provider.Instance,
-	}
 	if err != nil {
 		return node, err
 	}

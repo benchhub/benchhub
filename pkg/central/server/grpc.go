@@ -52,7 +52,7 @@ func (srv *GrpcServer) NodeInfo(ctx context.Context, _ *pb.NodeInfoReq) (*pb.Nod
 
 func (srv *GrpcServer) RegisterAgent(ctx context.Context, req *pb.RegisterAgentReq) (*pb.RegisterAgentRes, error) {
 	remoteAddr := igrpc.RemoteAddr(ctx)
-	srv.log.Infof("register agent req from %s %s", remoteAddr, req.Node.Host)
+	srv.log.Infof("register agent req from %s %s %s", remoteAddr, req.Node.Host, req.Node.Id)
 	req.Node.Addr.RemoteAddr = remoteAddr
 	req.Node.Addr.Ip, _ = igrpc.SplitHostPort(remoteAddr)
 

@@ -1,14 +1,12 @@
 package nodeutil
 
 import (
-	"os"
-
 	"github.com/dyweb/gommon/errors"
+	"os"
 
 	"github.com/benchhub/benchhub/lib/monitor/host"
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
 	"github.com/benchhub/benchhub/pkg/common/config"
-	"strings"
 )
 
 // return node info that is needed when register agent and heartbeat
@@ -22,7 +20,7 @@ func GetNodeInfo(cfg config.NodeConfig) (*pb.NodeInfo, error) {
 	}
 	node := &pb.NodeInfo{
 		Id:        UID(),
-		Role:      NodeRole(cfg.Role),
+		Role:      cfg.Role,
 		Host:      hostname(),
 		BootTime:  int64(m.BootTime), // unix ts in second
 		StartTime: startTime.Unix(),  // unix ts in second
@@ -33,24 +31,9 @@ func GetNodeInfo(cfg config.NodeConfig) (*pb.NodeInfo, error) {
 			DiskFree:    int32(m.DiskSpaceFree / 1024 / 1024), // B -> KB -> MB
 			DiskTotal:   int32(m.DiskSpaceTotal / 1024 / 1024),
 		},
+		Provider: cfg.Provider,
 	}
 	return node, nil
-}
-
-// FIXME: might use pb package in config directly to avoid this issue
-func NodeRole(role string) pb.Role {
-	s := strings.ToLower(role)
-	switch s {
-	case "any":
-		return pb.Role_ANY
-	case "central":
-		return pb.Role_CENTRAL
-	case "loader":
-		return pb.Role_LOADER
-	case "database":
-		return pb.Role_DATABASE
-	}
-	return pb.Role_UNKNOWN_ROLE
 }
 
 func hostname() string {

@@ -99,13 +99,13 @@ func (j *JobPoller) RunWithContext(ctx context.Context) error {
 				}
 				j.log.Infof("assign finished")
 				mgr.SetAssignedNodes(assigned)
-				// TODO: need to start the job manager in background
 				if err := j.registry.AddJob(mgr); err != nil {
 					j.log.Warnf("failed to add job to registry %v", err)
 					meta.PushbackJobSpec(spec.Id, spec)
 					goto SLEEP
 				}
-				j.log.Infof("stop processing job %s", spec.Id)
+				// TODO: need to start the job manager in background
+				j.log.Infof("created manager for job %s", spec.Id)
 			}
 		SLEEP:
 			time.Sleep(interval)
