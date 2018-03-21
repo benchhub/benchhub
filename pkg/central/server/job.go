@@ -37,9 +37,9 @@ func NewJobPoller(r *Registry, pollInterval time.Duration) (*JobPoller, error) {
 
 // SubmitJob handles job spec submitted by client and return an id to it
 func (srv *GrpcServer) SubmitJob(ctx context.Context, req *pb.SubmitJobReq) (*pb.SubmitJobRes, error) {
-	var job pb.JobSpec
-	if err := dconfig.LoadYAMLDirectFromStrict(bytes.NewReader([]byte(req.Spec)), &job); err != nil {
-		errMsg := errors.Wrap(err, "can't parse YAML job spec").Error()
+	var spec pb.JobSpec
+	if err := dconfig.LoadYAMLDirectFromStrict(bytes.NewReader([]byte(req.Spec)), &spec); err != nil {
+		errMsg := errors.Wrap(err, "can't parse YAML spec spec").Error()
 		return &pb.SubmitJobRes{
 			Error: &pb.Error{
 				Code:    pb.ErrorCode_INVALID_CONFIG,
@@ -47,9 +47,9 @@ func (srv *GrpcServer) SubmitJob(ctx context.Context, req *pb.SubmitJobReq) (*pb
 			},
 		}, nil
 	}
-	// TODO: validate job spec
-	if id, err := srv.meta.AddJobSpec(job); err != nil {
-		errMsg := errors.Wrap(err, "can't add job spec to meta store").Error()
+	// TODO: validate spec spec
+	if id, err := srv.meta.AddJobSpec(spec); err != nil {
+		errMsg := errors.Wrap(err, "can't add spec spec to meta store").Error()
 		return &pb.SubmitJobRes{
 			Error: &pb.Error{
 				Code:    pb.ErrorCode_STORE_ERROR,
@@ -64,9 +64,6 @@ func (srv *GrpcServer) SubmitJob(ctx context.Context, req *pb.SubmitJobReq) (*pb
 func (j *JobPoller) RunWithContext(ctx context.Context) error {
 	j.log.Infof("start job controller %s", time.Now())
 	start := time.Now()
-	meta := j.registry.Meta
-	interval := j.interval
-	scheduler := j.registry.Scheduler
 	for {
 		select {
 		case <-ctx.Done():
@@ -74,43 +71,48 @@ func (j *JobPoller) RunWithContext(ctx context.Context) error {
 			j.log.Infof("job poller stop due to context finished, its error is %v", ctx.Err())
 			return nil
 		default:
-			spec, empty, err := meta.GetPendingJobSpec()
-			if err != nil {
-				j.log.Warnf("failed to get pending job %v", err)
-				goto SLEEP
-			} else if empty {
-				goto SLEEP
-			} else {
-				j.log.Infof("start processing job %s", spec.Id)
-				nodes, err := meta.ListNodes()
-				if err != nil {
-					j.log.Warnf("failed to list nodes %v", err)
-					meta.PushbackJobSpec(spec.Id, spec)
-					goto SLEEP
-				}
-				j.log.Infof("total %d nodes", len(nodes))
-				mgr := job.NewManager()
-				mgr.SetSpec(spec)
-				assigned, err := scheduler.AssignNode(nodes, spec.NodeAssignments)
-				if err != nil {
-					j.log.Warnf("failed to assign nodes %v", err)
-					meta.PushbackJobSpec(spec.Id, spec)
-					goto SLEEP
-				}
-				j.log.Infof("assign finished")
-				mgr.SetAssignedNodes(assigned)
-				if err := j.registry.AddJob(mgr); err != nil {
-					j.log.Warnf("failed to add job to registry %v", err)
-					meta.PushbackJobSpec(spec.Id, spec)
-					goto SLEEP
-				}
-				// TODO: need to start the job manager in background
-				j.log.Infof("created manager for job %s", spec.Id)
-			}
-		SLEEP:
-			time.Sleep(interval)
+			j.processPending()
+			time.Sleep(j.interval)
 		}
 	}
 	j.log.Infof("stop job controller %s duration %s", time.Now(), time.Now().Sub(start))
 	return nil
+}
+
+func (j *JobPoller) processPending() {
+	meta := j.registry.Meta
+	scheduler := j.registry.Scheduler
+
+	spec, empty, err := meta.GetPendingJobSpec()
+	if err != nil {
+		j.log.Warnf("failed to get pending job %v", err)
+		return
+	} else if empty {
+		return
+	}
+	j.log.Infof("start processing job %s", spec.Id)
+	nodes, err := meta.ListNodes()
+	if err != nil {
+		j.log.Warnf("failed to list nodes %v", err)
+		meta.PushbackJobSpec(spec.Id, spec)
+		return
+	}
+	j.log.Infof("total %d nodes", len(nodes))
+	mgr := job.NewManager()
+	mgr.SetSpec(spec)
+	assigned, err := scheduler.AssignNode(nodes, spec.NodeAssignments)
+	if err != nil {
+		j.log.Warnf("failed to assign nodes %v", err)
+		meta.PushbackJobSpec(spec.Id, spec)
+		return
+	}
+	j.log.Infof("assign finished")
+	mgr.SetAssignedNodes(assigned)
+	if err := j.registry.AddJob(mgr); err != nil {
+		j.log.Warnf("failed to add job to registry %v", err)
+		meta.PushbackJobSpec(spec.Id, spec)
+		return
+	}
+	// TODO: need to start the job manager in background
+	j.log.Infof("created manager for job %s", spec.Id)
 }
