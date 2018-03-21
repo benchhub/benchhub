@@ -7,19 +7,22 @@ import (
 
 	"github.com/benchhub/benchhub/lib/monitor/host"
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
+	"github.com/benchhub/benchhub/pkg/common/config"
+	"strings"
 )
 
 // return node info that is needed when register agent and heartbeat
 
 // GetNode returns node id, capacity, start & boot time
 // TODO: addr https://github.com/benchhub/benchhub/issues/18
-func GetNodeInfo() (*pb.NodeInfo, error) {
+func GetNodeInfo(cfg config.NodeConfig) (*pb.NodeInfo, error) {
 	m := host.NewMachine()
 	if err := m.Update(); err != nil {
 		return nil, errors.Wrap(err, "can't get node info")
 	}
 	node := &pb.NodeInfo{
 		Id:        UID(),
+		Role:      NodeRole(cfg.Role),
 		Host:      hostname(),
 		BootTime:  int64(m.BootTime), // unix ts in second
 		StartTime: startTime.Unix(),  // unix ts in second
@@ -32,6 +35,22 @@ func GetNodeInfo() (*pb.NodeInfo, error) {
 		},
 	}
 	return node, nil
+}
+
+// FIXME: might use pb package in config directly to avoid this issue
+func NodeRole(role string) pb.Role {
+	s := strings.ToLower(role)
+	switch s {
+	case "any":
+		return pb.Role_ANY
+	case "central":
+		return pb.Role_CENTRAL
+	case "loader":
+		return pb.Role_LOADER
+	case "database":
+		return pb.Role_DATABASE
+	}
+	return pb.Role_UNKNOWN_ROLE
 }
 
 func hostname() string {

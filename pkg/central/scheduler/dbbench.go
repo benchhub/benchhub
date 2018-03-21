@@ -37,7 +37,9 @@ func (s *DbBench) AssignNode(nodes []pb.Node, specs []pb.NodeAssignmentSpec) ([]
 	// FIXME: node.role (current role) is ignored
 	// FIXME: node state is ignored
 	// FIXME: selector in spec is ignored
+NextSpec:
 	for i, spec := range specs {
+		s.log.Infof("spec %s role %s", spec.Name, spec.Role)
 		for _, node := range nodes {
 			// skipp assigned node
 			if assignedNodes[node.Id] != nil {
@@ -45,12 +47,15 @@ func (s *DbBench) AssignNode(nodes []pb.Node, specs []pb.NodeAssignmentSpec) ([]
 			}
 			// exact match of role or any
 			if spec.Role == node.Info.Role || node.Info.Role == pb.Role_ANY {
+				s.log.Infof("chose node %s for spec %s", node.Id, spec.Name)
+				// update node role TODO: should we update it in place?
 				node.Role = spec.Role
 				assignedNodes[node.Id] = &pb.AssignedNode{
 					Node: node,
 					Spec: spec,
 				}
 				assignedSpecs[i] = node.Id
+				continue NextSpec
 			}
 		}
 	}

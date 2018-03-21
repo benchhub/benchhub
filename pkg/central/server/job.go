@@ -81,13 +81,14 @@ func (j *JobPoller) RunWithContext(ctx context.Context) error {
 			} else if empty {
 				goto SLEEP
 			} else {
-				log.Infof("start processing job %s", spec.Id)
+				j.log.Infof("start processing job %s", spec.Id)
 				nodes, err := meta.ListNodes()
 				if err != nil {
 					j.log.Warnf("failed to list nodes %v", err)
 					meta.PushbackJobSpec(spec.Id, spec)
 					goto SLEEP
 				}
+				j.log.Infof("total %d nodes", len(nodes))
 				mgr := job.NewManager()
 				mgr.SetSpec(spec)
 				assigned, err := scheduler.AssignNode(nodes, spec.NodeAssignments)

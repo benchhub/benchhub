@@ -11,7 +11,7 @@ http:
   key: icehub.key
   enableTracing: false
 node:
-  role: "ANY" # CENTRAL, LOADER, DATABASE
+  role: "any" # central, loader, database
   provider:
     name: "at15-local-cloud"
     region: "us-west"

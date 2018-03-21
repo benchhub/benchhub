@@ -14,7 +14,7 @@ var serveCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Infof("node id is %s", nodeutil.UID())
 		mustLoadConfig()
-		log.Infof("node is %s", cfg.Node)
+		log.Infof("node role is %s", cfg.Node.Role)
 		cfg.Grpc.Addr = grpcAddr
 		cfg.Http.Addr = httpAddr
 		mgr, err := server.NewManager(cfg)

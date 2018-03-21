@@ -8,7 +8,7 @@ import (
 
 // FIXME: this is dup in both agent and central
 func NodeInfo(cfg config.ServerConfig) (*pb.NodeInfo, error) {
-	node, err := nodeutil.GetNodeInfo()
+	node, err := nodeutil.GetNodeInfo(cfg.Node)
 	node.Addr = pb.Addr{
 		BindAddr: cfg.Grpc.Addr,
 	}
@@ -17,7 +17,6 @@ func NodeInfo(cfg config.ServerConfig) (*pb.NodeInfo, error) {
 		Region:   cfg.Node.Provider.Region,
 		Instance: cfg.Node.Provider.Instance,
 	}
-	node.Role = pb.Role(pb.Role_value[cfg.Node.Role])
 	if err != nil {
 		return node, err
 	}

@@ -1,5 +1,7 @@
 package config
 
+// TODO: might reuse pb package?
+
 type NodeProvider struct {
 	Name     string `yaml:"name"`
 	Region   string `yaml:"region"`
