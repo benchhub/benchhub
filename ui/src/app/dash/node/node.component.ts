@@ -20,15 +20,15 @@ export class NodeComponent implements OnInit {
       .subscribe(data => {
         console.log('got central node', data);
         // TODO: need model for mapping the data
-        this.central = data.node;
+        // this.central = data.node;
       }, err => {
         console.error(err)
       });
     this.svc.getAgents()
       .subscribe(data => {
         console.log('got agents nodes', data);
-        this.agents = data.agents;
-        this.agentsCount = data.agents.length;
+        // this.agents = data.agents;
+        // this.agentsCount = data.agents.length;
       }, err => {
         console.error(err)
       })
