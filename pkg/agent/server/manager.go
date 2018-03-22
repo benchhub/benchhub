@@ -32,7 +32,7 @@ type Manager struct {
 func NewManager(cfg config.ServerConfig) (*Manager, error) {
 	log.Info("creating benchhub agent manager")
 
-	r := &Registry{Config: cfg}
+	r := NewRegistry(cfg)
 
 	// state machine
 	state, err := NewStateMachine()

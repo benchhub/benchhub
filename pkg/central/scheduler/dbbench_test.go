@@ -1,4 +1,4 @@
-package job
+package scheduler
 
 import (
 	"testing"
@@ -9,9 +9,9 @@ import (
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
 )
 
-func TestScheduler_AssignNode(t *testing.T) {
+func TestDbBench_AssignNode(t *testing.T) {
 	assert := asst.New(t)
-	s := NewScheduler()
+	s := NewDbBench()
 	var spec1Loader1Db []pb.NodeAssignmentSpec
 	testutil.ReadYAMLToStrict(t, "testdata/nodesassign_1l1d.yml", &spec1Loader1Db)
 	assert.Equal(2, len(spec1Loader1Db))
@@ -44,4 +44,19 @@ func TestScheduler_AssignNode(t *testing.T) {
 			assert.Equal(r.Spec.Role, r.Node.Role)
 		}
 	})
+	t.Run("2a", func(t *testing.T) {
+		assert := asst.New(t)
+
+		var nodes2a []pb.Node
+		testutil.ReadYAMLToStrict(t, "testdata/nodes_2a.yml", &nodes2a)
+		assert.Equal(2, len(nodes2a))
+		assert.Equal(pb.Role_ANY, nodes2a[0].Info.Role)
+		assert.Equal(pb.Role_ANY, nodes2a[1].Info.Role)
+
+		res, err := s.AssignNode(nodes2a, spec1Loader1Db)
+		assert.Nil(err)
+
+		assert.Equal(2, len(res))
+	})
+
 }

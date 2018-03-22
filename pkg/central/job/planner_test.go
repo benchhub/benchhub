@@ -1,13 +1,14 @@
 package job
 
 import (
+	"os"
 	"testing"
 
 	"github.com/dyweb/gommon/util/testutil"
 	asst "github.com/stretchr/testify/assert"
 
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
-	"os"
+	"github.com/benchhub/benchhub/pkg/central/scheduler"
 )
 
 func TestPlanner_Job(t *testing.T) {
@@ -19,7 +20,7 @@ func TestPlanner_Job(t *testing.T) {
 	var nodes1Loader1Db []pb.Node
 	testutil.ReadYAMLToStrict(t, "testdata/nodes_1l1d.yml", &nodes1Loader1Db)
 
-	s := NewScheduler()
+	s := scheduler.NewDbBench()
 	assigned, err := s.AssignNode(nodes1Loader1Db, job.NodeAssignments)
 	assert.Nil(err)
 	assert.Equal(2, len(assigned))
@@ -27,5 +28,8 @@ func TestPlanner_Job(t *testing.T) {
 	p := NewPlanner()
 	plan, err := p.Job(assigned, job)
 	assert.Nil(err)
-	testutil.PrintTidyJsonTo(t, plan, os.Stderr)
+
+	if testutil.Dump().B() {
+		testutil.PrintTidyJsonTo(t, plan, os.Stderr)
+	}
 }

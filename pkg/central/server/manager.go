@@ -21,7 +21,7 @@ type Manager struct {
 	registry *Registry
 
 	meta          meta.Provider
-	job           *JobController
+	job           *JobPoller
 	grpcSrv       *GrpcServer
 	grpcTransport *igrpc.Server
 	httpSrv       *HttpServer
@@ -38,11 +38,11 @@ func NewManager(cfg config.ServerConfig) (*Manager, error) {
 	}
 
 	// registry
-	r := &Registry{Config: cfg, Meta: metaStore}
+	r := NewRegistry(cfg)
+	r.Meta = metaStore
 
-	// job controller
-	// TODO: use the new job controller in job package
-	job, err := NewJobController(r)
+	// job poller
+	job, err := NewJobPoller(r, cfg.Job.PollInterval)
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create job controller")
 	}
@@ -90,6 +90,7 @@ func (mgr *Manager) Run() error {
 	wg.Add(3) // grpc + http + job controller
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+	// TODO: logic here are pretty duplicated
 	// grpc server
 	go func() {
 		go func() {
@@ -131,7 +132,7 @@ func (mgr *Manager) Run() error {
 			return
 		}
 	}()
-	// job controller
+	// job poller
 	go func() {
 		if err := mgr.job.RunWithContext(ctx); err != nil {
 			merr.Append(err)

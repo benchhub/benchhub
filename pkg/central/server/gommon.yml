@@ -5,5 +5,5 @@ loggers:
     receiver: "srv"
   - struct: "*Manager"
     receiver: "mgr"
-  - struct: "*JobController"
+  - struct: "*JobPoller"
     receiver: "j"

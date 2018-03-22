@@ -1,13 +1,11 @@
 package config
 
-type NodeProvider struct {
-	Name     string `yaml:"name"`
-	Region   string `yaml:"region"`
-	Instance string `yaml:"instance"`
-}
+import (
+	pb "github.com/benchhub/benchhub/pkg/bhpb"
+)
 
 type NodeConfig struct {
 	// Role is preferred role of this node, should be set based on instance type
-	Role     string       `yaml:"role"`
-	Provider NodeProvider `yaml:"provider"`
+	Role     pb.Role         `yaml:"role"`
+	Provider pb.NodeProvider `yaml:"provider"`
 }

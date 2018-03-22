@@ -1,14 +1,9 @@
 package server
 
 import (
-	"bytes"
 	"context"
 	"fmt"
-	"sync/atomic"
-
 	igrpc "github.com/at15/go.ice/ice/transport/grpc"
-	dconfig "github.com/dyweb/gommon/config"
-	"github.com/dyweb/gommon/errors"
 	dlog "github.com/dyweb/gommon/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -25,7 +20,6 @@ type GrpcServer struct {
 	meta         meta.Provider
 	registry     *Registry
 	globalConfig config.ServerConfig
-	c            int64
 	log          *dlog.Logger
 }
 
@@ -58,7 +52,7 @@ func (srv *GrpcServer) NodeInfo(ctx context.Context, _ *pb.NodeInfoReq) (*pb.Nod
 
 func (srv *GrpcServer) RegisterAgent(ctx context.Context, req *pb.RegisterAgentReq) (*pb.RegisterAgentRes, error) {
 	remoteAddr := igrpc.RemoteAddr(ctx)
-	srv.log.Infof("register agent req from %s %s", remoteAddr, req.Node.Host)
+	srv.log.Infof("register agent req from %s %s %s", remoteAddr, req.Node.Host, req.Node.Id)
 	req.Node.Addr.RemoteAddr = remoteAddr
 	req.Node.Addr.Ip, _ = igrpc.SplitHostPort(remoteAddr)
 
@@ -67,9 +61,10 @@ func (srv *GrpcServer) RegisterAgent(ctx context.Context, req *pb.RegisterAgentR
 		// TODO: state ... it is not passed in request, also change req.Node to req.Info ?...
 		Info: req.Node,
 	})
-	if err != nil {
+	// TODO: do something if the agent is already registered instead of just ignore it ...
+	if err != nil && !pb.IsAlreadyExist(err) {
 		log.Warnf("failed to add node %v", err)
-		return &pb.RegisterAgentRes{Error: pb.ToError(err)}, status.Errorf(codes.Internal, "failed to add node %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to register node %v", err)
 	}
 	node, err := NodeInfo(srv.globalConfig)
 	if err != nil {
@@ -100,24 +95,4 @@ func (srv *GrpcServer) ListAgent(ctx context.Context, req *pb.ListAgentReq) (*pb
 	return &pb.ListAgentRes{
 		Agents: node,
 	}, nil
-}
-
-func (srv *GrpcServer) SubmitJob(ctx context.Context, req *pb.SubmitJobReq) (*pb.SubmitJobRes, error) {
-	var job pb.JobSpec
-	if err := dconfig.LoadYAMLDirectFromStrict(bytes.NewReader([]byte(req.Spec)), &job); err != nil {
-		return nil, errors.Wrap(err, "can't parse YAML job spec")
-	}
-	// TODO: implement the validate logic
-	//if err := job.Validate(); err != nil {
-	//	return nil, errors.Wrap(err, "invalid job spec")
-	//}
-	// TODO: wrap this in store
-	// FIXME: we are just using project name + a global counter ...
-	atomic.AddInt64(&srv.c, 1)
-	id := fmt.Sprintf("%s-%d", job.Name, atomic.LoadInt64(&srv.c))
-	srv.log.Infof("got job %s id %s", job.Name, id)
-	if err := srv.meta.AddJobSpec(id, job); err != nil {
-		return nil, errors.Wrap(err, "can't add job spec to store")
-	}
-	return &pb.SubmitJobRes{Id: id}, nil
 }

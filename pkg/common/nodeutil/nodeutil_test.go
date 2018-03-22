@@ -5,6 +5,7 @@ import (
 
 	"github.com/rs/xid"
 	asst "github.com/stretchr/testify/assert"
+	"github.com/benchhub/benchhub/pkg/common/config"
 )
 
 func TestNewUID(t *testing.T) {
@@ -19,7 +20,7 @@ func TestNewUID(t *testing.T) {
 
 func TestGetNodeInfo(t *testing.T) {
 	assert := asst.New(t)
-	n, err := GetNodeInfo()
+	n, err := GetNodeInfo(config.NodeConfig{})
 	assert.Nil(err)
 	t.Logf("start time %d", n.StartTime)
 	t.Logf("boot  time %d", n.BootTime)

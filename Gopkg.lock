@@ -17,7 +17,7 @@
     "ice/transport/http",
     "ice/util/logutil"
   ]
-  revision = "1eae51f02b6b9b0e8adf781c6dc570458c18db77"
+  revision = "6e0d9073953d5249c7725a89493355ba57dc97b1"
 
 [[projects]]
   name = "github.com/davecgh/go-spew"
@@ -153,7 +153,7 @@
   branch = "master"
   name = "github.com/rs/xid"
   packages = ["."]
-  revision = "d5f201f58a9de462bfe843bca4c65127fbab05cd"
+  revision = "705291fb22314c68b7f5d8c0674cb19954ca8f81"
 
 [[projects]]
   name = "github.com/spf13/cobra"
@@ -187,13 +187,13 @@
     "proxy",
     "trace"
   ]
-  revision = "803fdb99c0f72e493c28ef2099d250a9c989d8ff"
+  revision = "6078986fec03a1dcc236c34816c71b0e05018fda"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["windows"]
-  revision = "c28acc882ebcbfbe8ce9f0f14b9ac26ee138dd51"
+  revision = "d8e400bc7db4870d786864138af681469693d18c"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -220,7 +220,7 @@
   branch = "master"
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
-  revision = "df60624c1e9b9d2973e889c7a1cff73155da81c4"
+  revision = "f8c8703595236ae70fdf8789ecb656ea0bcdcf46"
 
 [[projects]]
   name = "google.golang.org/grpc"

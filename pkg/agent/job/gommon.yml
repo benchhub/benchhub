@@ -1,7 +1,5 @@
 loggers:
   - struct: "*Manager"
     receiver: "m"
-  - struct: "*Planner"
-    receiver: "p"
   - struct: "*Executor"
     receiver: "exc"

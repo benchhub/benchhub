@@ -363,3 +363,23 @@ Copied from planner_test using json format
    ]
 }
 ````
+
+## Executor
+
+Both central and agent has job executor, the one in central is a dispatcher and monitor, the one in agent does the actual execution
+
+Central
+
+- requires generated plan
+- [ ] how to dispatch job to mock executor?
+- pick the first stage
+- for all the selected nodes in this stage
+- send the plan of this stage to each nodes
+- when central get update about job, it is dispatched to correspond job executor
+  - [x] the server registry keeps a map of job manager
+  
+Agent
+
+- listen to plan sent from server
+- make sure one job only have on running stage
+  - [ ] return error code for Conflict?

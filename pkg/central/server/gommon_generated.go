@@ -40,14 +40,14 @@ func (mgr *Manager) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Ident
 	return justCallMe()
 }
 
-func (j *JobController) SetLogger(logger *dlog.Logger) {
+func (j *JobPoller) SetLogger(logger *dlog.Logger) {
 	j.log = logger
 }
 
-func (j *JobController) GetLogger() *dlog.Logger {
+func (j *JobPoller) GetLogger() *dlog.Logger {
 	return j.log
 }
 
-func (j *JobController) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
+func (j *JobPoller) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
 	return justCallMe()
 }

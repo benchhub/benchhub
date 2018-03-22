@@ -2,6 +2,7 @@ package bhpb
 
 import (
 	"encoding/json"
+	"strings"
 )
 
 // custom YAML unmarshaler to deal with enum type in proto, we use string in config, but unmarshal to int to match the enum
@@ -11,6 +12,7 @@ func (x *OwnerType) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	if err := unmarshal(&s); err != nil {
 		return err
 	}
+	s = strings.ToLower(s)
 	switch s {
 	case "user":
 		*x = OwnerType_USER
@@ -70,6 +72,7 @@ func (x *OwnerType) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &s); err != nil {
 		return err
 	}
+	s = strings.ToLower(s)
 	switch s {
 	case "user":
 		*x = OwnerType_USER
@@ -84,6 +87,7 @@ func (x *Role) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	if err := unmarshal(&s); err != nil {
 		return err
 	}
+	s = strings.ToLower(s)
 	switch s {
 	case "any":
 		*x = Role_ANY
@@ -102,6 +106,7 @@ func (x *TaskDriver) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	if err := unmarshal(&s); err != nil {
 		return err
 	}
+	s = strings.ToLower(s)
 	switch s {
 	case "stopper":
 		*x = TaskDriver_STOPPER

@@ -10,13 +10,14 @@ http:
   cert: icehub.crt
   key: icehub.key
   enableTracing: false
-central:
-  addr: "localhost:6081"
-heartbeat:
-  interval: "1s"
 node:
-  role: "ANY" # CENTRAL, LOADER, DATABASE
+  role: "any" # central, loader, database
   provider:
     name: "at15-local-cloud"
     region: "us-west"
     instance: "GameBoyAdvance"
+central:
+  addr: "localhost:6081"
+heartbeat:
+  interval: "1s"
+

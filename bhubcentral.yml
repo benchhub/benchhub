@@ -10,11 +10,13 @@ http:
   cert: icehub.crt
   key: icehub.key
   enableTracing: false
-meta:
-  provider: mem
 node:
   role: "CENTRAL" # CENTRAL, LOADER, DATABASE
   provider:
     name: "at15-local-cloud"
     region: "us-west"
     instance: "GameBoyAdvance"
+meta:
+  provider: mem
+job:
+  pollInterval: "1s"

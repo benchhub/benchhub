@@ -12,12 +12,17 @@ import (
 
 var log = logutil.NewPackageLogger()
 
+var _ meta.Provider = (*MetaStore)(nil)
+var _ meta.NodeProvider = (*MetaStore)(nil)
+var _ meta.JobProvider = (*MetaStore)(nil)
+
 type MetaStore struct {
 	mu sync.RWMutex
 
 	nodes  map[string]pb.Node
 	status map[string]pb.NodeStatus
 
+	jobCounter    int
 	specs         map[string]pb.JobSpec
 	pendingSpecs  []string
 	finishedSpecs []string

@@ -60,3 +60,7 @@ package: install
 	rm pingserver
 	rm pingclient
 	rm waitforit
+
+.PHONY: agent2
+agent2:
+	bhubagent serve --gaddr :6083 --haddr :6093

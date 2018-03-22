@@ -32,12 +32,15 @@ type NodeProvider interface {
 	RemoveNode(id string) error
 }
 
-// TODO: maintain a queue for job
 type JobProvider interface {
-	// TODO: should return both spec and job status ...
+	// TODO: how to avoid a user submit same job twice?
+	AddJobSpec(job pb.JobSpec) (id string, err error)
 	GetJobSpec(id string) (pb.JobSpec, error)
-	AddJobSpec(id string, job pb.JobSpec) error
-	GetPendingJob() (job pb.JobSpec, empty bool, err error)
+	// GetPending job get a spec from start of a queue
+	GetPendingJobSpec() (job pb.JobSpec, empty bool, err error)
+	// PushbackJob put a spec to the end of queue after it is retrieved using GetPendingJob TODO: put to head of queue instead?
+	PushbackJobSpec(id string, job pb.JobSpec) error
+	// TODO: API for both spec and job status ...
 }
 
 type Provider interface {

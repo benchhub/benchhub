@@ -1,25 +1,26 @@
 package nodeutil
 
 import (
-	"os"
-
 	"github.com/dyweb/gommon/errors"
+	"os"
 
 	"github.com/benchhub/benchhub/lib/monitor/host"
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
+	"github.com/benchhub/benchhub/pkg/common/config"
 )
 
 // return node info that is needed when register agent and heartbeat
 
 // GetNode returns node id, capacity, start & boot time
 // TODO: addr https://github.com/benchhub/benchhub/issues/18
-func GetNodeInfo() (*pb.NodeInfo, error) {
+func GetNodeInfo(cfg config.NodeConfig) (*pb.NodeInfo, error) {
 	m := host.NewMachine()
 	if err := m.Update(); err != nil {
 		return nil, errors.Wrap(err, "can't get node info")
 	}
 	node := &pb.NodeInfo{
 		Id:        UID(),
+		Role:      cfg.Role,
 		Host:      hostname(),
 		BootTime:  int64(m.BootTime), // unix ts in second
 		StartTime: startTime.Unix(),  // unix ts in second
@@ -30,6 +31,7 @@ func GetNodeInfo() (*pb.NodeInfo, error) {
 			DiskFree:    int32(m.DiskSpaceFree / 1024 / 1024), // B -> KB -> MB
 			DiskTotal:   int32(m.DiskSpaceTotal / 1024 / 1024),
 		},
+		Provider: cfg.Provider,
 	}
 	return node, nil
 }
