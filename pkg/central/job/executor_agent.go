@@ -1,12 +1,13 @@
 package job
 
 import (
+	"context"
 	"sync"
 
 	dlog "github.com/dyweb/gommon/log"
 )
 
-var _ Executor = (*AgentExecutor)(nil)
+//var _ Executor = (*AgentExecutor)(nil)
 
 // AgentExecutor dispatch plan to node agent on worker nodes
 type AgentExecutor struct {
@@ -19,6 +20,10 @@ func NewAgentExecutor() *AgentExecutor {
 	exc := &AgentExecutor{}
 	dlog.NewStructLogger(log, exc)
 	return exc
+}
+
+func (exc *AgentExecutor) Start(ctx context.Context) error {
+	return nil
 }
 
 //func (exc *AgentExecutor) RLock() {

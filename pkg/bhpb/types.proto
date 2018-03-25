@@ -391,9 +391,11 @@ message StagePipelinePlan {
     repeated StagePlan stages = 2 [(gogoproto.nullable) = false];
 }
 
+// TODO: maybe stage plan should contains the original spec
 message StagePlan {
-    repeated AssignedNode nodes = 1 [(gogoproto.nullable) = false];
-    repeated TaskPipelinePlan pipelines = 2 [(gogoproto.nullable) = false];
+    string name = 1;
+    repeated AssignedNode nodes = 2 [(gogoproto.nullable) = false];
+    repeated TaskPipelinePlan pipelines = 3 [(gogoproto.nullable) = false];
 }
 
 message TaskPipelinePlan {

@@ -40,15 +40,15 @@ func (exc *AgentExecutor) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog
 	return justCallMe()
 }
 
-func (exc *TestExecutor) SetLogger(logger *dlog.Logger) {
+func (exc *MockExecutor) SetLogger(logger *dlog.Logger) {
 	exc.log = logger
 }
 
-func (exc *TestExecutor) GetLogger() *dlog.Logger {
+func (exc *MockExecutor) GetLogger() *dlog.Logger {
 	return exc.log
 }
 
-func (exc *TestExecutor) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
+func (exc *MockExecutor) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
 	return justCallMe()
 }
 

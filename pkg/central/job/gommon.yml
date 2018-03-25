@@ -5,7 +5,7 @@ loggers:
     receiver: "p"
   - struct: "*AgentExecutor"
     receiver: "exc"
-  - struct: "*TestExecutor"
+  - struct: "*MockExecutor"
     receiver: "exc"
   - struct: "*EchoExecutor"
     receiver: "exc"
