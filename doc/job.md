@@ -381,5 +381,17 @@ Central
 Agent
 
 - listen to plan sent from server
-- make sure one job only have on running stage
-  - [ ] return error code for Conflict?
+- make sure one job only have one running stage
+  - [ ] return error code for Conflict
+  
+### Mock Agent
+
+Server use a mocked agent, so the plan are executed locally without sending to the agent
+
+- pure mock, got the plan, finish it, call the methods 
+- run locally, got the plan, run it, call the methods
+- real implementation, got the plan, run it, call central server via grpc
+
+### Mock Server
+
+Agent use a mocked server, plan are executed locally without sending to the server?
