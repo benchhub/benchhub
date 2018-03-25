@@ -1,11 +1,11 @@
 package job
 
 import (
+	"context"
 	"sync"
 
 	dlog "github.com/dyweb/gommon/log"
 
-	"context"
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
 )
 
