@@ -1,30 +1,50 @@
 package job
 
 import (
+	"bytes"
 	"context"
+	"io"
+	"io/ioutil"
 	"sync"
 	"testing"
 
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
+	"github.com/dyweb/gommon/util/fsutil"
+	"github.com/dyweb/gommon/util/testutil"
+	asst "github.com/stretchr/testify/assert"
 )
 
-func TestExecutor(t *testing.T) {
+func TestEchoExecutor(t *testing.T) {
+	assert := asst.New(t)
+
 	plan := pingpongPlan(t)
 
 	// FIXME: this test is just for early stage design
+	w := &bytes.Buffer{}
 	for i := range plan.Pipelines {
-		excPipeline(t, plan.Pipelines[i])
+		excPipeline(t, plan.Pipelines[i], w)
+	}
+	// TODO: make gen golden a default condition in gommon/testutil
+	golden := "testdata/echo_pingpong_result.txt"
+	if testutil.EnvTrue("GEN_GOLDEN").B() {
+		fsutil.WriteFile(golden, w.Bytes())
+	} else {
+		// TODO: support equal golden in gommon/testutil
+		b, err := ioutil.ReadFile(golden)
+		assert.Nil(err)
+		assert.Equal(string(b), w.String())
 	}
 }
 
-func excPipeline(t *testing.T, plan pb.StagePipelinePlan) {
+func excPipeline(t *testing.T, plan pb.StagePipelinePlan, w io.Writer) {
 	t.Logf("execute pipeline %s with %d stages", plan.Name, len(plan.Stages))
 	// execute stages in one pipeline concurrently
+	// TODO: this is not async ...
 	var wg sync.WaitGroup
 	wg.Add(len(plan.Stages))
 	for i := range plan.Stages {
 		go func(i int) {
-			excStage(t, plan.Stages[i])
+			excStage(t, plan.Stages[i], w)
 			t.Logf("stage %d finished", i)
 			wg.Done()
 		}(i)
@@ -32,12 +52,11 @@ func excPipeline(t *testing.T, plan pb.StagePipelinePlan) {
 	wg.Wait()
 }
 
-func excStage(t *testing.T, plan pb.StagePlan) {
+func excStage(t *testing.T, plan pb.StagePlan, w io.Writer) {
 	// create executors based on nodes
 	var executors []Executor
 	for i := 0; i < len(plan.Nodes); i++ {
-		// TODO: stage plan contains all nodes, but actually the executor just need to know one node, itself
-		executors = append(executors, NewEchoExecutor(plan))
+		executors = append(executors, NewEchoExecutor(plan, i, w))
 	}
 
 	// run all the executors
