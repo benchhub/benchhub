@@ -4,12 +4,10 @@ import (
 	"bytes"
 	"context"
 	"io"
-	"io/ioutil"
 	"sync"
 	"testing"
 
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
-	"github.com/dyweb/gommon/util/fsutil"
 	"github.com/dyweb/gommon/util/testutil"
 	asst "github.com/stretchr/testify/assert"
 )
@@ -24,14 +22,12 @@ func TestEchoExecutor(t *testing.T) {
 	for i := range plan.Pipelines {
 		excPipeline(t, plan.Pipelines[i], w)
 	}
-	// TODO: make gen golden a default condition in gommon/testutil
+	// TODO: wait for change in gommon/testutil https://github.com/dyweb/gommon/issues/64
 	golden := "testdata/echo_pingpong_result.txt"
-	if testutil.EnvTrue("GEN_GOLDEN").B() {
-		fsutil.WriteFile(golden, w.Bytes())
+	if testutil.GenGolden().B() {
+		testutil.WriteFixture(t, golden, w.Bytes())
 	} else {
-		// TODO: support equal golden in gommon/testutil
-		b, err := ioutil.ReadFile(golden)
-		assert.Nil(err)
+		b := testutil.ReadFixture(t, golden)
 		assert.Equal(string(b), w.String())
 	}
 }
