@@ -1,0 +1,12 @@
+execute stage download_server on node srv
+task driver SHELL
+shell wget https://github.com/benchhub/benchhub/releases/download/v0.0.1/pingserver-0.0.1.zip && unzip pingserver-0.0.1.zip
+execute stage download_client on node cli
+task driver SHELL
+shell wget https://github.com/benchhub/benchhub/releases/download/v0.0.1/pingclient-0.0.1.zip && unzip pingclient-0.0.1.zip
+execute stage start_server on node srv
+task driver SHELL
+shell pingserver 8080
+execute stage ping_server on node cli
+task driver SHELL
+shell pingclient http://{{.Nodes.srv.Ip}}:8080

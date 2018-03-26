@@ -136,6 +136,7 @@ func (p *Planner) Stage(nodes []pb.AssignedNode, stageSpec pb.StageSpec) (pb.Sta
 		merr.Append(errors.Errorf("stage %s is marked as background but no background task is defined"))
 	}
 	stage := pb.StagePlan{
+		Name:      stageSpec.Name,
 		Nodes:     selectedNodes,
 		Pipelines: pipelines,
 	}

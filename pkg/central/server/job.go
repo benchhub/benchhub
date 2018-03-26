@@ -98,8 +98,6 @@ func (j *JobPoller) processPending() {
 		return
 	}
 	j.log.Infof("total %d nodes", len(nodes))
-	mgr := job.NewManager()
-	mgr.SetSpec(spec)
 	assigned, err := scheduler.AssignNode(nodes, spec.NodeAssignments)
 	if err != nil {
 		j.log.Warnf("failed to assign nodes %v", err)
@@ -107,6 +105,8 @@ func (j *JobPoller) processPending() {
 		return
 	}
 	j.log.Infof("assign finished")
+	mgr := job.NewManager()
+	mgr.SetSpec(spec)
 	mgr.SetAssignedNodes(assigned)
 	if err := j.registry.AddJob(mgr); err != nil {
 		j.log.Warnf("failed to add job to registry %v", err)

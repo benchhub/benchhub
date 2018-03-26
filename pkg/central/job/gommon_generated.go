@@ -28,14 +28,50 @@ func (p *Planner) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identit
 	return justCallMe()
 }
 
-func (exc *Executor) SetLogger(logger *dlog.Logger) {
+func (exc *AgentExecutor) SetLogger(logger *dlog.Logger) {
 	exc.log = logger
 }
 
-func (exc *Executor) GetLogger() *dlog.Logger {
+func (exc *AgentExecutor) GetLogger() *dlog.Logger {
 	return exc.log
 }
 
-func (exc *Executor) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
+func (exc *AgentExecutor) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
+	return justCallMe()
+}
+
+func (exc *MockExecutor) SetLogger(logger *dlog.Logger) {
+	exc.log = logger
+}
+
+func (exc *MockExecutor) GetLogger() *dlog.Logger {
+	return exc.log
+}
+
+func (exc *MockExecutor) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
+	return justCallMe()
+}
+
+func (exc *EchoExecutor) SetLogger(logger *dlog.Logger) {
+	exc.log = logger
+}
+
+func (exc *EchoExecutor) GetLogger() *dlog.Logger {
+	return exc.log
+}
+
+func (exc *EchoExecutor) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
+	return justCallMe()
+}
+
+func (exc *LocalExecutor) SetLogger(logger *dlog.Logger) {
+	exc.log = logger
+}
+
+func (exc *LocalExecutor) GetLogger() *dlog.Logger {
+	return exc.log
+}
+
+func (exc *LocalExecutor) LoggerIdentity(justCallMe func() *dlog.Identity) *dlog.Identity {
 	return justCallMe()
 }
