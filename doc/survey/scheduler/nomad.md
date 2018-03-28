@@ -12,3 +12,7 @@ https://github.com/hashicorp/nomad
 - job
   - group, all the task in one group is assigned to same node
     - task
+    
+- nomad/nomad/worker.go 
+  - `func (w *Worker) run()` the long-lived goroutine which is used to run the worker
+- nomad/nomad/heartbeat.go
