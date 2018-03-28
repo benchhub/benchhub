@@ -2,6 +2,9 @@
 
 - [cmd](../cmd), command line tools, entry point for daemon (`bhubcentral`, `bubagent`) ctl (`bhubctl`) etc.
 - [doc](.) documents, survey and internals, few is about usage
+  - [legacy](legacy) out dated doc
+  - [survey](survey) scheduler, CI systems
+  - [third_party](third_party) notes about using third party libraries
 - [example](../example) example benchhub job spec, mostly not working
 - [lib](../lib) libraries that will be split out as standalone repositories
   - [benchmark](../lib/benchmark) wrapper on existing benchmark frameworks, empty
@@ -39,3 +42,5 @@
 - [ ] move all package in `pkg/common` to `pkg`
 - [ ] store might become a common package? though agent does not need meta store much, just ts store is enough
   - [ ] a central meta store interface?
+- [ ] ? split `bhpb` into `bhspec` `bhstore` `bhjob` etc. or find a better way to use the giant file ... don't want to have too many packages ...
+  - https://github.com/sensu/sensu-go/tree/master/types is an example
