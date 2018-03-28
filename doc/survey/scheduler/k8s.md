@@ -3,6 +3,7 @@
 - https://github.com/benchhub/benchhub/issues/3
   - https://engineering.bitnami.com/articles/a-deep-dive-into-kubernetes-controllers.html
 - https://blog.heptio.com/core-kubernetes-jazz-improv-over-orchestration-a7903ea92ca
+  - the flow image is very clear
   - use watch in etcd to coordinate between components, like pubsub, but the topic is rich instead of message
     - client mirror a subset in memory, watch keep cache up to date, fall back to polling if watch failed
    - api server talks to etcd directly, other components talk to api server

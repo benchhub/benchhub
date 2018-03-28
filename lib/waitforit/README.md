@@ -21,3 +21,8 @@ Example:
   - Wait for two server using default config, return 0 when both of them can be connected
     waitforit -w tcp://localhost:9042 -w http://localhost:8080
 ````
+
+TODO
+
+- https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
+- https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
