@@ -3,9 +3,10 @@ package nodeutil
 import (
 	"testing"
 
-	"github.com/benchhub/benchhub/pkg/common/config"
 	"github.com/rs/xid"
 	asst "github.com/stretchr/testify/assert"
+
+	"github.com/benchhub/benchhub/pkg/config"
 )
 
 func TestNewUID(t *testing.T) {

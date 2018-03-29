@@ -3,7 +3,7 @@ package server
 import (
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
 	"github.com/benchhub/benchhub/pkg/central/config"
-	"github.com/benchhub/benchhub/pkg/common/nodeutil"
+	"github.com/benchhub/benchhub/pkg/util/nodeutil"
 )
 
 // FIXME: this is dup in both agent and central

@@ -6,7 +6,7 @@ import (
 
 	"github.com/benchhub/benchhub/lib/monitor/host"
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
-	"github.com/benchhub/benchhub/pkg/common/config"
+	"github.com/benchhub/benchhub/pkg/config"
 )
 
 // return node info that is needed when register agent and heartbeat
