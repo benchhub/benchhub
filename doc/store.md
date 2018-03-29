@@ -4,130 +4,90 @@
   - Rethink node, job https://github.com/benchhub/benchhub/issues/30
   - Job status stages https://github.com/benchhub/benchhub/issues/27
 
-- meta store is mainly used to keep state of the cluster, which including two part
-  - node states
-  - job states
-- additionally, all the update to state should be logged
+## Categories
+
+### Meta Store for current state
+
+- mainly used to keep state of the cluster, all updates goes through central
+  - currently, the implementation is a map with lock in central
+- static 'tables', once created, rarely update
+  - node info
+  - job spec
+- dynamic 'tables'
+  - node status, job assigned to it, status of running jobs
+  - job general status (also used as job queue)
+  - job detail status (aggregation from multiple stages and multiple nodes)
+
+### Meta Store for historical data
+
+- log state change based on event from pub/sub
   - node register history
   - job update history
-  
-currently we just store all the meta inside central's memory, agent also need store due to long running jobs
+- snap shot of operating system before and after each task, stage, job
+- result of benchmark (aggregated)
 
-- [ ] might add a driver called kill, which stop specific task in long running stages
+### Time Series Store
 
-## Node store
-
-- node ~~config~~ info
-  - ip etc.
-  - [ ] a message for address, bindAddr etc.
-  - provider
-  - capacity
-  - preferred role
-  - state
-- node status
-  - state, idle, job running, job waiting (peers), report, clean up
-  - jobs
-    - foreground stage
-      - tasks
-        - status
-    - background stage
-      - tasks
-        - status
-        
-````text
-[
-    id string # same as info.id
-    state enum # same as status.state
-    # provided when node register
-    info: {
-        id string # generated when node start, central also use it instead of assign new one
-        host string # hostname
-        addr {
-            ip # set manually or obtained from remoteAddr, the ip address other people can reach
-            bindAddr
-            remoteAddr # filled by other side, what they see when they receive the request
-        }
-        startTime int64 # agent/central process start time unix second
-        bootTime int64 # machine boot time from /proc/stat
-        role # preferred role
-        provider # iaas, packet, aws etc.
-        capacity # node capacity when it register
-    },
-    jobs: [
-    // TODO: running and background, only store current ...
-    ]
-]
-````
-    
-## Job store
-
-- job spec
-- nodes assignment
-- current stage
-  - status of all nodes
-- [ ] TODO: copy is needed between config struct and proto message
-- ref https://developer.github.com/v3/repos/#get
+- metrics collected by agent when running job
+- benchmark result that can be expressed as time series, i.e. latency, (moving throughput?)
 
 
-job status, a global view of job status, can also be used as final job history
+## Schemas
 
-- [ ] TODO: we need to know all stages in one node, and also need to know status of all nodes in one stage
+node_info
 
-````text
-{
-    id string
-    rawSpec string
-    spec JobSpec
-    
-    createTime int64  unix nano
-    startTime int64
-    stopTime int64
-    
-    status enum;
-    currentPipeline # the array index in pipeline
-    foregroundStages # array of index of stages currently running in foreground
-    backgroundStages # array of index of stages currently running in background
-    finishedStages # array of index of finished stages
-    
-    # TODO: how to describe pipelines
-    pipelines: [
-        {
-            status enum # queued, running, finished, aborted, background
-            stages: [
-                # TODO: just refer index ?
-            ]
-        }
-    ]
-    
-    stages [
-        {
-            index int # the index in stages, filled by central, not configurable by client
-            pipeline int # the index in pipelines, filled by central, not configurable by client
-            spec StageSpec # rendered with information
-            nodes: [
-                {
-                    id string
-                    name string # name assigned in config
-                    role enum # role specified when got assigned
-                    info NodeInfo # node info when registered to server
-                    pipelines: [
-                        {
-                            status enum # queued, running, finished, aborted, background
-                            tasks: [
-                                # TODO: just refer index ?
-                            ]
-                        }
-                    ]
-                    tasks: [
-                        {
-                            startTime int64
-                            readyTime int64 # for background task only
-                            # TODO: log, resource usage etc.
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
-}
-````
+- id string (currently generated by node itself instead of assigned by central, using ip + host)
+- host string host name
+- addr struct for ip address, agent relies on central to know its ip address in the cluster
+- start time
+- boot time
+- role preferred role in config
+- provider struct for cloud service provider
+- capacity struct for hardware capacity
+
+job_spec
+
+- id string (generated from store)
+  - [ ] TODO: need to move id out
+- hash string hash of entire job spec
+- spec struct decoded from yaml string
+- [ ] assigned nodes
+
+job_status
+
+- id string
+- stage int/string
+- status/state int/string, created/running/error/finished
+- create_time, update_time time
+- [ ] assigned nodes
+
+node_status
+
+- id string, refer to node_info
+  - [ ] TODO: might de-normalize in current in-mem implementation and have method `GetNodeStatusWithNode`
+- state string/int idle, job running, etc.
+- job_count int, number of jobs currently running on this node
+- role string/int, current role of node, loader, database
+- heartbeat time, last time central got the node's heartbeat
+- jobs []string, id of jobs running on the node
+
+node_job_status
+
+- node_id string
+- job_id string
+- stage int/string? current stage
+- start_time
+- finish_time
+- status/state int/string, running, finished, error, canceled
+- [ ] TODO: each job has pipeline of stages, each stages have pipeline of tasks
+
+node_job_stage_pipeline_status
+
+node_job_stage_status
+
+node_job_task_pipeline_status
+
+node_job_task_status
+
+
+

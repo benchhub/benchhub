@@ -12,19 +12,24 @@
 	<br>
 </h1>
 
-BenchHub is a service for running and storing benchmark result of databases in database.
+BenchHub is a service for running and storing benchmark result of distributed databases in database.
 
 ## Usage
 
-````bash
-make install
-bhubcentral serve
-bhubagent serve
-# on another machine, change bhubagent.yml to point to the right central
-bhubagent serve
-bhubctl c sumbit pingpong.yml
-````
+TODO: not in a usable state
 
+## Develop
+
+see [doc](doc/README.md)
 
 ## License
+
+MIT
+
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fbenchhub%2Fbenchhub.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fbenchhub%2Fbenchhub?ref=badge_large)
+
+## About
+
+This project is master thesis of [@at15](https://github.com/at15) in [UCSC](https://www.ucsc.edu/) 'BenchHub: Store database benchmark result in database'.
+It aims to define a spec for running distributed database benchmark and provides a continuous integration service.
+Benchmark result is stored in database, it is structured and can be compared across sources.
