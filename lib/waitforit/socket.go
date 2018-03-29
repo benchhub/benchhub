@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/dyweb/gommon/errors"
+	"github.com/dyweb/gommon/requests"
 )
 
 func WaitSockets(ctx context.Context, us []url.URL, totalTimeout time.Duration, timeout time.Duration, retry int) (time.Duration, error) {
@@ -87,7 +88,7 @@ func waitRaw(schema string, addr string, timeout time.Duration) (time.Duration, 
 func waitHttp(u url.URL, timeout time.Duration) (time.Duration, error) {
 	start := time.Now()
 	c := http.Client{
-		Transport: NewDefaultTransport(),
+		Transport: requests.NewDefaultTransport(),
 		Timeout:   timeout,
 	}
 	res, err := c.Get(u.String())
@@ -101,23 +102,4 @@ func waitHttp(u url.URL, timeout time.Duration) (time.Duration, error) {
 		return time.Now().Sub(start), nil
 	}
 	return timeout, errors.Errorf("invalid status code %d", res.StatusCode)
-}
-
-// Default Transport Client that is same as https://golang.org/src/net/http/transport.go
-// It's similar to https://github.com/hashicorp/go-cleanhttp
-
-// NewDefaultTransport is copied from net/http/transport.go
-func NewDefaultTransport() *http.Transport {
-	return &http.Transport{
-		Proxy: http.ProxyFromEnvironment,
-		DialContext: (&net.Dialer{
-			Timeout:   30 * time.Second,
-			KeepAlive: 30 * time.Second,
-			DualStack: true,
-		}).DialContext,
-		MaxIdleConns:          100,
-		IdleConnTimeout:       90 * time.Second,
-		TLSHandshakeTimeout:   10 * time.Second,
-		ExpectContinueTimeout: 1 * time.Second,
-	}
 }

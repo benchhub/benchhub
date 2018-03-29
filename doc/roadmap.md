@@ -11,3 +11,20 @@
 ## 0.2
 
 - use push + pull, push is to notify event right away, pull (during heartbeat) will tell the state eventually
+
+## 0.3
+
+- works with other scheduler, i.e. Mesos, Kubernetes so it can run along side existing infrastructure
+
+## 0.4
+
+- github integration
+
+## 0.5
+
+- multi tenant
+- cost estimator
+
+## 0.6
+
+- benchboard, non database benchmark, i.e. go's benchmark, jmh etc.

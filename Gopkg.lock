@@ -82,6 +82,7 @@
     "errors",
     "log",
     "log/handlers/cli",
+    "requests",
     "structure",
     "util",
     "util/color",
@@ -158,8 +159,8 @@
 [[projects]]
   name = "github.com/spf13/cobra"
   packages = ["."]
-  revision = "7b2c5ac9fc04fc5efafb60700713d4fa609b777b"
-  version = "v0.0.1"
+  revision = "a1f051bc3eba734da4772d60e2d677f47cf93ef4"
+  version = "v0.0.2"
 
 [[projects]]
   name = "github.com/spf13/pflag"
@@ -193,7 +194,7 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["windows"]
-  revision = "d8e400bc7db4870d786864138af681469693d18c"
+  revision = "378d26f46672a356c46195c28f61bdb4c0a781dd"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -220,7 +221,7 @@
   branch = "master"
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
-  revision = "f8c8703595236ae70fdf8789ecb656ea0bcdcf46"
+  revision = "ab0870e398d5dd054b868c0db1481ab029b9a9f2"
 
 [[projects]]
   name = "google.golang.org/grpc"
@@ -251,18 +252,18 @@
     "tap",
     "transport"
   ]
-  revision = "8e4536a86ab602859c20df5ebfd0bd4228d08655"
-  version = "v1.10.0"
+  revision = "afc05b9e1d36f289ea16ba294894486a3e458246"
+  version = "v1.11.0"
 
 [[projects]]
   name = "gopkg.in/yaml.v2"
   packages = ["."]
-  revision = "7f97868eec74b32b0982dd158a51a446d1da7eb5"
-  version = "v2.1.1"
+  revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
+  version = "v2.2.1"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "da1a4301ab0f9c8f63abcbd3cf52985c18cb69b6917e733759b333631ed33751"
+  inputs-digest = "bf5e23ca055e6eae530c5aca9bd8d696870f91464711c8bde73d603513f23923"
   solver-name = "gps-cdcl"
   solver-version = 1

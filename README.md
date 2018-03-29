@@ -30,6 +30,6 @@ MIT
 
 ## About
 
-This project is master thesis of [@at15](https://github.com/at15) in [UCSC](https://www.ucsc.edu/) 'BenchHub: Store database benchmark result in database'.
+BenchHub an implementation [@at15](https://github.com/at15)'s master thesis in [UCSC](https://www.ucsc.edu/) 'BenchHub: Store database benchmark result in database'.
 It aims to define a spec for running distributed database benchmark and provides a continuous integration service.
 Benchmark result is stored in database, it is structured and can be compared across sources.
