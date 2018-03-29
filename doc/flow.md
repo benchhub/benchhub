@@ -4,7 +4,26 @@ Workflow (life cycle) of agent, central, job
 
 ## Agent
 
+````text
+title: agent lifecycle
+nodeutil->agent: capacity
+Note over agent: bootstrap
+agent->central: register
+central->meta: update store
+central->agent: node info
+nodeutil->agent: capacity
+agent->central: heartbeat
+central->agent: job
+Note over agent: run job
+agent->central: result
+central->meta: update store
+````
+
+![agent-flow](images/agent-flow.svg)
+
 ## Central
+
+see agent and job
 
 ## Job
 
