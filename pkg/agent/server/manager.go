@@ -9,13 +9,13 @@ import (
 	"google.golang.org/grpc"
 	"sync"
 
-	"github.com/benchhub/benchhub/pkg/agent/config"
 	mygrpc "github.com/benchhub/benchhub/pkg/agent/transport/grpc"
 	crpc "github.com/benchhub/benchhub/pkg/central/transport/grpc"
+	"github.com/benchhub/benchhub/pkg/config"
 )
 
 type Manager struct {
-	cfg config.ServerConfig
+	cfg config.AgentServerConfig
 
 	registry *Registry
 
@@ -29,7 +29,7 @@ type Manager struct {
 	log    *dlog.Logger
 }
 
-func NewManager(cfg config.ServerConfig) (*Manager, error) {
+func NewManager(cfg config.AgentServerConfig) (*Manager, error) {
 	log.Info("creating benchhub agent manager")
 
 	r := NewRegistry(cfg)

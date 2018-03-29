@@ -9,9 +9,9 @@ import (
 	"google.golang.org/grpc/status"
 
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
-	"github.com/benchhub/benchhub/pkg/central/config"
 	"github.com/benchhub/benchhub/pkg/central/store/meta"
 	rpc "github.com/benchhub/benchhub/pkg/central/transport/grpc"
+	"github.com/benchhub/benchhub/pkg/config"
 )
 
 var _ rpc.BenchHubCentralServer = (*GrpcServer)(nil)
@@ -19,7 +19,7 @@ var _ rpc.BenchHubCentralServer = (*GrpcServer)(nil)
 type GrpcServer struct {
 	meta         meta.Provider
 	registry     *Registry
-	globalConfig config.ServerConfig
+	globalConfig config.CentralServerConfig
 	log          *dlog.Logger
 }
 

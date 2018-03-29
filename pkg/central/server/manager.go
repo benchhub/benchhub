@@ -10,13 +10,13 @@ import (
 	dlog "github.com/dyweb/gommon/log"
 	"google.golang.org/grpc"
 
-	"github.com/benchhub/benchhub/pkg/central/config"
 	"github.com/benchhub/benchhub/pkg/central/store/meta"
 	mygrpc "github.com/benchhub/benchhub/pkg/central/transport/grpc"
+	"github.com/benchhub/benchhub/pkg/config"
 )
 
 type Manager struct {
-	cfg config.ServerConfig
+	cfg config.CentralServerConfig
 
 	registry *Registry
 
@@ -30,7 +30,7 @@ type Manager struct {
 	log *dlog.Logger
 }
 
-func NewManager(cfg config.ServerConfig) (*Manager, error) {
+func NewManager(cfg config.CentralServerConfig) (*Manager, error) {
 	log.Infof("creating benchhub central manager")
 	metaStore, err := meta.GetProvider(cfg.Meta.Provider)
 	if err != nil {

@@ -9,16 +9,16 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/benchhub/benchhub/pkg/agent/config"
 	rpc "github.com/benchhub/benchhub/pkg/agent/transport/grpc"
 	pbc "github.com/benchhub/benchhub/pkg/bhpb"
+	"github.com/benchhub/benchhub/pkg/config"
 )
 
 var _ rpc.BenchHubAgentServer = (*GrpcServer)(nil)
 
 type GrpcServer struct {
 	registry     *Registry
-	globalConfig config.ServerConfig
+	globalConfig config.AgentServerConfig
 	log          *dlog.Logger
 }
 

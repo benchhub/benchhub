@@ -10,14 +10,14 @@ import (
 	"github.com/dyweb/gommon/errors"
 	dlog "github.com/dyweb/gommon/log"
 
-	"github.com/benchhub/benchhub/pkg/agent/config"
 	pbc "github.com/benchhub/benchhub/pkg/bhpb"
+	"github.com/benchhub/benchhub/pkg/config"
 )
 
 // HttpServer is mainly used to communicate with browser, routes are mounted in transport http package
 type HttpServer struct {
 	registry     *Registry
-	globalConfig config.ServerConfig
+	globalConfig config.AgentServerConfig
 	log          *dlog.Logger
 }
 

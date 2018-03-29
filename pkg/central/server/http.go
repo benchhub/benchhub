@@ -11,14 +11,14 @@ import (
 	dlog "github.com/dyweb/gommon/log"
 
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
-	"github.com/benchhub/benchhub/pkg/central/config"
 	"github.com/benchhub/benchhub/pkg/central/store/meta"
+	"github.com/benchhub/benchhub/pkg/config"
 )
 
 type HttpServer struct {
 	meta         meta.Provider
 	registry     *Registry
-	globalConfig config.ServerConfig
+	globalConfig config.CentralServerConfig
 	log          *dlog.Logger
 }
 
