@@ -7,3 +7,9 @@
 - [environment setup](dev-env.md) required runtime and how to install them
 - [directory layout](directory.md) what every folder (package does)
 - [flow](flow.md) life cycle of job, agent and central
+- [agent](agent.md) agent lifecyle and goroutines
+- [central](central.md) central lifecyle and goroutines
+
+## Roadmap
+
+see [roadmap.md](roadmap.md)
