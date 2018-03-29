@@ -4,7 +4,7 @@ import (
 	"time"
 
 	iconfig "github.com/at15/go.ice/ice/config"
-	cconfig "github.com/benchhub/benchhub/pkg/common/config"
+	cconfig "github.com/benchhub/benchhub/pkg/config"
 )
 
 type MetaConfig struct {
