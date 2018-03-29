@@ -5,6 +5,7 @@
   - [legacy](legacy) out dated doc
   - [survey](survey) scheduler, CI systems
   - [third_party](third_party) notes about using third party libraries
+  - [util](util) utility for generating graphs
 - [example](../example) example benchhub job spec, mostly not working
 - [lib](../lib) libraries that will be split out as standalone repositories
   - [benchmark](../lib/benchmark) wrapper on existing benchmark frameworks, empty
