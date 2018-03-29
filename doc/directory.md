@@ -16,9 +16,8 @@
   - [agent](../pkg/agent) daemon runs on worker node, run tasks, collect metrics
   - [bhpub](../pkg/bhpb) protobuf definition and generated go structs, custom error and YAML unmarshalers
   - [central](../pkg/central) the single point of failure, daemon runs on central node, api, scheduler, ui, job coordinator, in memory store 
-  - [common](../pkg/common) shared packages between agent and central, will be deprecated and move sub packages to `pkg`
   - [ctl](../pkg/ctl) command line tool logic, will be deprecated, just use `cmd` package directly
-  - [util](../pkg/util) just logutil, control logging of itself and dependencies using gommon/log
+  - [util](../pkg/util) logutil, control logging of itself and dependencies using gommon/log, nodeutil
 - [script](../script) provision, local dev setup, hacky tools
 - [ui](../ui) SPA using Angular + Ant.Design + Echarts
 
@@ -40,8 +39,9 @@
 
 ## TODO
 
-- [ ] move all package in `pkg/common` to `pkg`
+- [x] move all package in `pkg/common` to `pkg`
 - [ ] store might become a common package? though agent does not need meta store much, just ts store is enough
   - [ ] a central meta store interface?
-- [ ] ? split `bhpb` into `bhspec` `bhstore` `bhjob` etc. or find a better way to use the giant file ... don't want to have too many packages ...
+- [x] ? split `bhpb` into `bhspec` `bhstore` `bhjob` etc. or find a better way to use the giant file ... don't want to have too many packages ...
   - https://github.com/sensu/sensu-go/tree/master/types is an example
+  - it makes import harder, so just bear with the one giant proto file

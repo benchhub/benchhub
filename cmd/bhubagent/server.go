@@ -4,7 +4,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/benchhub/benchhub/pkg/agent/server"
-	"github.com/benchhub/benchhub/pkg/common/nodeutil"
+	"github.com/benchhub/benchhub/pkg/util/nodeutil"
 )
 
 var serveCmd = &cobra.Command{

@@ -4,7 +4,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/benchhub/benchhub/pkg/central/server"
-	"github.com/benchhub/benchhub/pkg/common/nodeutil"
+	"github.com/benchhub/benchhub/pkg/util/nodeutil"
 
 	// empty imports to enable providers
 	_ "github.com/benchhub/benchhub/pkg/central/store/meta/mem"
