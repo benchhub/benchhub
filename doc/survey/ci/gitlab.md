@@ -2,7 +2,7 @@
 
 https://gitlab.com/gitlab-org/gitlab-runner
 
-- [ ] its ar
+- [ ] its ar (? what was I trying to say)
 
 ````yaml
 image: ruby:2.1
