@@ -1,0 +1,52 @@
+<html>
+<head>Sequence diagram</head>
+<body>
+<textarea id="editor" cols="30" rows="10">
+# example of comment
+Title: this is the title
+A->B: Message
+Note left of A: note
+</textarea>
+<button onclick="draw()">draw</button>
+<button onclick="clearText()">clear text</button>
+<button onclick="clearDiagram()">clear diagram</button>
+<div id="diagram"></div>
+<div id="error-message"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js"></script>
+<script src="https://bramp.github.io/js-sequence-diagrams/js/underscore-min.js"></script>
+<script src="https://bramp.github.io/js-sequence-diagrams/js/sequence-diagram-snap-min.js"></script>
+<script>
+    var editor, diagram, errMsg;
+
+    function draw() {
+        try {
+            var d = Diagram.parse(editor.val());
+            d.drawSVG('diagram', {theme: 'simple'});
+        } catch (e) {
+            console.error(e);
+            errMsg.html(e.message);
+        }
+    }
+
+    function clearText() {
+        editor.html('');
+    }
+
+    function clearDiagram() {
+        diagram.html('');
+    }
+
+    $(document).ready(function () {
+        editor = $('#editor');
+        diagram = $('#diagram');
+        errMsg = $('#error-message');
+        // FIXME: this is not the case for the gh-pages ... https://bramp.github.io/js-sequence-diagrams/
+        errMsg.html('first draw take a while, please wait');
+        draw();
+    });
+</script>
+</body>
+</html>
