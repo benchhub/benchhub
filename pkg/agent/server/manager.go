@@ -2,17 +2,22 @@ package server
 
 import (
 	"context"
+	"sync"
+
 	igrpc "github.com/at15/go.ice/ice/transport/grpc"
 	ihttp "github.com/at15/go.ice/ice/transport/http"
 	"github.com/dyweb/gommon/errors"
 	dlog "github.com/dyweb/gommon/log"
 	"google.golang.org/grpc"
-	"sync"
 
 	mygrpc "github.com/benchhub/benchhub/pkg/agent/transport/grpc"
 	crpc "github.com/benchhub/benchhub/pkg/central/transport/grpc"
 	"github.com/benchhub/benchhub/pkg/config"
 )
+
+type runnable interface {
+	RunWithContext(ctx context.Context) error
+}
 
 type Manager struct {
 	cfg config.AgentServerConfig
@@ -54,7 +59,7 @@ func NewManager(cfg config.AgentServerConfig) (*Manager, error) {
 		return nil, errors.Wrap(err, "manager can't create beater")
 	}
 
-	// grpc and http server
+	// grpc
 	grpcSrv, err := NewGrpcServer(r)
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create grpc server")
@@ -65,6 +70,7 @@ func NewManager(cfg config.AgentServerConfig) (*Manager, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create grpc transport")
 	}
+	// http
 	httpSrv, err := NewHttpServer(r)
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create http server")
@@ -90,81 +96,53 @@ func NewManager(cfg config.AgentServerConfig) (*Manager, error) {
 
 // Run creates the following long running goroutines
 //
+// beater, register node, send heartbeat
 // grpc server
 // http server
-// monitor metrics collector
-// client to central server, register, keep alive
-//
-// short running goroutines
-//
-// run benchmarks
-// install packages
-// send metrics
-//
-// different go routines communicate using event bus
+// TODO: metrics collector
 func (mgr *Manager) Run() error {
 	var (
-		wg      sync.WaitGroup
-		grpcErr error
-		httpErr error
-		merr    = errors.NewMultiErrSafe()
+		wg   sync.WaitGroup
+		merr = errors.NewMultiErrSafe()
 	)
-	wg.Add(3) // grpc + http + beater TODO: mon
+	names, routines := mgr.runnable()
+	wg.Add(len(routines))
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	// grpc server
-	go func() {
-		go func() {
-			if err := mgr.grpcTransport.Run(); err != nil {
-				grpcErr = err
+	for i, name := range names {
+		go func(i int, name string) {
+			log.Infof("%s started", name)
+			err := routines[i].RunWithContext(ctx)
+			log.Infof("%s stopped", name)
+			wg.Done()
+			if err != nil {
+				log.Errorf("%s error %v", name, err)
+				log.Errorf("cancel manager context due to %s", name)
 				cancel()
 			}
-		}()
-		select {
-		case <-ctx.Done():
-			if grpcErr != nil {
-				merr.Append(grpcErr)
-				mgr.log.Errorf("can't run grpc server %v", grpcErr)
-			} else {
-				// other service's fault ...
-				mgr.log.Warn("TODO: other's fault, need to shutdown grpc server")
-			}
-			wg.Done()
-			return
-		}
-	}()
-	// http server
-	go func() {
-		go func() {
-			if err := mgr.httpTransport.Run(); err != nil {
-				httpErr = err
-				cancel()
-			}
-		}()
-		select {
-		case <-ctx.Done():
-			if httpErr != nil {
-				merr.Append(httpErr)
-				mgr.log.Errorf("can't run http server %v", httpErr)
-			} else {
-				// other service's fault
-				mgr.log.Warn("TODO: other's fault, need to shutdown http server")
-			}
-			wg.Done()
-			return
-		}
-	}()
-	// heartbeat with server
-	go func() {
-		// TODO: logic here might be incorrect, beater can exit if ctx is canceled by other go routine, i.e. grpc, http server
-		if err := mgr.beater.RunWithContext(ctx); err != nil {
-			merr.Append(err)
-			mgr.log.Warnf("can't run beater %v", err)
-			cancel()
-		}
-		wg.Done()
-	}()
-
+		}(i, name)
+	}
 	wg.Wait()
 	return merr.ErrorOrNil()
+}
+
+// NOTE: we return two array instead of a map because iterate map has random order
+func (mgr *Manager) runnable() ([]string, []runnable) {
+	var names []string
+	var routines []runnable
+
+	names = append(names, "beater")
+	routines = append(routines, mgr.beater)
+
+	names = append(names, "grpc-server")
+	routines = append(routines, mgr.grpcTransport)
+	names = append(names, "http-server")
+	routines = append(routines, mgr.httpTransport)
+
+	if len(names) != len(routines) {
+		// TODO: need an assert package
+		panic("length of names and routines does not equal")
+	}
+
+	return names, routines
 }

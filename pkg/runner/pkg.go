@@ -3,12 +3,7 @@
 package runner
 
 import (
-	"context"
 	"github.com/benchhub/benchhub/pkg/util/logutil"
 )
 
 var log = logutil.NewPackageLogger()
-
-//type RunWithContext interface {
-//	RunWithContext(ctx context.Context) error
-//}

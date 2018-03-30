@@ -36,6 +36,7 @@ type Manager struct {
 
 func NewManager(cfg config.CentralServerConfig) (*Manager, error) {
 	log.Infof("creating benchhub central manager")
+
 	metaStore, err := meta.GetProvider(cfg.Meta.Provider)
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create meta store")
@@ -51,7 +52,7 @@ func NewManager(cfg config.CentralServerConfig) (*Manager, error) {
 		return nil, errors.Wrap(err, "manager can't create job controller")
 	}
 
-	// grpc http
+	// grpc
 	grpcSrv, err := NewGrpcServer(metaStore, r)
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create grpc server")
@@ -62,6 +63,7 @@ func NewManager(cfg config.CentralServerConfig) (*Manager, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create grpc transport")
 	}
+	// http
 	httpSrv, err := NewHttpServer(metaStore, r)
 	if err != nil {
 		return nil, errors.Wrap(err, "manager can't create http server")
@@ -84,6 +86,11 @@ func NewManager(cfg config.CentralServerConfig) (*Manager, error) {
 	return mgr, nil
 }
 
+// Run creates the following long running goroutines
+//
+// job poller
+// http server
+// grpc server
 func (mgr *Manager) Run() error {
 	var (
 		wg   sync.WaitGroup
