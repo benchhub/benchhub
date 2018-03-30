@@ -9,9 +9,9 @@ import (
 	"google.golang.org/grpc/status"
 
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
-	"github.com/benchhub/benchhub/pkg/central/config"
 	"github.com/benchhub/benchhub/pkg/central/store/meta"
 	rpc "github.com/benchhub/benchhub/pkg/central/transport/grpc"
+	"github.com/benchhub/benchhub/pkg/config"
 )
 
 var _ rpc.BenchHubCentralServer = (*GrpcServer)(nil)
@@ -19,7 +19,7 @@ var _ rpc.BenchHubCentralServer = (*GrpcServer)(nil)
 type GrpcServer struct {
 	meta         meta.Provider
 	registry     *Registry
-	globalConfig config.ServerConfig
+	globalConfig config.CentralServerConfig
 	log          *dlog.Logger
 }
 
@@ -40,13 +40,8 @@ func (srv *GrpcServer) Ping(ctx context.Context, ping *pb.Ping) (*pb.Pong, error
 }
 
 func (srv *GrpcServer) NodeInfo(ctx context.Context, _ *pb.NodeInfoReq) (*pb.NodeInfoRes, error) {
-	node, err := NodeInfo(srv.globalConfig)
-	if err != nil {
-		log.Warnf("failed to get central node info %v", err)
-		return nil, status.Errorf(codes.Internal, "failed to get central node info %v", err)
-	}
 	return &pb.NodeInfoRes{
-		Node: node,
+		Node: srv.registry.NodeInfo(),
 	}, nil
 }
 
@@ -66,15 +61,10 @@ func (srv *GrpcServer) RegisterAgent(ctx context.Context, req *pb.RegisterAgentR
 		log.Warnf("failed to add node %v", err)
 		return nil, status.Errorf(codes.Internal, "failed to register node %v", err)
 	}
-	node, err := NodeInfo(srv.globalConfig)
-	if err != nil {
-		log.Warnf("failed to get central node info %v", err)
-		return nil, status.Errorf(codes.Internal, "failed to get central node info %v", err)
-	}
 	res := &pb.RegisterAgentRes{
 		Id:      req.Node.Id,
 		Node:    req.Node,
-		Central: *node,
+		Central: srv.registry.NodeInfo(),
 	}
 	return res, nil
 }

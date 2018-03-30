@@ -17,7 +17,7 @@
     "ice/transport/http",
     "ice/util/logutil"
   ]
-  revision = "6e0d9073953d5249c7725a89493355ba57dc97b1"
+  revision = "4b6c9eb5c27eb22fb8207289bd4ecd32f3207f39"
 
 [[projects]]
   name = "github.com/davecgh/go-spew"
@@ -252,8 +252,8 @@
     "tap",
     "transport"
   ]
-  revision = "afc05b9e1d36f289ea16ba294894486a3e458246"
-  version = "v1.11.0"
+  revision = "1e2570b1b19ade82d8dbb31bba4e65e9f9ef5b34"
+  version = "v1.11.1"
 
 [[projects]]
   name = "gopkg.in/yaml.v2"

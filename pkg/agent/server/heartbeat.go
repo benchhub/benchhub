@@ -7,9 +7,9 @@ import (
 	"github.com/dyweb/gommon/errors"
 	dlog "github.com/dyweb/gommon/log"
 
-	"github.com/benchhub/benchhub/pkg/agent/config"
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
 	"github.com/benchhub/benchhub/pkg/central/transport/grpc"
+	"github.com/benchhub/benchhub/pkg/config"
 )
 
 const (
@@ -26,14 +26,14 @@ type Beater struct {
 	id         string
 
 	registry     *Registry
-	globalConfig config.ServerConfig
+	globalConfig config.AgentServerConfig
 
 	log *dlog.Logger
 }
 
 func NewBeater(client grpc.BenchHubCentralClient, r *Registry) (*Beater, error) {
-	interval, err := time.ParseDuration(r.Config.Heartbeat.Interval)
-	if err != nil || interval <= 0 {
+	interval := r.Config.Heartbeat.Interval
+	if interval <= 0 {
 		return nil, errors.Errorf("invalid heartbeat interval config %d", interval)
 	}
 	b := &Beater{
@@ -86,12 +86,8 @@ func (b *Beater) Register() error {
 	c := b.client
 	ctx, cancel := context.WithTimeout(context.Background(), registerTimeout)
 	defer cancel()
-	node, err := NodeInfo(b.globalConfig)
-	if err != nil {
-		return err
-	}
 	req := &pb.RegisterAgentReq{
-		Node: *node,
+		Node: b.registry.NodeInfo(),
 	}
 	res, err := c.RegisterAgent(ctx, req)
 	if err != nil {

@@ -11,14 +11,14 @@ import (
 	dlog "github.com/dyweb/gommon/log"
 
 	pb "github.com/benchhub/benchhub/pkg/bhpb"
-	"github.com/benchhub/benchhub/pkg/central/config"
 	"github.com/benchhub/benchhub/pkg/central/store/meta"
+	"github.com/benchhub/benchhub/pkg/config"
 )
 
 type HttpServer struct {
 	meta         meta.Provider
 	registry     *Registry
-	globalConfig config.ServerConfig
+	globalConfig config.CentralServerConfig
 	log          *dlog.Logger
 }
 
@@ -42,13 +42,8 @@ func (srv *HttpServer) Ping(ctx context.Context, ping *pb.Ping) (*pb.Pong, error
 }
 
 func (srv *HttpServer) NodeInfo(ctx context.Context) (*pb.NodeInfoRes, error) {
-	node, err := NodeInfo(srv.globalConfig)
-	if err != nil {
-		log.Warnf("failed to get central node info %v", err)
-		return nil, err
-	}
 	return &pb.NodeInfoRes{
-		Node: node,
+		Node: srv.registry.NodeInfo(),
 	}, nil
 }
 

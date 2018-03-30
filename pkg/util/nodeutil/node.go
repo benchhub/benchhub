@@ -13,15 +13,18 @@ import (
 
 // GetNode returns node id, capacity, start & boot time
 // TODO: addr https://github.com/benchhub/benchhub/issues/18
-func GetNodeInfo(cfg config.NodeConfig) (*pb.NodeInfo, error) {
+func GetNodeInfo(cfg config.NodeConfig, bindAddr string) (*pb.NodeInfo, error) {
 	m := host.NewMachine()
 	if err := m.Update(); err != nil {
 		return nil, errors.Wrap(err, "can't get node info")
 	}
 	node := &pb.NodeInfo{
-		Id:        UID(),
-		Role:      cfg.Role,
-		Host:      hostname(),
+		Id:   UID(),
+		Role: cfg.Role,
+		Host: hostname(),
+		Addr: pb.Addr{
+			BindAddr: bindAddr,
+		},
 		BootTime:  int64(m.BootTime), // unix ts in second
 		StartTime: startTime.Unix(),  // unix ts in second
 		Capacity: pb.NodeCapacity{

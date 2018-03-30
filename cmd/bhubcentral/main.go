@@ -7,7 +7,7 @@ import (
 
 	icli "github.com/at15/go.ice/ice/cli"
 
-	"github.com/benchhub/benchhub/pkg/central/config"
+	"github.com/benchhub/benchhub/pkg/config"
 	"github.com/benchhub/benchhub/pkg/util/logutil"
 )
 
@@ -27,7 +27,7 @@ var (
 
 var buildInfo = icli.BuildInfo{Version: version, Commit: commit, BuildTime: buildTime, BuildUser: buildUser, GoVersion: goVersion}
 var cli *icli.Root
-var cfg config.ServerConfig
+var cfg config.CentralServerConfig
 
 func main() {
 	cli = icli.New(

@@ -430,7 +430,7 @@ message NodeInfoReq {
 }
 
 message NodeInfoRes {
-    NodeInfo node = 1;
+    NodeInfo node = 1 [(gogoproto.nullable) = false];
 }
 // ---------------------------
 //       </common rpc>
