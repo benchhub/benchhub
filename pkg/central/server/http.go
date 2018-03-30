@@ -42,13 +42,8 @@ func (srv *HttpServer) Ping(ctx context.Context, ping *pb.Ping) (*pb.Pong, error
 }
 
 func (srv *HttpServer) NodeInfo(ctx context.Context) (*pb.NodeInfoRes, error) {
-	node, err := NodeInfo(srv.globalConfig)
-	if err != nil {
-		log.Warnf("failed to get central node info %v", err)
-		return nil, err
-	}
 	return &pb.NodeInfoRes{
-		Node: node,
+		Node: srv.registry.NodeInfo(),
 	}, nil
 }
 

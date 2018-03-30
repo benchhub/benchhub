@@ -86,12 +86,8 @@ func (b *Beater) Register() error {
 	c := b.client
 	ctx, cancel := context.WithTimeout(context.Background(), registerTimeout)
 	defer cancel()
-	node, err := NodeInfo(b.globalConfig)
-	if err != nil {
-		return err
-	}
 	req := &pb.RegisterAgentReq{
-		Node: *node,
+		Node: b.registry.NodeInfo(),
 	}
 	res, err := c.RegisterAgent(ctx, req)
 	if err != nil {

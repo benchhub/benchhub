@@ -43,7 +43,10 @@ func NewManager(cfg config.CentralServerConfig) (*Manager, error) {
 	}
 
 	// registry
-	r := NewRegistry(cfg)
+	r, err := NewRegistry(cfg)
+	if err != nil {
+		return nil, errors.Wrap(err, "manager can't create registry")
+	}
 	r.Meta = metaStore
 
 	// job poller

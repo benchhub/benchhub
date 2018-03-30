@@ -37,8 +37,10 @@ type Manager struct {
 func NewManager(cfg config.AgentServerConfig) (*Manager, error) {
 	log.Info("creating benchhub agent manager")
 
-	r := NewRegistry(cfg)
-
+	r, err := NewRegistry(cfg)
+	if err != nil {
+		return nil, errors.Wrap(err, "manager can't create registry")
+	}
 	// state machine
 	state, err := NewStateMachine()
 	if err != nil {

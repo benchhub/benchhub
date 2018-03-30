@@ -10,7 +10,7 @@ import (
 	"github.com/dyweb/gommon/errors"
 	dlog "github.com/dyweb/gommon/log"
 
-	pbc "github.com/benchhub/benchhub/pkg/bhpb"
+	pb "github.com/benchhub/benchhub/pkg/bhpb"
 	"github.com/benchhub/benchhub/pkg/config"
 )
 
@@ -30,20 +30,15 @@ func NewHttpServer(r *Registry) (*HttpServer, error) {
 	return s, nil
 }
 
-func (srv *HttpServer) Ping(ctx context.Context, ping *pbc.Ping) (*pbc.Pong, error) {
+func (srv *HttpServer) Ping(ctx context.Context, ping *pb.Ping) (*pb.Pong, error) {
 	res := fmt.Sprintf("pong from agent %s your message is %s", igrpc.Hostname(), ping.Message)
-	return &pbc.Pong{Message: res}, nil
+	return &pb.Pong{Message: res}, nil
 
 }
 
-func (srv *HttpServer) NodeInfo(ctx context.Context) (*pbc.NodeInfoRes, error) {
-	node, err := NodeInfo(srv.globalConfig)
-	if err != nil {
-		log.Warnf("failed to get central node info %v", err)
-		return nil, err
-	}
-	return &pbc.NodeInfoRes{
-		Node: node,
+func (srv *HttpServer) NodeInfo(ctx context.Context) (*pb.NodeInfoRes, error) {
+	return &pb.NodeInfoRes{
+		Node: srv.registry.NodeInfo(),
 	}, nil
 }
 
@@ -57,10 +52,10 @@ func (srv *HttpServer) Handler() http.Handler {
 
 func (srv *HttpServer) RegisterHandler(mux *ihttp.JsonHandlerMux) {
 	mux.AddHandlerFunc("/api/ping", func() interface{} {
-		return &pbc.Ping{}
+		return &pb.Ping{}
 	}, func(ctx context.Context, req interface{}) (res interface{}, err error) {
-		if ping, ok := req.(*pbc.Ping); !ok {
-			return nil, errors.New("invalid type, can't cast to *pbc.Ping")
+		if ping, ok := req.(*pb.Ping); !ok {
+			return nil, errors.New("invalid type, can't cast to *pb.Ping")
 		} else {
 			return srv.Ping(ctx, ping)
 		}
