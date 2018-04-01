@@ -38,8 +38,22 @@ message Error {
     string message = 3;
     string nodeId = 4;
 }
+
 // ---------------------------
 //           </error>
+// ---------------------------
+
+// ---------------------------
+//           </label>
+// ---------------------------
+
+message Label {
+    string k = 1;
+    string v = 2;
+}
+
+// ---------------------------
+//           </label>
 // ---------------------------
 
 // ---------------------------
@@ -47,10 +61,8 @@ message Error {
 // ---------------------------
 
 message Node {
-    //    string id = 1;
-    //    Role role = 2; // current role, could be different from info.role due to updated when assign node in job
-    //    NodeState state = 3;
     NodeInfo info = 1 [(gogoproto.nullable) = false];
+    NodeStatus status = 2 [(gogoproto.nullable) = false];
 }
 
 // ---------------------------
@@ -63,6 +75,7 @@ message Node {
 message NodeConfig {
     Role role = 1;
     NodeProvider provider = 2 [(gogoproto.nullable) = false];
+    repeated Label labels = 3 [(gogoproto.nullable) = false];
 }
 
 enum Role {
@@ -95,9 +108,9 @@ message NodeProvider {
 //       </node config>
 // ---------------------------
 
-// ------------------------------------
-// <node info=id+addr+capacity+config>
-// ------------------------------------
+// --------------------------------------------
+// <node info=id+addr+config+capacity+property>
+// --------------------------------------------
 
 // NodeInfo is provided to central when agent register
 message NodeInfo {
@@ -148,9 +161,9 @@ message NodeProperty {
     string host = 3;
 }
 
-// ------------------------------------
-// </node info=id+addr+capacity+config>
-// ------------------------------------
+// --------------------------------------------
+// </node info=id+addr+config+capacity+property>
+// --------------------------------------------
 
 // ---------------------------
 //       <node status>
@@ -158,18 +171,36 @@ message NodeProperty {
 
 message NodeStatus {
     NodeState state = 1;
-    // TODO: need to include job information
+    repeated NodeJobStatus jobs = 2 [(gogoproto.nullable) = false];
+}
+
+message NodeJobStatus {
+    // properties assigned to node in NodeAssignmentSpec TODO: might use a common struct
+    // name in current job
+    string name = 1;
+    // role in current job, could be different from role in configuration file
+    // i.e. a Any node can become a Database or Loader node
+    Role role = 2;
+
+    // TODO: status of one job on a single node, it is different from the global job status
+    NodeJobState state = 3;
 }
 
 enum NodeState {
     UNKNOWN_NODE_STATE = 0;
     NODE_FINDING_CENTRAL = 1;
     NODE_IDLE = 2;
-    NODE_JOB_RUNNING = 3;
-    // TODO: including peers?
-    NODE_JOB_WAITING_PEERS = 4;
-    //    NODE_JOB_REPORTING = 6;
-    //    NODE_JOB_CLEANUP = 7;
+    NODE_RUNNING_JOB = 3;
+}
+
+enum NodeJobState {
+    UNKNOWN_NODE_JOB_STATE = 0;
+    NODE_JOB_RUNNING = 1;
+    NODE_JOB_FINISHED = 2;
+    NODE_JOB_ERROR = 3;
+    NODE_JOB_WAITING_INSTRUCTION = 4;
+    NODE_JOB_REPORTING = 5;
+    NODE_JOB_CLEANUP = 6;
 }
 
 // ---------------------------
@@ -179,6 +210,7 @@ enum NodeState {
 // ---------------------------
 //          <identity>
 // ---------------------------
+
 enum OwnerType {
     UNKNOWN_OWNER = 0;
     USER = 1;
@@ -221,13 +253,20 @@ message NodeSelectorSpec {
     bool none = 2; // none is used for stages like stopper, where central tell all the nodes to stop long running tasks
     string name = 3;
     Role role = 4;
-    // TODO: label support
+    Label label = 5 [(gogoproto.nullable) = false];
 }
 
 message NodeAssignmentSpec {
-    string name = 1; // unique in job, used to refer assigned node in rest of the config
-    Role role = 2; // role assign to the node after selection, MUST be either database or loader # TODO: update node role in status, info.role is node's preferred role
-    repeated NodeSelectorSpec selectors = 3 [(gogoproto.nullable) = false]; // select by label, resource TODO: not used in assignment
+    // select by name, role, label, resource
+    // TODO: label and resource are not used in current implementation
+    repeated NodeSelectorSpec selectors = 1 [(gogoproto.nullable) = false];
+
+    // properties assigned to node, visiable to this job only
+    // unique in job, used to refer assigned node in rest of the config
+    string name = 2;
+    // role assign to the node after selection, MUST be either database or loader
+    Role role = 3;
+
 }
 
 message StagePipelineSpec {
@@ -236,8 +275,10 @@ message StagePipelineSpec {
 }
 
 message StageSpec {
-    string name = 1; // unqiue in job, used by rest of the config
-    bool background = 2; // if true, there MUST be one task that is background
+    // unqiue in job, used by rest of the config
+    string name = 1;
+    // if true, there MUST be one task that is background
+    bool background = 2;
     // selct by name, role, the relation between multiple selector is OR, NOT AND
     repeated NodeSelectorSpec selectors = 3 [(gogoproto.nullable) = false];
     repeated TaskPipelineSpec pipelines = 4 [(gogoproto.nullable) = false];
@@ -258,8 +299,10 @@ enum TaskDriver {
 }
 
 message TaskSpec {
-    string name = 1; // unique in stage, MUST be specified if pipeline is used or is longRunning
-    bool background = 2; // the container stage MUST also be background
+    // unique in stage, MUST be specified if pipeline is used or is a background process
+    string name = 1;
+    // the stage contains this background task MUST also be background
+    bool background = 2;
     TaskDriver driver = 3;
     repeated Env env = 4;
 
@@ -269,7 +312,7 @@ message TaskSpec {
     ExecSpec exec = 7;
     DockerSpec docker = 8;
 
-    // for long running task
+    // readiness check for long running task
     ReadySpec ready = 9 [(gogoproto.nullable) = false];
     // TODO: liveness check ...
 }
@@ -309,6 +352,7 @@ message DockerSpec {
     string image = 1;
     DockerAction action = 2;
     repeated Port ports = 3 [(gogoproto.nullable) = false];
+    // TODO: volume, different types of volume etc.
 }
 
 message ReadySpec {
