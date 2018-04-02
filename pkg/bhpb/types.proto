@@ -44,7 +44,7 @@ message Error {
 // ---------------------------
 
 // ---------------------------
-//           </label>
+//     <label alike>
 // ---------------------------
 
 message Label {
@@ -52,8 +52,12 @@ message Label {
     string v = 2;
 }
 
+message Env {
+    string k = 1;
+    string v = 2;
+}
 // ---------------------------
-//           </label>
+//      </label alike>
 // ---------------------------
 
 // ---------------------------
@@ -86,6 +90,13 @@ enum Role {
     DATABASE = 4;
 }
 
+// TODO: use provider enum
+message NodeProvider {
+    string name = 1;
+    string region = 2;
+    string instance = 3;
+}
+
 enum Provider {
     UNKNOWN_PROVIDER = 0;
     LOCAL_PROVIDER = 1; // local dev environment
@@ -95,13 +106,6 @@ enum Provider {
     AZURE_PROVIDER = 5;
     GCP_PROVIDER = 6;
     PACKET_PROVIDER = 7;
-}
-
-// TODO: use provider enum
-message NodeProvider {
-    string name = 1;
-    string region = 2;
-    string instance = 3;
 }
 
 // ---------------------------
@@ -174,15 +178,20 @@ message NodeStatus {
     repeated NodeJobStatus jobs = 2 [(gogoproto.nullable) = false];
 }
 
-message NodeJobStatus {
-    // properties assigned to node in NodeAssignmentSpec TODO: might use a common struct
-    // name in current job
+message NodeAssignedProperty {
+    // uinque name in current job, used to refer assigned node in rest of the config
     string name = 1;
     // role in current job, could be different from role in configuration file
     // i.e. a Any node can become a Database or Loader node
+    // values: database, loader
     Role role = 2;
+}
 
-    // TODO: status of one job on a single node, it is different from the global job status
+message NodeJobStatus {
+    // properties assigned to node in NodeAssignmentSpec
+    NodeAssignedProperty assigned = 1 [(gogoproto.nullable) = false];
+
+    // TODO: status of one job on a single node, it is different from global job status because it does not contains node
     NodeJobState state = 3;
 }
 
@@ -211,16 +220,16 @@ enum NodeJobState {
 //          <identity>
 // ---------------------------
 
-enum OwnerType {
-    UNKNOWN_OWNER = 0;
-    USER = 1;
-    ORG = 2;
-}
-
 message Owner {
     string id = 1;
     string name = 2;
     OwnerType type = 3;
+}
+
+enum OwnerType {
+    UNKNOWN_OWNER = 0;
+    USER = 1;
+    ORG = 2;
 }
 
 // ---------------------------
@@ -241,6 +250,7 @@ message JobSpec {
     repeated StageSpec stages = 7 [(gogoproto.nullable) = false];
 }
 
+// TODO: this is not used
 message WorkloadSpec {
     string framework = 1;
     string frameworkVersion = 2 [(gogoproto.moretags) = "yaml:\"frameworkVersion\""];
@@ -248,25 +258,23 @@ message WorkloadSpec {
     string databaseVersion = 4 [(gogoproto.moretags) = "yaml:\"databaseVersion\""];
 }
 
-message NodeSelectorSpec {
-    bool all = 1; // all is used for install util packages in the whole cluster
-    bool none = 2; // none is used for stages like stopper, where central tell all the nodes to stop long running tasks
-    string name = 3;
-    Role role = 4;
-    Label label = 5 [(gogoproto.nullable) = false];
-}
-
 message NodeAssignmentSpec {
     // select by name, role, label, resource
     // TODO: label and resource are not used in current implementation
     repeated NodeSelectorSpec selectors = 1 [(gogoproto.nullable) = false];
 
-    // properties assigned to node, visiable to this job only
-    // unique in job, used to refer assigned node in rest of the config
-    string name = 2;
-    // role assign to the node after selection, MUST be either database or loader
-    Role role = 3;
+    // properties assigned to selected node, visiable to this job only
+    NodeAssignedProperty assignment = 2 [(gogoproto.nullable) = false];
+}
 
+message NodeSelectorSpec {
+    // all is shortcut for select all nodes in order to install global packages, i.e. tldr
+    bool all = 1;
+    // none is shortcut for stages like stopper, where central tell all the nodes to stop long running tasks
+    bool none = 2;
+    string name = 3;
+    Role role = 4;
+    repeated Label labels = 5 [(gogoproto.nullable) = false];
 }
 
 message StagePipelineSpec {
@@ -290,14 +298,6 @@ message TaskPipelineSpec {
     repeated string tasks = 2; // tasks that can run in parallel
 }
 
-enum TaskDriver {
-    UNKNOWN_TASKDRIVER = 0;
-    STOPPER = 1;
-    SHELL = 2;
-    EXEC = 3;
-    DOCKER = 4;
-}
-
 message TaskSpec {
     // unique in stage, MUST be specified if pipeline is used or is a background process
     string name = 1;
@@ -317,9 +317,12 @@ message TaskSpec {
     // TODO: liveness check ...
 }
 
-message Env {
-    string k = 1;
-    string v = 2;
+enum TaskDriver {
+    UNKNOWN_TASKDRIVER = 0;
+    STOPPER = 1;
+    SHELL = 2;
+    EXEC = 3;
+    DOCKER = 4;
 }
 
 message StopperSpec {
@@ -368,6 +371,7 @@ message ReadySpec {
 //        <job store>
 // ---------------------------
 
+// TODO: the whole job store part will be changed ...
 message Job {
     string id = 1;
     string rawSpec = 2; // original job spec file content
