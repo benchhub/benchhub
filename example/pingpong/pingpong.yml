@@ -14,12 +14,12 @@ workload:
 nodeAssignments:
   - selectors:
     - role: database # NOTE: custom yaml unmarshaler
-    assignment:
+    properties:
       name: srv
       role: database
   - selectors:
     - role: loader
-    assignment:
+    properties:
       name: cli
       role: loader
 pipelines:

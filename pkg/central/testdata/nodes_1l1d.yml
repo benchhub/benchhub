@@ -1,0 +1,9 @@
+# 1 loader 1 database
+- info:
+    id: "id-loader"
+    config:
+      role: "loader"
+- info:
+    id: "id-database"
+    config:
+      role: "database"

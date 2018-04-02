@@ -178,7 +178,7 @@ message NodeStatus {
     repeated NodeJobStatus jobs = 2 [(gogoproto.nullable) = false];
 }
 
-message NodeAssignedProperty {
+message NodeAssignedProperties {
     // uinque name in current job, used to refer assigned node in rest of the config
     string name = 1;
     // role in current job, could be different from role in configuration file
@@ -189,7 +189,7 @@ message NodeAssignedProperty {
 
 message NodeJobStatus {
     // properties assigned to node in NodeAssignmentSpec
-    NodeAssignedProperty assigned = 1 [(gogoproto.nullable) = false];
+    NodeAssignedProperties properties = 1 [(gogoproto.nullable) = false];
 
     // TODO: status of one job on a single node, it is different from global job status because it does not contains node
     NodeJobState state = 3;
@@ -264,7 +264,7 @@ message NodeAssignmentSpec {
     repeated NodeSelectorSpec selectors = 1 [(gogoproto.nullable) = false];
 
     // properties assigned to selected node, visiable to this job only
-    NodeAssignedProperty assignment = 2 [(gogoproto.nullable) = false];
+    NodeAssignedProperties properties = 2 [(gogoproto.nullable) = false];
 }
 
 message NodeSelectorSpec {
@@ -468,7 +468,7 @@ enum TaskStatus {
 //       <job scheduler>
 // ---------------------------
 message AssignedNode {
-    Node node = 1 [(gogoproto.nullable) = false];
+    NodeInfo node = 1 [(gogoproto.nullable) = false];
     NodeAssignmentSpec spec = 2 [(gogoproto.nullable) = false];
 }
 // ---------------------------

@@ -3,6 +3,7 @@ package nodeutil
 import (
 	"testing"
 
+	tu "github.com/dyweb/gommon/util/testutil"
 	"github.com/rs/xid"
 	asst "github.com/stretchr/testify/assert"
 
@@ -23,11 +24,13 @@ func TestGetNodeInfo(t *testing.T) {
 	assert := asst.New(t)
 	n, err := GetNodeInfo(pb.NodeConfig{}, ":6081")
 	assert.Nil(err)
-	t.Logf("start time %d", n.Property.StartTime)
-	t.Logf("boot  time %d", n.Property.BootTime)
-	t.Logf("cores %d", n.Capacity.Cores)
-	t.Logf("disk total %d MB", n.Capacity.DiskTotal)
-	t.Logf("disk free  %d MB", n.Capacity.DiskFree)
-	t.Logf("mem total  %d MB", n.Capacity.MemoryTotal)
-	t.Logf("mem free   %d MB", n.Capacity.MemoryFree)
+	if tu.Dump().B() {
+		t.Logf("start time %d", n.Property.StartTime)
+		t.Logf("boot  time %d", n.Property.BootTime)
+		t.Logf("cores %d", n.Capacity.Cores)
+		t.Logf("disk total %d MB", n.Capacity.DiskTotal)
+		t.Logf("disk free  %d MB", n.Capacity.DiskFree)
+		t.Logf("mem total  %d MB", n.Capacity.MemoryTotal)
+		t.Logf("mem free   %d MB", n.Capacity.MemoryFree)
+	}
 }

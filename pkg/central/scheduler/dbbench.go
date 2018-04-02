@@ -27,9 +27,11 @@ func (s *DbBench) AssignNode(nodes []pb.Node, specs []pb.NodeAssignmentSpec) ([]
 	if len(nodes) == 0 {
 		return nil, errors.New("0 nodes available")
 	}
+	// we can put multiple loader in one node, so it may not be an error
 	if len(nodes) < len(specs) {
 		s.log.Warnf("only %d nodes available but requires %d nodes", len(nodes), len(specs))
 	}
+
 	assignedNodes := make(map[string]*pb.AssignedNode, len(nodes))
 	assignedSpecs := make(map[int]string, len(specs))
 
@@ -39,22 +41,28 @@ func (s *DbBench) AssignNode(nodes []pb.Node, specs []pb.NodeAssignmentSpec) ([]
 	// FIXME: selector in spec is ignored
 NextSpec:
 	for i, spec := range specs {
-		s.log.Infof("spec %s role %s", spec.Name, spec.Role)
+		s.log.Infof("spec %s role %s", spec.Properties.Name, spec.Properties.Role)
+	NextNode:
 		for _, node := range nodes {
 			// skipp assigned node
-			if assignedNodes[node.Id] != nil {
-				continue
+			if assignedNodes[node.Info.Id] != nil {
+				continue NextNode
+			}
+			switch spec.Properties.Role {
+			case pb.Role_DATABASE:
+				// TODO: function to schedule database node
+			case pb.Role_LOADER:
+				// TODO: function to schedule loader node
 			}
 			// exact match of role or any
-			if spec.Role == node.Info.Role || node.Info.Role == pb.Role_ANY {
-				s.log.Infof("chose node %s for spec %s", node.Id, spec.Name)
-				// update node role TODO: should we update it in place?
-				node.Role = spec.Role
-				assignedNodes[node.Id] = &pb.AssignedNode{
-					Node: node,
+			if spec.Properties.Role == node.Info.Config.Role ||
+				node.Info.Config.Role == pb.Role_ANY {
+				s.log.Infof("chose node %s for spec %s", node.Info.Id, spec.Properties.Name)
+				assignedNodes[node.Info.Id] = &pb.AssignedNode{
+					Node: node.Info,
 					Spec: spec,
 				}
-				assignedSpecs[i] = node.Id
+				assignedSpecs[i] = node.Info.Id
 				continue NextSpec
 			}
 		}
@@ -67,7 +75,7 @@ NextSpec:
 	if len(assignedSpecs) != len(specs) {
 		for i, spec := range specs {
 			if assignedSpecs[i] == "" {
-				merr.Append(errors.Errorf("spec name %s role %s not assigned", spec.Name, spec.Role))
+				merr.Append(errors.Errorf("spec name %s role %s not assigned", spec.Properties.Name, spec.Properties.Role))
 			}
 		}
 		return nil, merr.ErrorOrNil()
