@@ -114,3 +114,19 @@ spec:
       restartPolicy: Never
   backoffLimit: 4
 ````
+
+## Scheduler
+
+- official
+  - https://github.com/kubernetes/community/blob/master/contributors/devel/scheduler.md
+- code
+- blog
+  - https://jvns.ca/blog/2017/07/27/how-does-the-kubernetes-scheduler-work/
+  - https://deis.com/blog/2016/schedulers-pt2-kubernetes/ Mothiki (colleague in PayPal) is the author
+
+````text
+pod = pop(queue)
+nodes = filter(nodes)
+nodes = order(nodes)
+node = pick_one(node)
+````
