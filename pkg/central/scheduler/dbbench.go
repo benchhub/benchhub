@@ -32,6 +32,7 @@ func (s *DbBench) AssignNode(nodes []pb.Node, specs []pb.NodeAssignmentSpec) ([]
 		s.log.Warnf("only %d nodes available but requires %d nodes", len(nodes), len(specs))
 	}
 
+	merr := errors.NewMultiErr()
 	assignedNodes := make(map[string]*pb.AssignedNode, len(nodes))
 	assignedSpecs := make(map[int]string, len(specs))
 
@@ -48,11 +49,17 @@ NextSpec:
 			if assignedNodes[node.Info.Id] != nil {
 				continue NextNode
 			}
+			var (
+				success pb.ScheduleSuccess
+				err error
+			)
 			switch spec.Properties.Role {
 			case pb.Role_DATABASE:
-				// TODO: function to schedule database node
+				success, err = s.scheduleDb(node, spec)
 			case pb.Role_LOADER:
-				// TODO: function to schedule loader node
+				success, err = s.scheduleLoader(node, spec)
+			default:
+				merr.Append(errors.Errorf("invalid spec unknown role %s for %s", spec.Properties.Role, spec.Properties.Name))
 			}
 			// exact match of role or any
 			if spec.Properties.Role == node.Info.Config.Role ||
@@ -71,7 +78,6 @@ NextSpec:
 	//s.log.Info("assign finished")
 
 	// TODO: allow binpack loader into one node
-	merr := errors.NewMultiErr()
 	if len(assignedSpecs) != len(specs) {
 		for i, spec := range specs {
 			if assignedSpecs[i] == "" {
@@ -91,4 +97,29 @@ NextSpec:
 		res = append(res, *assignedNodes[assignedSpecs[i]])
 	}
 	return res, merr.ErrorOrNil()
+}
+
+func (s *DbBench) scheduleDb(node pb.Node, spec pb.NodeAssignmentSpec) (pb.ScheduleSuccess, error) {
+	if spec.Properties.Role != pb.Role_DATABASE {
+		return pb.ScheduleSuccess_UNKNOWN_SCHEDULE_SUCCESS,
+			errors.Errorf("incompatible role %s passed for database", spec.Properties.Role)
+	}
+	if node.Status.State == pb.NodeState_NODE_IDLE {
+		if node.Info.Config.Role == pb.Role_DATABASE {
+			return pb.ScheduleSuccess_IDLE_EXACT_ROLE_MATCH, nil
+		}
+		if node.Info.Config.Role == pb.Role_ANY {
+			return pb.ScheduleSuccess_IDLE_ANY_ROLE_MATCH, nil
+		}
+		return pb.ScheduleSuccess_UNKNOWN_SCHEDULE_SUCCESS,
+			errors.Wrap(&Error{Code: pb.ScheduleFail_IDLE_ROLE_NO_MATCH}, "failed to schedule db")
+	}
+	// TODO: check if this node is already running database
+	return pb.ScheduleSuccess_UNKNOWN_SCHEDULE_SUCCESS, errors.New("not implemented, schedule on non idle node")
+}
+
+func (s *DbBench) scheduleLoader(node pb.Node, spec pb.NodeAssignmentSpec) (pb.ScheduleSuccess, error) {
+	if spec.Properties.Role != pb.Role_LOADER {
+		return errors.Errorf("in compatible role %s passed to dbBest", spec.Properties.Role)
+	}
 }

@@ -471,6 +471,19 @@ message AssignedNode {
     NodeInfo node = 1 [(gogoproto.nullable) = false];
     NodeAssignmentSpec spec = 2 [(gogoproto.nullable) = false];
 }
+
+enum ScheduleSuccess {
+    UNKNOWN_SCHEDULE_SUCCESS = 0;
+    IDLE_EXACT_ROLE_MATCH = 1;
+    IDLE_ANY_ROLE_MATCH = 2;
+}
+
+enum ScheduleFail {
+    UNKNOWN_SCHEDULE_FAIL = 0;
+    IDLE_ROLE_NO_MATCH = 1;
+    BUSY_DATABASE = 2;
+}
+
 // ---------------------------
 //       </job scheduler>
 // ---------------------------

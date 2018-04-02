@@ -1,4 +1,5 @@
-# 1 loader 1 database
+# nodes snapshot 1 loader 1 database
+# TODO: might dump from real data, it's much easier than write by hand and sync with proto change
 - info:
     id: "id-loader"
     config:
