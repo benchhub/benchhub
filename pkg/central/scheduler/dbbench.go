@@ -51,7 +51,7 @@ NextSpec:
 			}
 			var (
 				success pb.ScheduleSuccess
-				err error
+				err     error
 			)
 			switch spec.Properties.Role {
 			case pb.Role_DATABASE:
@@ -97,6 +97,11 @@ NextSpec:
 		res = append(res, *assignedNodes[assignedSpecs[i]])
 	}
 	return res, merr.ErrorOrNil()
+}
+
+// TODO: reason for why nodes are filtered out
+func (s *DbBench) filterDb(nodes []pb.Node) ([]pb.Node, error) {
+
 }
 
 func (s *DbBench) scheduleDb(node pb.Node, spec pb.NodeAssignmentSpec) (pb.ScheduleSuccess, error) {

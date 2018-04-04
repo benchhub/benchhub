@@ -117,6 +117,7 @@ spec:
 
 ## Scheduler
 
+- https://github.com/benchhub/benchhub/issues/49
 - official
   - https://github.com/kubernetes/community/blob/master/contributors/devel/scheduler.md
 - code
@@ -129,4 +130,38 @@ pod = pop(queue)
 nodes = filter(nodes)
 nodes = order(nodes)
 node = pick_one(node)
+````
+
+interface
+
+````go
+// scheduler/algorithm/scheduler_interface.go
+type ScheduleAlgorithm interface {
+  // Schedule tries to schedule the given pod to one of the nodes in the node list.
+  // If it succeeds, it will return the name of the node.
+  // If it fails, it will return a FitError error with reasons.
+  Schedule(*v1.Pod, NodeLister) (selectedMachine string, err error)
+}
+
+// scheduler/algorithm/types.go
+type PredicateFailureReason interface {
+  GetReason() string
+}
+
+// FitPredicate is a function that indicates if a pod fits into an existing node.
+// The failure information is given by the error.
+type FitPredicate func(pod *v1.Pod, meta PredicateMetadata, nodeInfo *schedulercache.NodeInfo) (bool, []PredicateFailureReason, error)
+
+// scheduler/algorithm/predicates/error.go
+// PredicateFailureError describes a failure error of predicate.
+type PredicateFailureError struct {
+  PredicateName string
+  PredicateDesc string
+}
+````
+
+implementation generic + mock
+
+````go
+// scheduler/core/generic_scheduler.go
 ````
