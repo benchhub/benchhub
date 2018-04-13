@@ -1,5 +1,0 @@
-- name: srv
-  # NOTE: custom yaml unmarshaler
-  role: database
-- name: cli
-  role: loader

@@ -12,11 +12,16 @@ workload:
   databaseVersion: "0.0.1"
 # NOTE: extra tag is specified in proto file using (gogoproto.moretags) = "yaml:\"nodeAssignments\""
 nodeAssignments:
-  - name: srv
-    # NOTE: custom yaml unmarshaler
-    role: database
-  - name: cli
-    role: loader
+  - selectors:
+    - role: database # NOTE: custom yaml unmarshaler
+    properties:
+      name: srv
+      role: database
+  - selectors:
+    - role: loader
+    properties:
+      name: cli
+      role: loader
 pipelines:
   - name: download
     stages:

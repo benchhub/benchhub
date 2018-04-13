@@ -4,7 +4,7 @@ import (
 	"github.com/rs/xid"
 )
 
-var uid = NewUID()
+var uid string
 
 // generate unique id
 // https://github.com/benchhub/benchhub/issues/17
@@ -18,4 +18,8 @@ func NewUID() string {
 	id := xid.New()
 	//log.Info(id.String(), id.Pid(), id.Machine(), id.Time())
 	return id.String()
+}
+
+func init() {
+	uid = NewUID()
 }

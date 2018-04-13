@@ -3,6 +3,8 @@ language: go
 sudo: true
 git:
   depth: 3
+env:
+  - DUMP=true # gommon/util/testutil.Dump
 
 go:
   - 1.9.x

@@ -1,0 +1,10 @@
+- selectors:
+  - role: database
+  properties:
+    name: srv
+    role: database
+- selectors:
+  - role: loader
+  properties:
+    name: cli
+    role: loader

@@ -1,0 +1,9 @@
+# nodes snapshot 2 any
+- info:
+    id: "id-loader"
+    config:
+      role: "any"
+- info:
+    id: "id-database"
+    config:
+      role: "any"
