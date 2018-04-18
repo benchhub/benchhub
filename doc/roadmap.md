@@ -1,30 +1,19 @@
 # Roadmap
 
-## 0.1
+Previous deprecated roadmap in [UCSC Winter 2018](legacy/roadmap-winter18.md)
 
-- use push style without retry, the whole job won't work if their is a single call goes wrong
-  - central call agent directly instead of agent pull from central or watch store
-  - agent call central directly after a task is finished
-- use state machine to keep an updated view in memory for central and agent
-- use pub/sub to record updates into store
+## 0.0.3
 
-## 0.2
+Structure BenchHub itself like a database
+ 
+- state of the cluster can be considered as schema stored in catalog
+- checking and populating benchmark spec is like validating and expanding SQL statement
+- scheduling nodes is like data placement and cost estimation
+- executing benchmark spec is like execute SQL statement (except most benchmark runs much longer)
+- the dependencies between stages among multiple nodes is like 2PC
+- benchhub can also be seen as a proxy for meta and time series store
 
-- use push + pull, push is to notify event right away, pull (during heartbeat) will tell the state eventually
+## 0.0.2
 
-## 0.3
-
-- works with other scheduler, i.e. Mesos, Kubernetes so it can run along side existing infrastructure
-
-## 0.4
-
-- github integration
-
-## 0.5
-
-- multi tenant
-- cost estimator
-
-## 0.6
-
-- benchboard, non database benchmark, i.e. go's benchmark, jmh etc.
+- old client server style design, most components are finished, but are not well linked together
+- the schema for store is still quite a mess
