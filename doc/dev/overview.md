@@ -35,15 +35,15 @@ NOTE: it may not reflect current package layout
 - lib
   - benchmark, wrapper/implementation for benchmark suite
   - monitor, use `/proc` to monitor host, use docker client to monitor container (might just use cgroup)
-  - waitforit
+  - waitforit, wait until a tcp port or http endpoint is ready
 - pkg/bhpb types defined using protobuf
 - pkg/central central only logic
 - pkg/agent agent only logic
 - pkg/scheduler scheduler
 - pkg/estimator estimator
-- pkg/planner 
-- pkg/executor 
-- pkg/runner spawn process and container
+- pkg/planner expand job spec to plan
+- pkg/executor execute plan locally or in remote
+- pkg/runner spawn process and container, maybe vm in the future
 
 ## Limitations
 
