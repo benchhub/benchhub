@@ -14,6 +14,8 @@
 
 BenchHub is a service for running and storing benchmark result of distributed databases in database.
 
+- status: Under major rewrite
+
 ## Usage
 
 TODO: not in a usable state
