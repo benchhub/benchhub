@@ -1,0 +1,48 @@
+syntax = "proto3";
+package bhpb;
+
+option go_package = "bhpb";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "common.proto";
+
+option (gogoproto.sizer_all) = true;
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+option (gogoproto.goproto_getters_all) = false;
+
+message Spec {
+    int64 id = 1;
+    string payload = 2;
+    int64 env_type_id = 3;
+    // TODO: use time struct?
+    int64 create_time = 4;
+}
+
+message Job {
+    int64 id = 1;
+    int64 spec_id = 2;
+    int64 env_id = 3;
+    int64 start_time = 4;
+    int64 finish_time = 5;
+}
+
+message GoBenchmarkResult {
+    int64 package_id = 1;
+    string package_name = 2;
+    int64 case_id = 3;
+    string case_name = 4;
+    int64 duration = 5;
+    int64 ns_per_op = 6;
+    int64 alloc_per_op = 7;
+    int64 bytes_allocated_per_op = 8;
+}
+
+message XephonBResult {
+    // TODO: not sure about what to put for xephon yet ...
+}
+
+// Test if we can have multiple proto files of one package within one folder, yes we can ...
+message DummyUseCommon {
+    bhpb.DummyCommon common = 1;
+}

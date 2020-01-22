@@ -3,8 +3,8 @@ BUILD_COMMIT = $(shell git rev-parse HEAD)
 BUILD_TIME = $(shell date +%Y-%m-%dT%H:%M:%S%z)
 CURRENT_USER = $(USER)
 FLAGS = -X main.version=$(VERSION) -X main.commit=$(BUILD_COMMIT) -X main.buildTime=$(BUILD_TIME) -X main.buildUser=$(CURRENT_USER)
-PKGST = ./cmd
-PKGS = ./cmd/...
+PKGST = ./cmd ./pkg
+PKGS = ./cmd/... ./pkg...
 
 .PHONY: install
 install:
