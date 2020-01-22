@@ -34,16 +34,6 @@ message Job {
     int64 finish_time = 5;
 }
 
-message GoBenchmarkResult {
-    int64 package_id = 1;
-    string package_name = 2;
-    int64 case_id = 3;
-    string case_name = 4;
-    int64 duration = 5;
-    int64 ns_per_op = 6;
-    int64 alloc_per_op = 7;
-    int64 bytes_allocated_per_op = 8;
-}
 
 message XephonBResult {
     // TODO: not sure about what to put for xephon yet ...

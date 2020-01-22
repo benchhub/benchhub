@@ -23,15 +23,44 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+type BenchmarkType int32
+
+const (
+	BenchmarkType_BENCHMARKTYPE_UNKNOWN BenchmarkType = 0
+	BenchmarkType_BENCHMARKTYPE_GO      BenchmarkType = 1
+	BenchmarkType_BENCHMARKTYPE_XEPHONB BenchmarkType = 2
+)
+
+var BenchmarkType_name = map[int32]string{
+	0: "BENCHMARKTYPE_UNKNOWN",
+	1: "BENCHMARKTYPE_GO",
+	2: "BENCHMARKTYPE_XEPHONB",
+}
+
+var BenchmarkType_value = map[string]int32{
+	"BENCHMARKTYPE_UNKNOWN": 0,
+	"BENCHMARKTYPE_GO":      1,
+	"BENCHMARKTYPE_XEPHONB": 2,
+}
+
+func (x BenchmarkType) String() string {
+	return proto.EnumName(BenchmarkType_name, int32(x))
+}
+
+func (BenchmarkType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_3b5ea8fe65782bcc, []int{0}
+}
+
 type Spec struct {
-	Id        int64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Payload   string `protobuf:"bytes,2,opt,name=payload,proto3" json:"payload,omitempty"`
-	EnvTypeId int64  `protobuf:"varint,3,opt,name=env_type_id,json=envTypeId,proto3" json:"env_type_id,omitempty"`
-	// TODO: use time struct?
-	CreateTime           int64    `protobuf:"varint,4,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Id                   int64         `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Hash                 string        `protobuf:"bytes,2,opt,name=hash,proto3" json:"hash,omitempty"`
+	Payload              string        `protobuf:"bytes,3,opt,name=payload,proto3" json:"payload,omitempty"`
+	EnvTypeId            int64         `protobuf:"varint,4,opt,name=env_type_id,json=envTypeId,proto3" json:"env_type_id,omitempty"`
+	BenchmarkType        BenchmarkType `protobuf:"varint,5,opt,name=benchmark_type,json=benchmarkType,proto3,enum=bhpb.BenchmarkType" json:"benchmark_type,omitempty"`
+	CreateTime           int64         `protobuf:"varint,6,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
 }
 
 func (m *Spec) Reset()         { *m = Spec{} }
@@ -111,53 +140,6 @@ func (m *Job) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Job proto.InternalMessageInfo
 
-type GoBenchmarkResult struct {
-	PackageId            int64    `protobuf:"varint,1,opt,name=package_id,json=packageId,proto3" json:"package_id,omitempty"`
-	PackageName          string   `protobuf:"bytes,2,opt,name=package_name,json=packageName,proto3" json:"package_name,omitempty"`
-	CaseId               int64    `protobuf:"varint,3,opt,name=case_id,json=caseId,proto3" json:"case_id,omitempty"`
-	CaseName             string   `protobuf:"bytes,4,opt,name=case_name,json=caseName,proto3" json:"case_name,omitempty"`
-	Duration             int64    `protobuf:"varint,5,opt,name=duration,proto3" json:"duration,omitempty"`
-	NsPerOp              int64    `protobuf:"varint,6,opt,name=ns_per_op,json=nsPerOp,proto3" json:"ns_per_op,omitempty"`
-	AllocPerOp           int64    `protobuf:"varint,7,opt,name=alloc_per_op,json=allocPerOp,proto3" json:"alloc_per_op,omitempty"`
-	BytesAllocatedPerOp  int64    `protobuf:"varint,8,opt,name=bytes_allocated_per_op,json=bytesAllocatedPerOp,proto3" json:"bytes_allocated_per_op,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *GoBenchmarkResult) Reset()         { *m = GoBenchmarkResult{} }
-func (m *GoBenchmarkResult) String() string { return proto.CompactTextString(m) }
-func (*GoBenchmarkResult) ProtoMessage()    {}
-func (*GoBenchmarkResult) Descriptor() ([]byte, []int) {
-	return fileDescriptor_3b5ea8fe65782bcc, []int{2}
-}
-func (m *GoBenchmarkResult) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *GoBenchmarkResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_GoBenchmarkResult.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *GoBenchmarkResult) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GoBenchmarkResult.Merge(m, src)
-}
-func (m *GoBenchmarkResult) XXX_Size() int {
-	return m.Size()
-}
-func (m *GoBenchmarkResult) XXX_DiscardUnknown() {
-	xxx_messageInfo_GoBenchmarkResult.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_GoBenchmarkResult proto.InternalMessageInfo
-
 type XephonBResult struct {
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -168,7 +150,7 @@ func (m *XephonBResult) Reset()         { *m = XephonBResult{} }
 func (m *XephonBResult) String() string { return proto.CompactTextString(m) }
 func (*XephonBResult) ProtoMessage()    {}
 func (*XephonBResult) Descriptor() ([]byte, []int) {
-	return fileDescriptor_3b5ea8fe65782bcc, []int{3}
+	return fileDescriptor_3b5ea8fe65782bcc, []int{2}
 }
 func (m *XephonBResult) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -197,6 +179,7 @@ func (m *XephonBResult) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_XephonBResult proto.InternalMessageInfo
 
+// Test if we can have multiple proto files of one package within one folder, yes we can ...
 type DummyUseCommon struct {
 	Common               *DummyCommon `protobuf:"bytes,1,opt,name=common,proto3" json:"common,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
@@ -208,7 +191,7 @@ func (m *DummyUseCommon) Reset()         { *m = DummyUseCommon{} }
 func (m *DummyUseCommon) String() string { return proto.CompactTextString(m) }
 func (*DummyUseCommon) ProtoMessage()    {}
 func (*DummyUseCommon) Descriptor() ([]byte, []int) {
-	return fileDescriptor_3b5ea8fe65782bcc, []int{4}
+	return fileDescriptor_3b5ea8fe65782bcc, []int{3}
 }
 func (m *DummyUseCommon) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -238,9 +221,9 @@ func (m *DummyUseCommon) XXX_DiscardUnknown() {
 var xxx_messageInfo_DummyUseCommon proto.InternalMessageInfo
 
 func init() {
+	proto.RegisterEnum("bhpb.BenchmarkType", BenchmarkType_name, BenchmarkType_value)
 	proto.RegisterType((*Spec)(nil), "bhpb.Spec")
 	proto.RegisterType((*Job)(nil), "bhpb.Job")
-	proto.RegisterType((*GoBenchmarkResult)(nil), "bhpb.GoBenchmarkResult")
 	proto.RegisterType((*XephonBResult)(nil), "bhpb.XephonBResult")
 	proto.RegisterType((*DummyUseCommon)(nil), "bhpb.DummyUseCommon")
 }
@@ -248,36 +231,34 @@ func init() {
 func init() { proto.RegisterFile("meta.proto", fileDescriptor_3b5ea8fe65782bcc) }
 
 var fileDescriptor_3b5ea8fe65782bcc = []byte{
-	// 460 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x64, 0x52, 0x4d, 0x6e, 0xd3, 0x40,
-	0x14, 0xc6, 0x49, 0xea, 0xc4, 0x2f, 0xa1, 0xa8, 0x83, 0x28, 0x56, 0x10, 0x21, 0x64, 0x55, 0x16,
-	0xa4, 0x12, 0x5d, 0xb2, 0x22, 0x20, 0xa1, 0xb0, 0x00, 0x14, 0x8a, 0x84, 0xd8, 0x58, 0x63, 0xcf,
-	0x6b, 0x6c, 0x35, 0xf3, 0x83, 0x3d, 0x8e, 0xe4, 0x03, 0x70, 0x09, 0x4e, 0xd4, 0x25, 0x47, 0x80,
-	0x9c, 0x04, 0xcd, 0x1b, 0xbb, 0xaa, 0xc4, 0x6e, 0xbe, 0xbf, 0x79, 0x3f, 0x7a, 0x00, 0x12, 0x2d,
-	0x5f, 0x9a, 0x52, 0x5b, 0xcd, 0x06, 0x69, 0x6e, 0xd2, 0xe9, 0xcb, 0x6d, 0x61, 0xf3, 0x3a, 0x5d,
-	0x66, 0x5a, 0x9e, 0x6f, 0xf5, 0x56, 0x9f, 0x93, 0x98, 0xd6, 0x57, 0x84, 0x08, 0xd0, 0xcb, 0x87,
-	0xa6, 0x93, 0x4c, 0x4b, 0xa9, 0x95, 0x47, 0x8b, 0x1f, 0x30, 0xf8, 0x62, 0x30, 0x63, 0xc7, 0xd0,
-	0x2b, 0x44, 0x1c, 0xcc, 0x83, 0xb3, 0xfe, 0xa6, 0x57, 0x08, 0x16, 0xc3, 0xd0, 0xf0, 0x66, 0xa7,
-	0xb9, 0x88, 0x7b, 0xf3, 0xe0, 0x2c, 0xda, 0x74, 0x90, 0xcd, 0x60, 0x8c, 0x6a, 0x9f, 0xd8, 0xc6,
-	0x60, 0x52, 0x88, 0xb8, 0x4f, 0x91, 0x08, 0xd5, 0xfe, 0xb2, 0x31, 0xb8, 0x16, 0xec, 0x19, 0x8c,
-	0xb3, 0x12, 0xb9, 0xc5, 0xc4, 0x16, 0x12, 0xe3, 0x01, 0xe9, 0xe0, 0xa9, 0xcb, 0x42, 0xe2, 0xe2,
-	0x67, 0x00, 0xfd, 0x0f, 0x3a, 0xfd, 0xaf, 0xe4, 0x63, 0x18, 0x56, 0x06, 0x33, 0xf7, 0x69, 0x8f,
-	0xc8, 0xd0, 0xc1, 0xb5, 0x60, 0x8f, 0x20, 0x74, 0x15, 0x6f, 0x8b, 0x1d, 0xa1, 0xda, 0xaf, 0x05,
-	0x7b, 0x0a, 0x50, 0x59, 0x5e, 0xda, 0xbb, 0x75, 0x22, 0x62, 0x5c, 0x19, 0xd7, 0xc7, 0x55, 0xa1,
-	0x8a, 0x2a, 0xf7, 0xfa, 0x91, 0xef, 0xc3, 0x53, 0xd4, 0xc7, 0xaf, 0x1e, 0x9c, 0xbc, 0xd7, 0x2b,
-	0x54, 0x59, 0x2e, 0x79, 0x79, 0xbd, 0xc1, 0xaa, 0xde, 0x59, 0xf7, 0xab, 0xe1, 0xd9, 0x35, 0xdf,
-	0xd2, 0x74, 0xbe, 0xbb, 0xa8, 0x65, 0xd6, 0x82, 0x3d, 0x87, 0x49, 0x27, 0x2b, 0x2e, 0xb1, 0x5d,
-	0xce, 0xb8, 0xe5, 0x3e, 0x72, 0x89, 0x6e, 0x8e, 0x8c, 0x57, 0x77, 0x96, 0x13, 0x3a, 0xb8, 0x16,
-	0xec, 0x09, 0x44, 0x24, 0x50, 0x70, 0x40, 0xc1, 0x91, 0x23, 0x28, 0x35, 0x85, 0x91, 0xa8, 0x4b,
-	0x6e, 0x0b, 0xad, 0xda, 0x5e, 0x6f, 0x31, 0x9b, 0x42, 0xa4, 0xaa, 0xc4, 0x60, 0x99, 0x68, 0x13,
-	0x87, 0x24, 0x0e, 0x55, 0xf5, 0x19, 0xcb, 0x4f, 0x86, 0xcd, 0x61, 0xc2, 0x77, 0x3b, 0x9d, 0x75,
-	0xf2, 0xd0, 0xcf, 0x49, 0x9c, 0x77, 0x5c, 0xc0, 0x69, 0xda, 0x58, 0xac, 0x12, 0xe2, 0xb8, 0x45,
-	0xd1, 0x79, 0x47, 0xe4, 0x7d, 0x48, 0xea, 0x9b, 0x4e, 0xa4, 0xd0, 0xe2, 0x01, 0xdc, 0xff, 0x86,
-	0x26, 0xd7, 0x6a, 0xe5, 0xf7, 0xb2, 0x78, 0x0d, 0xc7, 0xef, 0x6a, 0x29, 0x9b, 0xaf, 0x15, 0xbe,
-	0xa5, 0x03, 0x62, 0x2f, 0x20, 0xf4, 0xa7, 0x44, 0x5b, 0x1a, 0xbf, 0x3a, 0x59, 0xba, 0x73, 0x5c,
-	0x92, 0xcb, 0x5b, 0x36, 0xad, 0x61, 0x75, 0x7a, 0xf3, 0x77, 0x76, 0xef, 0xe6, 0x30, 0x0b, 0x7e,
-	0x1f, 0x66, 0xc1, 0x9f, 0xc3, 0x2c, 0xf8, 0x4e, 0xa7, 0x9b, 0x86, 0x74, 0x84, 0x17, 0xff, 0x02,
-	0x00, 0x00, 0xff, 0xff, 0xb8, 0xd5, 0x75, 0xef, 0xd5, 0x02, 0x00, 0x00,
+	// 426 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x64, 0x52, 0xdd, 0x6e, 0xd3, 0x30,
+	0x14, 0x9e, 0xd3, 0x36, 0xd3, 0x4e, 0x69, 0x29, 0x86, 0x41, 0x98, 0x44, 0xa8, 0x7a, 0x55, 0x90,
+	0xe8, 0xa4, 0x71, 0x07, 0x57, 0x64, 0x54, 0xac, 0x4c, 0xa4, 0x53, 0xe8, 0xc4, 0x80, 0x8b, 0x2a,
+	0x3f, 0x67, 0x8d, 0xc5, 0x1c, 0x5b, 0x8d, 0x5b, 0x29, 0x0f, 0xc0, 0x83, 0x71, 0xb7, 0x4b, 0x1e,
+	0x01, 0xfa, 0x24, 0x28, 0xc7, 0x9b, 0xc4, 0xd4, 0x3b, 0x7f, 0x3f, 0xb6, 0xbf, 0xef, 0xe8, 0x00,
+	0x48, 0x34, 0xf1, 0x48, 0x2f, 0x95, 0x51, 0xbc, 0x99, 0xe4, 0x3a, 0x39, 0x78, 0xb5, 0x10, 0x26,
+	0x5f, 0x25, 0xa3, 0x54, 0xc9, 0xc3, 0x85, 0x5a, 0xa8, 0x43, 0x12, 0x93, 0xd5, 0x25, 0x21, 0x02,
+	0x74, 0xb2, 0x97, 0x0e, 0xee, 0xa5, 0x4a, 0x4a, 0x55, 0x58, 0x34, 0xf8, 0xc5, 0xa0, 0xf9, 0x59,
+	0x63, 0xca, 0xbb, 0xe0, 0x88, 0xcc, 0x63, 0x7d, 0x36, 0x6c, 0x44, 0x8e, 0xc8, 0x38, 0x87, 0x66,
+	0x1e, 0x97, 0xb9, 0xe7, 0xf4, 0xd9, 0x70, 0x2f, 0xa2, 0x33, 0xf7, 0x60, 0x57, 0xc7, 0xd5, 0x95,
+	0x8a, 0x33, 0xaf, 0x41, 0xf4, 0x2d, 0xe4, 0x3e, 0xb4, 0xb1, 0x58, 0xcf, 0x4d, 0xa5, 0x71, 0x2e,
+	0x32, 0xaf, 0x49, 0xcf, 0xec, 0x61, 0xb1, 0x9e, 0x55, 0x1a, 0x27, 0x19, 0x7f, 0x03, 0xdd, 0x04,
+	0x8b, 0x34, 0x97, 0xf1, 0xf2, 0x07, 0xb9, 0xbc, 0x56, 0x9f, 0x0d, 0xbb, 0x47, 0x0f, 0x47, 0x75,
+	0x85, 0x51, 0x70, 0xab, 0xd5, 0xf6, 0xa8, 0x93, 0xfc, 0x0f, 0xf9, 0x73, 0x68, 0xa7, 0x4b, 0x8c,
+	0x0d, 0xce, 0x8d, 0x90, 0xe8, 0xb9, 0xf4, 0x36, 0x58, 0x6a, 0x26, 0x24, 0x0e, 0x7e, 0x32, 0x68,
+	0x7c, 0x54, 0xc9, 0x56, 0x85, 0x27, 0xb0, 0x5b, 0x6a, 0x4c, 0xeb, 0x40, 0x0e, 0x91, 0x6e, 0x0d,
+	0x27, 0x19, 0xdf, 0x07, 0xb7, 0x4e, 0x2b, 0x6c, 0x8d, 0x46, 0xd4, 0xc2, 0x62, 0x3d, 0xc9, 0xf8,
+	0x33, 0x80, 0xd2, 0xc4, 0x4b, 0x63, 0xff, 0xb9, 0xe9, 0x40, 0x4c, 0xfd, 0x4d, 0x9d, 0xe3, 0x52,
+	0x14, 0xa2, 0xcc, 0xad, 0xde, 0xb2, 0x39, 0x2c, 0x45, 0x39, 0xee, 0x43, 0xe7, 0x02, 0x75, 0xae,
+	0x8a, 0x20, 0xc2, 0x72, 0x75, 0x65, 0x06, 0x6f, 0xa1, 0xfb, 0x7e, 0x25, 0x65, 0x75, 0x5e, 0xe2,
+	0x31, 0x0d, 0x9d, 0xbf, 0x00, 0xd7, 0x8e, 0x9f, 0x62, 0xb6, 0x8f, 0x1e, 0xd8, 0xfe, 0xe4, 0xb2,
+	0x96, 0xe8, 0xc6, 0xf0, 0xf2, 0x3b, 0x74, 0xee, 0x8c, 0x85, 0x3f, 0x85, 0xfd, 0x60, 0x1c, 0x1e,
+	0x9f, 0x7c, 0x7a, 0x17, 0x9d, 0xce, 0xbe, 0x9e, 0x8d, 0xe7, 0xe7, 0xe1, 0x69, 0x38, 0xfd, 0x12,
+	0xf6, 0x76, 0xf8, 0x23, 0xe8, 0xdd, 0x95, 0x3e, 0x4c, 0x7b, 0x6c, 0xfb, 0xc2, 0xc5, 0xf8, 0xec,
+	0x64, 0x1a, 0x06, 0x3d, 0x27, 0x78, 0x7c, 0xfd, 0xd7, 0xdf, 0xb9, 0xde, 0xf8, 0xec, 0xf7, 0xc6,
+	0x67, 0x7f, 0x36, 0x3e, 0xfb, 0x46, 0xbb, 0x94, 0xb8, 0xb4, 0x15, 0xaf, 0xff, 0x05, 0x00, 0x00,
+	0xff, 0xff, 0x6d, 0xbb, 0x38, 0x1b, 0x66, 0x02, 0x00, 0x00,
 }
 
 func (m *Spec) Marshal() (dAtA []byte, err error) {
@@ -307,17 +288,29 @@ func (m *Spec) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	if m.CreateTime != 0 {
 		i = encodeVarintMeta(dAtA, i, uint64(m.CreateTime))
 		i--
-		dAtA[i] = 0x20
+		dAtA[i] = 0x30
+	}
+	if m.BenchmarkType != 0 {
+		i = encodeVarintMeta(dAtA, i, uint64(m.BenchmarkType))
+		i--
+		dAtA[i] = 0x28
 	}
 	if m.EnvTypeId != 0 {
 		i = encodeVarintMeta(dAtA, i, uint64(m.EnvTypeId))
 		i--
-		dAtA[i] = 0x18
+		dAtA[i] = 0x20
 	}
 	if len(m.Payload) > 0 {
 		i -= len(m.Payload)
 		copy(dAtA[i:], m.Payload)
 		i = encodeVarintMeta(dAtA, i, uint64(len(m.Payload)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Hash) > 0 {
+		i -= len(m.Hash)
+		copy(dAtA[i:], m.Hash)
+		i = encodeVarintMeta(dAtA, i, uint64(len(m.Hash)))
 		i--
 		dAtA[i] = 0x12
 	}
@@ -375,77 +368,6 @@ func (m *Job) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	}
 	if m.Id != 0 {
 		i = encodeVarintMeta(dAtA, i, uint64(m.Id))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *GoBenchmarkResult) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *GoBenchmarkResult) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *GoBenchmarkResult) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.BytesAllocatedPerOp != 0 {
-		i = encodeVarintMeta(dAtA, i, uint64(m.BytesAllocatedPerOp))
-		i--
-		dAtA[i] = 0x40
-	}
-	if m.AllocPerOp != 0 {
-		i = encodeVarintMeta(dAtA, i, uint64(m.AllocPerOp))
-		i--
-		dAtA[i] = 0x38
-	}
-	if m.NsPerOp != 0 {
-		i = encodeVarintMeta(dAtA, i, uint64(m.NsPerOp))
-		i--
-		dAtA[i] = 0x30
-	}
-	if m.Duration != 0 {
-		i = encodeVarintMeta(dAtA, i, uint64(m.Duration))
-		i--
-		dAtA[i] = 0x28
-	}
-	if len(m.CaseName) > 0 {
-		i -= len(m.CaseName)
-		copy(dAtA[i:], m.CaseName)
-		i = encodeVarintMeta(dAtA, i, uint64(len(m.CaseName)))
-		i--
-		dAtA[i] = 0x22
-	}
-	if m.CaseId != 0 {
-		i = encodeVarintMeta(dAtA, i, uint64(m.CaseId))
-		i--
-		dAtA[i] = 0x18
-	}
-	if len(m.PackageName) > 0 {
-		i -= len(m.PackageName)
-		copy(dAtA[i:], m.PackageName)
-		i = encodeVarintMeta(dAtA, i, uint64(len(m.PackageName)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if m.PackageId != 0 {
-		i = encodeVarintMeta(dAtA, i, uint64(m.PackageId))
 		i--
 		dAtA[i] = 0x8
 	}
@@ -538,12 +460,19 @@ func (m *Spec) Size() (n int) {
 	if m.Id != 0 {
 		n += 1 + sovMeta(uint64(m.Id))
 	}
+	l = len(m.Hash)
+	if l > 0 {
+		n += 1 + l + sovMeta(uint64(l))
+	}
 	l = len(m.Payload)
 	if l > 0 {
 		n += 1 + l + sovMeta(uint64(l))
 	}
 	if m.EnvTypeId != 0 {
 		n += 1 + sovMeta(uint64(m.EnvTypeId))
+	}
+	if m.BenchmarkType != 0 {
+		n += 1 + sovMeta(uint64(m.BenchmarkType))
 	}
 	if m.CreateTime != 0 {
 		n += 1 + sovMeta(uint64(m.CreateTime))
@@ -574,44 +503,6 @@ func (m *Job) Size() (n int) {
 	}
 	if m.FinishTime != 0 {
 		n += 1 + sovMeta(uint64(m.FinishTime))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *GoBenchmarkResult) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.PackageId != 0 {
-		n += 1 + sovMeta(uint64(m.PackageId))
-	}
-	l = len(m.PackageName)
-	if l > 0 {
-		n += 1 + l + sovMeta(uint64(l))
-	}
-	if m.CaseId != 0 {
-		n += 1 + sovMeta(uint64(m.CaseId))
-	}
-	l = len(m.CaseName)
-	if l > 0 {
-		n += 1 + l + sovMeta(uint64(l))
-	}
-	if m.Duration != 0 {
-		n += 1 + sovMeta(uint64(m.Duration))
-	}
-	if m.NsPerOp != 0 {
-		n += 1 + sovMeta(uint64(m.NsPerOp))
-	}
-	if m.AllocPerOp != 0 {
-		n += 1 + sovMeta(uint64(m.AllocPerOp))
-	}
-	if m.BytesAllocatedPerOp != 0 {
-		n += 1 + sovMeta(uint64(m.BytesAllocatedPerOp))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -703,6 +594,38 @@ func (m *Spec) Unmarshal(dAtA []byte) error {
 			}
 		case 2:
 			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Hash", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMeta
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMeta
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMeta
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Hash = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Payload", wireType)
 			}
 			var stringLen uint64
@@ -733,7 +656,7 @@ func (m *Spec) Unmarshal(dAtA []byte) error {
 			}
 			m.Payload = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 3:
+		case 4:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field EnvTypeId", wireType)
 			}
@@ -752,7 +675,26 @@ func (m *Spec) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 4:
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field BenchmarkType", wireType)
+			}
+			m.BenchmarkType = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMeta
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.BenchmarkType |= BenchmarkType(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CreateTime", wireType)
 			}
@@ -916,238 +858,6 @@ func (m *Job) Unmarshal(dAtA []byte) error {
 				b := dAtA[iNdEx]
 				iNdEx++
 				m.FinishTime |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipMeta(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthMeta
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthMeta
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *GoBenchmarkResult) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowMeta
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: GoBenchmarkResult: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: GoBenchmarkResult: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PackageId", wireType)
-			}
-			m.PackageId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMeta
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PackageId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PackageName", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMeta
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthMeta
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthMeta
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.PackageName = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field CaseId", wireType)
-			}
-			m.CaseId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMeta
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.CaseId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field CaseName", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMeta
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthMeta
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthMeta
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.CaseName = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Duration", wireType)
-			}
-			m.Duration = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMeta
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Duration |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 6:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field NsPerOp", wireType)
-			}
-			m.NsPerOp = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMeta
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.NsPerOp |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 7:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field AllocPerOp", wireType)
-			}
-			m.AllocPerOp = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMeta
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.AllocPerOp |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 8:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field BytesAllocatedPerOp", wireType)
-			}
-			m.BytesAllocatedPerOp = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMeta
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.BytesAllocatedPerOp |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}

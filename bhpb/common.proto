@@ -13,3 +13,10 @@ option (gogoproto.goproto_getters_all) = false;
 message DummyCommon {
     string foo = 1;
 }
+
+message ServerTarget {
+    // name is client only alias, not used by server
+    string name = 1;
+    // addr is host:port
+    string addr = 2;
+}

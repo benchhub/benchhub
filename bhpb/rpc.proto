@@ -1,0 +1,41 @@
+syntax = "proto3";
+package bhpb;
+
+option go_package = "bhpb";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "gobench.proto";
+
+option (gogoproto.sizer_all) = true;
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+option (gogoproto.goproto_getters_all) = false;
+
+message PingRequest {
+    string content = 1;
+}
+
+message PingResponse {
+    string content = 1;
+}
+
+message JobRegisterResponse {
+    int64 job_id = 1;
+    int64 spec_id = 2;
+    JobEstimation estimation = 3;
+}
+
+message JobEstimation {
+    int64 history_min_time = 1;
+    int64 history_max_time = 2;
+}
+
+service BenchHub {
+    rpc Ping (PingRequest) returns (PingResponse) {
+
+    }
+
+    // TODO: have a wrapper to reduce number of rpc definition for different type of benchmarks
+    rpc RegisterGoBenchmark (GoBenchmarkSpec) returns (JobRegisterResponse) {
+    }
+}

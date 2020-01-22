@@ -35,15 +35,10 @@ func main() {
 		icli.Version(buildInfo),
 	)
 	root := cli.Command()
-	//root.AddCommand(runCmd)
+	root.AddCommand(serveCmd)
+	root.AddCommand(pingCmd)
 	if err := root.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
-
-//func mustLoadConfig() {
-//	if err := cli.LoadConfigTo(&cfg); err != nil {
-//		log.Fatal(err)
-//	}
-//}

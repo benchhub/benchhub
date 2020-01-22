@@ -1,0 +1,39 @@
+syntax = "proto3";
+package bhpb;
+
+option go_package = "bhpb";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "common.proto";
+
+option (gogoproto.sizer_all) = true;
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+option (gogoproto.goproto_getters_all) = false;
+
+// TODO: single server, single command and single report to make things easier for now
+message GoBenchmarkSpec {
+    ServerTarget server = 1;
+    GoBenchmarkCommandSpec command = 2;
+    GoBenchmarkReportSpec report = 3;
+}
+
+message GoBenchmarkCommandSpec {
+    string command = 1;
+    string output = 2;
+}
+
+message GoBenchmarkReportSpec {
+    string input = 1;
+}
+
+message GoBenchmarkResult {
+    int64 package_id = 1;
+    string package_name = 2;
+    int64 case_id = 3;
+    string case_name = 4;
+    int64 duration = 5;
+    int64 ns_per_op = 6;
+    int64 alloc_per_op = 7;
+    int64 bytes_allocated_per_op = 8;
+}
