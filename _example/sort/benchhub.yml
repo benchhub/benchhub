@@ -1,0 +1,12 @@
+# benchhubtype=go
+
+servers:
+  - name: local # unique name on client side, not send to server
+    addr: localhost:1124
+commands:
+  - type: shell
+    command: make bench # the output is saved
+    output: bench.txt
+report:
+  - format: gobench
+    input: bench.txt

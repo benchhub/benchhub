@@ -1,0 +1,28 @@
+go test -bench Benchmark -run xx -count 5 -benchmem -benchtime=20s
+goos: linux
+goarch: amd64
+pkg: github.com/benchhub/benchhub/_example/sort
+BenchmarkStd-8                                 6        3426902393 ns/op              64 B/op          2 allocs/op
+BenchmarkStd-8                                 6        3405483294 ns/op              64 B/op          2 allocs/op
+BenchmarkStd-8                                 6        3448781462 ns/op              64 B/op          2 allocs/op
+BenchmarkStd-8                                 6        3510154018 ns/op              64 B/op          2 allocs/op
+BenchmarkStd-8                                 6        3569486400 ns/op              64 B/op          2 allocs/op
+BenchmarkMergeOnlySort-8                       8        2661479916 ns/op        3064291896 B/op  7683730 allocs/op
+BenchmarkMergeOnlySort-8                       8        2659477825 ns/op        3064285170 B/op  7683613 allocs/op
+BenchmarkMergeOnlySort-8                       8        2622186194 ns/op        3064337212 B/op  7685080 allocs/op
+BenchmarkMergeOnlySort-8                       8        2740197897 ns/op        3064331184 B/op  7684822 allocs/op
+BenchmarkMergeOnlySort-8                       8        2741207563 ns/op        3064325484 B/op  7684904 allocs/op
+BenchmarkMergeWithInsertionSort-8             10        2164096073 ns/op        2415919337 B/op   262144 allocs/op
+BenchmarkMergeWithInsertionSort-8             10        2216275638 ns/op        2415919209 B/op   262144 allocs/op
+BenchmarkMergeWithInsertionSort-8             10        2113932487 ns/op        2415919209 B/op   262144 allocs/op
+BenchmarkMergeWithInsertionSort-8             10        2120393709 ns/op        2415919152 B/op   262143 allocs/op
+BenchmarkMergeWithInsertionSort-8             10        2125551025 ns/op        2415919152 B/op   262143 allocs/op
+BenchmarkMergeSortWithBuf-8                    9        2390148244 ns/op        134217728 B/op         1 allocs/op
+BenchmarkMergeSortWithBuf-8                    9        2388369130 ns/op        134217728 B/op         1 allocs/op
+BenchmarkMergeSortWithBuf-8                    9        2392329484 ns/op        134217728 B/op         1 allocs/op
+BenchmarkMergeSortWithBuf-8                    9        2475682078 ns/op        134217728 B/op         1 allocs/op
+BenchmarkMergeSortWithBuf-8                    9        2492897496 ns/op        134217728 B/op         1 allocs/op
+BenchmarkMergeSortWithHalfBuf-8                9        2460627576 ns/op        67117056 B/op          1 allocs/op
+BenchmarkMergeSortWithHalfBuf-8                9        2447179944 ns/op        67117066 B/op          1 allocs/op
+BenchmarkMergeSortWithHalfBuf-8                9        2341716406 ns/op        67117056 B/op          1 allocs/op
+BenchmarkMergeSortWithHalfBuf-8                9        2487203626 ns/op        67117056 B/op          1 allocs/op

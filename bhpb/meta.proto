@@ -11,12 +11,19 @@ option (gogoproto.marshaler_all) = true;
 option (gogoproto.unmarshaler_all) = true;
 option (gogoproto.goproto_getters_all) = false;
 
+enum BenchmarkType {
+    BENCHMARKTYPE_UNKNOWN = 0;
+    BENCHMARKTYPE_GO = 1;
+    BENCHMARKTYPE_XEPHONB = 2;
+}
+
 message Spec {
     int64 id = 1;
-    string payload = 2;
-    int64 env_type_id = 3;
-    // TODO: use time struct?
-    int64 create_time = 4;
+    string hash = 2;
+    string payload = 3;
+    int64 env_type_id = 4;
+    BenchmarkType benchmark_type = 5;
+    int64 create_time = 6;
 }
 
 message Job {
