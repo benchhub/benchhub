@@ -10,7 +10,3 @@ var log = logReg.Logger()
 const (
 	DefaultAddr = "localhost:1124"
 )
-
-func New(cfg Config) (*BenchHubGRPCServer, error) {
-	return &BenchHubGRPCServer{cfg: cfg}, nil
-}

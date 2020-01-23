@@ -23,46 +23,6 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-type DummyCommon struct {
-	Foo                  string   `protobuf:"bytes,1,opt,name=foo,proto3" json:"foo,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *DummyCommon) Reset()         { *m = DummyCommon{} }
-func (m *DummyCommon) String() string { return proto.CompactTextString(m) }
-func (*DummyCommon) ProtoMessage()    {}
-func (*DummyCommon) Descriptor() ([]byte, []int) {
-	return fileDescriptor_555bd8c177793206, []int{0}
-}
-func (m *DummyCommon) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *DummyCommon) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_DummyCommon.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *DummyCommon) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DummyCommon.Merge(m, src)
-}
-func (m *DummyCommon) XXX_Size() int {
-	return m.Size()
-}
-func (m *DummyCommon) XXX_DiscardUnknown() {
-	xxx_messageInfo_DummyCommon.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_DummyCommon proto.InternalMessageInfo
-
 type ServerTarget struct {
 	// name is client only alias, not used by server
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -77,7 +37,7 @@ func (m *ServerTarget) Reset()         { *m = ServerTarget{} }
 func (m *ServerTarget) String() string { return proto.CompactTextString(m) }
 func (*ServerTarget) ProtoMessage()    {}
 func (*ServerTarget) Descriptor() ([]byte, []int) {
-	return fileDescriptor_555bd8c177793206, []int{1}
+	return fileDescriptor_555bd8c177793206, []int{0}
 }
 func (m *ServerTarget) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -107,59 +67,23 @@ func (m *ServerTarget) XXX_DiscardUnknown() {
 var xxx_messageInfo_ServerTarget proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*DummyCommon)(nil), "bhpb.DummyCommon")
 	proto.RegisterType((*ServerTarget)(nil), "bhpb.ServerTarget")
 }
 
 func init() { proto.RegisterFile("common.proto", fileDescriptor_555bd8c177793206) }
 
 var fileDescriptor_555bd8c177793206 = []byte{
-	// 169 bytes of a gzipped FileDescriptorProto
+	// 146 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x49, 0xce, 0xcf, 0xcd,
 	0xcd, 0xcf, 0xd3, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x49, 0xca, 0x28, 0x48, 0x92, 0xd2,
 	0x4d, 0xcf, 0x2c, 0xc9, 0x28, 0x4d, 0xd2, 0x4b, 0xce, 0xcf, 0xd5, 0x4f, 0xcf, 0x4f, 0xcf, 0xd7,
-	0x07, 0x4b, 0x26, 0x95, 0xa6, 0x81, 0x79, 0x60, 0x0e, 0x98, 0x05, 0xd1, 0xa4, 0x24, 0xcf, 0xc5,
-	0xed, 0x52, 0x9a, 0x9b, 0x5b, 0xe9, 0x0c, 0x36, 0x49, 0x48, 0x80, 0x8b, 0x39, 0x2d, 0x3f, 0x5f,
-	0x82, 0x51, 0x81, 0x51, 0x83, 0x33, 0x08, 0xc4, 0x54, 0x32, 0xe3, 0xe2, 0x09, 0x4e, 0x2d, 0x2a,
-	0x4b, 0x2d, 0x0a, 0x49, 0x2c, 0x4a, 0x4f, 0x2d, 0x11, 0x12, 0xe2, 0x62, 0xc9, 0x4b, 0xcc, 0x4d,
-	0x85, 0x2a, 0x01, 0xb3, 0x41, 0x62, 0x89, 0x29, 0x29, 0x45, 0x12, 0x4c, 0x10, 0x31, 0x10, 0xdb,
-	0x49, 0xec, 0xc4, 0x43, 0x39, 0x86, 0x13, 0x8f, 0xe4, 0x18, 0x2f, 0x3c, 0x92, 0x63, 0x7c, 0xf0,
-	0x48, 0x8e, 0x31, 0x0a, 0xec, 0xbe, 0x24, 0x36, 0xb0, 0xbd, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff,
-	0xff, 0xe5, 0x4e, 0xb3, 0x8a, 0xbc, 0x00, 0x00, 0x00,
-}
-
-func (m *DummyCommon) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *DummyCommon) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *DummyCommon) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if len(m.Foo) > 0 {
-		i -= len(m.Foo)
-		copy(dAtA[i:], m.Foo)
-		i = encodeVarintCommon(dAtA, i, uint64(len(m.Foo)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
+	0x07, 0x4b, 0x26, 0x95, 0xa6, 0x81, 0x79, 0x60, 0x0e, 0x98, 0x05, 0xd1, 0xa4, 0x64, 0xc6, 0xc5,
+	0x13, 0x9c, 0x5a, 0x54, 0x96, 0x5a, 0x14, 0x92, 0x58, 0x94, 0x9e, 0x5a, 0x22, 0x24, 0xc4, 0xc5,
+	0x92, 0x97, 0x98, 0x9b, 0x2a, 0xc1, 0xa8, 0xc0, 0xa8, 0xc1, 0x19, 0x04, 0x66, 0x83, 0xc4, 0x12,
+	0x53, 0x52, 0x8a, 0x24, 0x98, 0x20, 0x62, 0x20, 0xb6, 0x93, 0xd8, 0x89, 0x87, 0x72, 0x0c, 0x27,
+	0x1e, 0xc9, 0x31, 0x5e, 0x78, 0x24, 0xc7, 0xf8, 0xe0, 0x91, 0x1c, 0x63, 0x14, 0xd8, 0xfa, 0x24,
+	0x36, 0xb0, 0xb1, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff, 0x04, 0xe6, 0xee, 0x6c, 0x9b, 0x00,
+	0x00, 0x00,
 }
 
 func (m *ServerTarget) Marshal() (dAtA []byte, err error) {
@@ -214,22 +138,6 @@ func encodeVarintCommon(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *DummyCommon) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Foo)
-	if l > 0 {
-		n += 1 + l + sovCommon(uint64(l))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
 func (m *ServerTarget) Size() (n int) {
 	if m == nil {
 		return 0
@@ -255,92 +163,6 @@ func sovCommon(x uint64) (n int) {
 }
 func sozCommon(x uint64) (n int) {
 	return sovCommon(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (m *DummyCommon) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowCommon
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: DummyCommon: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: DummyCommon: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Foo", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowCommon
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthCommon
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthCommon
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Foo = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipCommon(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthCommon
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthCommon
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
 }
 func (m *ServerTarget) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)

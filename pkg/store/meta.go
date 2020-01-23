@@ -1,21 +1,22 @@
 package store
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
 
 	"github.com/benchhub/benchhub/bhpb"
 	"github.com/dyweb/gommon/errors"
 	"github.com/dyweb/gommon/util/hashutil"
+	"github.com/gogo/protobuf/proto"
 )
 
 type Meta interface {
-	RegisterGoBenchmark(spec *bhpb.GoBenchmarkSpec) (*bhpb.JobRegisterResponse, error)
+	RegisterGoBenchmark(ctx context.Context, spec *bhpb.GoBenchmarkSpec) (*bhpb.JobRegisterResponse, error)
 }
 
 func HashGoBenchmarkSpec(spec *bhpb.GoBenchmarkSpec) (string, error) {
 	// TODO: a dump way to hash entire spec, encode into bytes and hash ...
-	b, err := json.Marshal(spec)
+	b, err := proto.Marshal(spec)
 	if err != nil {
 		return "", errors.Wrap(err, "error encode spec as json")
 	}

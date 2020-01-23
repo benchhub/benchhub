@@ -5,4 +5,5 @@
 ```bash
 bh serve
 bh ping
+bh run
 ```

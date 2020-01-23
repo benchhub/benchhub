@@ -1,6 +1,7 @@
 package store
 
 import (
+	"context"
 	"sync"
 	"time"
 
@@ -26,17 +27,21 @@ func NewMetaMem() *MetaMem {
 	return &MetaMem{
 		specNextId: 1,
 		specByHash: make(map[string]int),
+		jobNextId:  1,
 	}
 }
 
-func (m *MetaMem) RegisterGoBenchmark(spec *bhpb.GoBenchmarkSpec) (*bhpb.JobRegisterResponse, error) {
+func (m *MetaMem) RegisterGoBenchmark(ctx context.Context, spec *bhpb.GoBenchmarkSpec) (*bhpb.JobRegisterResponse, error) {
 	sid, err := m.registerSpec(spec)
 	if err != nil {
 		return nil, err
 	}
+	jid, err := m.registerJob(sid)
+	if err != nil {
+		return nil, err
+	}
 	return &bhpb.JobRegisterResponse{
-		// TODO: register job
-		JobId:  0,
+		JobId:  int64(jid),
 		SpecId: int64(sid),
 	}, nil
 }
@@ -71,12 +76,28 @@ func (m *MetaMem) registerSpec(spec *bhpb.GoBenchmarkSpec) (int, error) {
 	}
 	sspec := &bhpb.Spec{
 		Id:            int64(id),
-		Hash:          h,
-		Payload:       string(b),
 		BenchmarkType: bhpb.BenchmarkType_BENCHMARKTYPE_GO,
+		Payload:       string(b),
+		PayloadHash:   h,
 		CreateTime:    time.Now().UnixNano(),
 	}
 	m.specs = append(m.specs, sspec)
 	m.specByHash[h] = id
+	return id, nil
+}
+
+func (m *MetaMem) registerJob(specId int) (int, error) {
+	m.jobMu.Lock()
+	defer m.jobMu.Unlock()
+
+	id := m.jobNextId
+	m.jobNextId++
+	job := &bhpb.Job{
+		Id:            int64(id),
+		SpecId:        int64(specId),
+		BenchmarkType: bhpb.BenchmarkType_BENCHMARKTYPE_GO,
+		SubmitTime:    time.Now().UnixNano(),
+	}
+	m.jobs = append(m.jobs, job)
 	return id, nil
 }
