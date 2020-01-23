@@ -4,15 +4,13 @@ package bhpb;
 option go_package = "bhpb";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "common.proto";
 
 option (gogoproto.sizer_all) = true;
 option (gogoproto.marshaler_all) = true;
 option (gogoproto.unmarshaler_all) = true;
 option (gogoproto.goproto_getters_all) = false;
 
-message ServerTarget {
-    // name is client only alias, not used by server
-    string name = 1;
-    // addr is host:port
-    string addr = 2;
+message XephonBResult {
+    // TODO: not sure about what to put for xephon yet ...
 }

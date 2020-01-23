@@ -19,27 +19,22 @@ enum BenchmarkType {
 
 message Spec {
     int64 id = 1;
-    string hash = 2;
+    BenchmarkType benchmark_type = 2;
     string payload = 3;
-    int64 env_type_id = 4;
-    BenchmarkType benchmark_type = 5;
-    int64 create_time = 6;
+    string payload_hash = 4;
+    int64 create_time = 5;
+
+    //    int64 env_type_id = 4;
 }
 
 message Job {
     int64 id = 1;
     int64 spec_id = 2;
-    int64 env_id = 3;
-    int64 start_time = 4;
-    int64 finish_time = 5;
-}
+    BenchmarkType benchmark_type = 3;
+    int64 submit_time = 4;
+    int64 report_time = 5;
+    int64 start_time = 6;
+    int64 finish_time = 7;
 
-
-message XephonBResult {
-    // TODO: not sure about what to put for xephon yet ...
-}
-
-// Test if we can have multiple proto files of one package within one folder, yes we can ...
-message DummyUseCommon {
-    bhpb.DummyCommon common = 1;
+    //    int64 env_id = 3;
 }

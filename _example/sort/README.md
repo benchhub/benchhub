@@ -4,4 +4,5 @@
 
 ```bash
 bh serve
+bh ping
 ```

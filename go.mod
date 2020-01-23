@@ -11,6 +11,7 @@ require (
 	github.com/xephonhq/xephon-b v0.3.0
 	golang.org/x/tools v0.0.0-20190524140312-2c0ae7006135
 	google.golang.org/grpc v1.26.0
+	gopkg.in/yaml.v2 v2.2.7
 )
 
 replace github.com/dyweb/go.ice => ../../dyweb/go.ice

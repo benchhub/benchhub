@@ -1,7 +1,7 @@
 # benchhubtype=go
 
 server:
-  name: local # unique name on client side, not send to server
+  name: local2 # unique name on client side, not send to server
   addr: localhost:1124
 command:
   command: make bench # the output is saved
