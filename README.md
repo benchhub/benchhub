@@ -18,7 +18,7 @@ BenchHub is a service for running and storing benchmark result of distributed da
 
 ## Usage
 
-TODO: not in a usable state
+NOTE: not in a usable state. See [_example](_example)
 
 ## Develop
 
