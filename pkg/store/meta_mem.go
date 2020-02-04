@@ -12,7 +12,10 @@ import (
 
 // meta_mem is in memory implementation for testing
 
+var _ Meta = (*MetaMem)(nil)
+
 type MetaMem struct {
+	// common tables
 	specMu     sync.RWMutex
 	specNextId int
 	specByHash map[string]int
@@ -21,17 +24,23 @@ type MetaMem struct {
 	jobMu     sync.RWMutex
 	jobNextId int
 	jobs      []*bhpb.Job
+
+	// benchmark specific
+	goResultMu     sync.RWMutex
+	goResultNextId int
+	goResults      []*bhpb.GoBenchmarkResult
 }
 
 func NewMetaMem() *MetaMem {
 	return &MetaMem{
-		specNextId: 1,
-		specByHash: make(map[string]int),
-		jobNextId:  1,
+		specNextId:     1,
+		specByHash:     make(map[string]int),
+		jobNextId:      1,
+		goResultNextId: 1,
 	}
 }
 
-func (m *MetaMem) RegisterGoBenchmark(ctx context.Context, spec *bhpb.GoBenchmarkSpec) (*bhpb.JobRegisterResponse, error) {
+func (m *MetaMem) GoBenchmarkRegister(ctx context.Context, spec *bhpb.GoBenchmarkSpec) (*bhpb.JobRegisterResponse, error) {
 	sid, err := m.registerSpec(spec)
 	if err != nil {
 		return nil, err
@@ -44,6 +53,17 @@ func (m *MetaMem) RegisterGoBenchmark(ctx context.Context, spec *bhpb.GoBenchmar
 		JobId:  int64(jid),
 		SpecId: int64(sid),
 	}, nil
+}
+
+func (m *MetaMem) GoBenchmarkReportResult(ctx context.Context, req *bhpb.GoBenchmarkReportResultRequest) (*bhpb.ResultReportResponse, error) {
+	m.goResultMu.Lock()
+	defer m.goResultMu.Unlock()
+	m.goResultNextId++
+	for _, res := range req.Results {
+		cp := proto.Clone(res).(*bhpb.GoBenchmarkResult)
+		m.goResults = append(m.goResults, cp)
+	}
+	return &bhpb.ResultReportResponse{Ok: true}, nil
 }
 
 func (m *MetaMem) registerSpec(spec *bhpb.GoBenchmarkSpec) (int, error) {
@@ -76,7 +96,7 @@ func (m *MetaMem) registerSpec(spec *bhpb.GoBenchmarkSpec) (int, error) {
 	}
 	sspec := &bhpb.Spec{
 		Id:            int64(id),
-		BenchmarkType: bhpb.BenchmarkType_BENCHMARKTYPE_GO,
+		BenchmarkType: bhpb.BenchmarkType_BENCHMARK_TYPE_GO,
 		Payload:       string(b),
 		PayloadHash:   h,
 		CreateTime:    time.Now().UnixNano(),
@@ -95,7 +115,7 @@ func (m *MetaMem) registerJob(specId int) (int, error) {
 	job := &bhpb.Job{
 		Id:            int64(id),
 		SpecId:        int64(specId),
-		BenchmarkType: bhpb.BenchmarkType_BENCHMARKTYPE_GO,
+		BenchmarkType: bhpb.BenchmarkType_BENCHMARK_TYPE_GO,
 		SubmitTime:    time.Now().UnixNano(),
 	}
 	m.jobs = append(m.jobs, job)

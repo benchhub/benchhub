@@ -10,10 +10,13 @@ import (
 	"github.com/gogo/protobuf/proto"
 )
 
+// TODO: the store interface is doing business logic, need to split those out
 type Meta interface {
-	RegisterGoBenchmark(ctx context.Context, spec *bhpb.GoBenchmarkSpec) (*bhpb.JobRegisterResponse, error)
+	GoBenchmarkRegister(ctx context.Context, spec *bhpb.GoBenchmarkSpec) (*bhpb.JobRegisterResponse, error)
+	GoBenchmarkReportResult(ctx context.Context, result *bhpb.GoBenchmarkReportResultRequest) (*bhpb.ResultReportResponse, error)
 }
 
+// TODO: might use sha1 to reduce chance of collision?
 func HashGoBenchmarkSpec(spec *bhpb.GoBenchmarkSpec) (string, error) {
 	// TODO: a dump way to hash entire spec, encode into bytes and hash ...
 	b, err := proto.Marshal(spec)

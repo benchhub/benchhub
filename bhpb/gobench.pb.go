@@ -4,6 +4,7 @@
 package bhpb
 
 import (
+	encoding_binary "encoding/binary"
 	fmt "fmt"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
@@ -25,9 +26,10 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // TODO: single server, single command and single report to make things easier for now
 type GoBenchmarkSpec struct {
-	Server               *ServerTarget           `protobuf:"bytes,1,opt,name=server,proto3" json:"server,omitempty"`
-	Command              *GoBenchmarkCommandSpec `protobuf:"bytes,2,opt,name=command,proto3" json:"command,omitempty"`
-	Report               *GoBenchmarkReportSpec  `protobuf:"bytes,3,opt,name=report,proto3" json:"report,omitempty"`
+	Package              string                  `protobuf:"bytes,1,opt,name=package,proto3" json:"package,omitempty"`
+	Server               *ServerTarget           `protobuf:"bytes,2,opt,name=server,proto3" json:"server,omitempty"`
+	Command              *GoBenchmarkCommandSpec `protobuf:"bytes,3,opt,name=command,proto3" json:"command,omitempty"`
+	Report               *GoBenchmarkReportSpec  `protobuf:"bytes,4,opt,name=report,proto3" json:"report,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
 	XXX_unrecognized     []byte                  `json:"-"`
 	XXX_sizecache        int32                   `json:"-"`
@@ -147,15 +149,16 @@ func (m *GoBenchmarkReportSpec) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GoBenchmarkReportSpec proto.InternalMessageInfo
 
+// TODO: id should be generated on server side after report is submitted, need to name the original request and expanded result properly
 type GoBenchmarkResult struct {
 	PackageId            int64    `protobuf:"varint,1,opt,name=package_id,json=packageId,proto3" json:"package_id,omitempty"`
 	PackageName          string   `protobuf:"bytes,2,opt,name=package_name,json=packageName,proto3" json:"package_name,omitempty"`
 	CaseId               int64    `protobuf:"varint,3,opt,name=case_id,json=caseId,proto3" json:"case_id,omitempty"`
 	CaseName             string   `protobuf:"bytes,4,opt,name=case_name,json=caseName,proto3" json:"case_name,omitempty"`
 	Duration             int64    `protobuf:"varint,5,opt,name=duration,proto3" json:"duration,omitempty"`
-	NsPerOp              int64    `protobuf:"varint,6,opt,name=ns_per_op,json=nsPerOp,proto3" json:"ns_per_op,omitempty"`
-	AllocPerOp           int64    `protobuf:"varint,7,opt,name=alloc_per_op,json=allocPerOp,proto3" json:"alloc_per_op,omitempty"`
-	BytesAllocatedPerOp  int64    `protobuf:"varint,8,opt,name=bytes_allocated_per_op,json=bytesAllocatedPerOp,proto3" json:"bytes_allocated_per_op,omitempty"`
+	NsPerOp              float64  `protobuf:"fixed64,6,opt,name=ns_per_op,json=nsPerOp,proto3" json:"ns_per_op,omitempty"`
+	AllocPerOp           uint64   `protobuf:"varint,7,opt,name=alloc_per_op,json=allocPerOp,proto3" json:"alloc_per_op,omitempty"`
+	BytesAllocatedPerOp  uint64   `protobuf:"varint,8,opt,name=bytes_allocated_per_op,json=bytesAllocatedPerOp,proto3" json:"bytes_allocated_per_op,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -194,43 +197,87 @@ func (m *GoBenchmarkResult) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GoBenchmarkResult proto.InternalMessageInfo
 
+type GoBenchmarkReportResultRequest struct {
+	Results              []*GoBenchmarkResult `protobuf:"bytes,1,rep,name=results,proto3" json:"results,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
+	XXX_unrecognized     []byte               `json:"-"`
+	XXX_sizecache        int32                `json:"-"`
+}
+
+func (m *GoBenchmarkReportResultRequest) Reset()         { *m = GoBenchmarkReportResultRequest{} }
+func (m *GoBenchmarkReportResultRequest) String() string { return proto.CompactTextString(m) }
+func (*GoBenchmarkReportResultRequest) ProtoMessage()    {}
+func (*GoBenchmarkReportResultRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_a18a56bd951d162f, []int{4}
+}
+func (m *GoBenchmarkReportResultRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GoBenchmarkReportResultRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GoBenchmarkReportResultRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GoBenchmarkReportResultRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GoBenchmarkReportResultRequest.Merge(m, src)
+}
+func (m *GoBenchmarkReportResultRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GoBenchmarkReportResultRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GoBenchmarkReportResultRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GoBenchmarkReportResultRequest proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*GoBenchmarkSpec)(nil), "bhpb.GoBenchmarkSpec")
 	proto.RegisterType((*GoBenchmarkCommandSpec)(nil), "bhpb.GoBenchmarkCommandSpec")
 	proto.RegisterType((*GoBenchmarkReportSpec)(nil), "bhpb.GoBenchmarkReportSpec")
 	proto.RegisterType((*GoBenchmarkResult)(nil), "bhpb.GoBenchmarkResult")
+	proto.RegisterType((*GoBenchmarkReportResultRequest)(nil), "bhpb.GoBenchmarkReportResultRequest")
 }
 
 func init() { proto.RegisterFile("gobench.proto", fileDescriptor_a18a56bd951d162f) }
 
 var fileDescriptor_a18a56bd951d162f = []byte{
-	// 407 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x92, 0x41, 0x8e, 0xd3, 0x30,
-	0x14, 0x86, 0xc9, 0x74, 0x26, 0x69, 0xde, 0x14, 0x21, 0x0c, 0x84, 0x28, 0x03, 0xd1, 0x90, 0x15,
-	0x42, 0x9a, 0x54, 0xa2, 0x12, 0x7b, 0xca, 0x02, 0x95, 0x05, 0xa0, 0x94, 0x15, 0x9b, 0xc8, 0x49,
-	0x4c, 0x1a, 0xb5, 0xb1, 0x2d, 0xc7, 0x41, 0xe2, 0x2a, 0x1c, 0x81, 0x93, 0x74, 0xc9, 0x11, 0xa0,
-	0x27, 0x41, 0x7e, 0x4e, 0x28, 0x68, 0xba, 0xf3, 0xff, 0xfe, 0xff, 0xfb, 0xdf, 0x5b, 0x18, 0xee,
-	0xd6, 0xa2, 0x60, 0xbc, 0xdc, 0xa4, 0x52, 0x09, 0x2d, 0xc8, 0x79, 0xb1, 0x91, 0x45, 0x74, 0x53,
-	0x37, 0x7a, 0xd3, 0x17, 0x69, 0x29, 0xda, 0x79, 0x2d, 0x6a, 0x31, 0x47, 0xb3, 0xe8, 0xbf, 0xa0,
-	0x42, 0x81, 0x2f, 0x0b, 0x45, 0xb3, 0x52, 0xb4, 0xad, 0xe0, 0x56, 0x25, 0x3f, 0x1c, 0xb8, 0xf7,
-	0x56, 0x2c, 0x4d, 0x69, 0x4b, 0xd5, 0x76, 0x2d, 0x59, 0x49, 0x5e, 0x80, 0xdb, 0x31, 0xf5, 0x95,
-	0xa9, 0xd0, 0xb9, 0x76, 0x9e, 0x5f, 0xbe, 0x24, 0xa9, 0xd9, 0x93, 0xae, 0x71, 0xf6, 0x89, 0xaa,
-	0x9a, 0xe9, 0x6c, 0x48, 0x90, 0x57, 0xe0, 0x99, 0x3e, 0xca, 0xab, 0xf0, 0x0c, 0xc3, 0x4f, 0x6c,
-	0xf8, 0x9f, 0xce, 0x37, 0xd6, 0x37, 0xd5, 0xd9, 0x18, 0x26, 0x0b, 0x70, 0x15, 0x93, 0x42, 0xe9,
-	0x70, 0x82, 0xd8, 0xd5, 0x2d, 0x2c, 0x43, 0x1b, 0xa9, 0x21, 0x9a, 0xbc, 0x83, 0xe0, 0x74, 0x2f,
-	0x09, 0x8f, 0x67, 0x98, 0x9b, 0xfd, 0xe3, 0xa2, 0x00, 0x5c, 0xd1, 0x6b, 0xd9, 0x6b, 0xbc, 0xcf,
-	0xcf, 0x06, 0x95, 0xdc, 0xc0, 0xa3, 0x93, 0xcb, 0xc8, 0x43, 0xb8, 0x68, 0xb8, 0xc9, 0xdb, 0x22,
-	0x2b, 0x92, 0xef, 0x67, 0x70, 0xff, 0xbf, 0x7c, 0xd7, 0xef, 0x34, 0x79, 0x0a, 0x20, 0x69, 0xb9,
-	0xa5, 0x35, 0xcb, 0x1b, 0xbb, 0x79, 0x92, 0xf9, 0xc3, 0x64, 0x55, 0x91, 0x67, 0x30, 0x1b, 0x6d,
-	0x4e, 0x5b, 0x36, 0x5c, 0x70, 0x39, 0xcc, 0xde, 0xd3, 0x96, 0x91, 0xc7, 0xe0, 0x95, 0xb4, 0x43,
-	0x7c, 0x82, 0xb8, 0x6b, 0xe4, 0xaa, 0x22, 0x57, 0xe0, 0xa3, 0x81, 0xe0, 0x39, 0x82, 0x53, 0x33,
-	0x40, 0x2a, 0x82, 0x69, 0xd5, 0x2b, 0xaa, 0x1b, 0xc1, 0xc3, 0x0b, 0xc4, 0xfe, 0x6a, 0x12, 0x81,
-	0xcf, 0xbb, 0x5c, 0x32, 0x95, 0x0b, 0x19, 0xba, 0x68, 0x7a, 0xbc, 0xfb, 0xc8, 0xd4, 0x07, 0x49,
-	0xae, 0x61, 0x46, 0x77, 0x3b, 0x51, 0x8e, 0xb6, 0x87, 0x36, 0xe0, 0xcc, 0x26, 0x16, 0x10, 0x14,
-	0xdf, 0x34, 0xeb, 0x72, 0x9c, 0x51, 0xcd, 0xaa, 0x31, 0x3b, 0xc5, 0xec, 0x03, 0x74, 0x5f, 0x8f,
-	0x26, 0x42, 0xcb, 0x60, 0xff, 0x3b, 0xbe, 0xb3, 0x3f, 0xc4, 0xce, 0xcf, 0x43, 0xec, 0xfc, 0x3a,
-	0xc4, 0xce, 0x67, 0xfc, 0x99, 0x85, 0x8b, 0x7f, 0x6c, 0xf1, 0x27, 0x00, 0x00, 0xff, 0xff, 0xf6,
-	0x90, 0x03, 0x28, 0xb7, 0x02, 0x00, 0x00,
+	// 455 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x93, 0xcf, 0x6e, 0xd3, 0x30,
+	0x1c, 0xc7, 0xf1, 0xda, 0x25, 0xcd, 0xaf, 0x45, 0x08, 0x03, 0x5d, 0xd4, 0x41, 0x14, 0x72, 0x8a,
+	0x90, 0xd6, 0x89, 0x55, 0xe2, 0xce, 0x38, 0xa0, 0x71, 0x00, 0xe4, 0x72, 0xe2, 0x52, 0x39, 0x89,
+	0x49, 0xa3, 0x35, 0xb1, 0x71, 0x1c, 0x24, 0x5e, 0x85, 0xe7, 0xe1, 0xb0, 0x23, 0x8f, 0x00, 0x7d,
+	0x12, 0x94, 0x9f, 0x63, 0xc4, 0xb4, 0xde, 0xf2, 0xfd, 0xf3, 0xf1, 0xcf, 0x76, 0x12, 0xb8, 0x5f,
+	0xca, 0x4c, 0x34, 0xf9, 0x76, 0xa9, 0xb4, 0x34, 0x92, 0x8e, 0xb3, 0xad, 0xca, 0x16, 0x67, 0x65,
+	0x65, 0xb6, 0x5d, 0xb6, 0xcc, 0x65, 0x7d, 0x5e, 0xca, 0x52, 0x9e, 0x63, 0x98, 0x75, 0x5f, 0x50,
+	0xa1, 0xc0, 0x27, 0x0b, 0x2d, 0x66, 0xb9, 0xac, 0x6b, 0xd9, 0x58, 0x95, 0xfc, 0x24, 0xf0, 0xe0,
+	0xad, 0xbc, 0xec, 0x17, 0xad, 0xb9, 0xbe, 0x5e, 0x2b, 0x91, 0xd3, 0x10, 0x7c, 0xc5, 0xf3, 0x6b,
+	0x5e, 0x8a, 0x90, 0xc4, 0x24, 0x0d, 0x98, 0x93, 0xf4, 0x05, 0x78, 0xad, 0xd0, 0xdf, 0x84, 0x0e,
+	0x8f, 0x62, 0x92, 0x4e, 0x2f, 0xe8, 0xb2, 0xdf, 0xc1, 0x72, 0x8d, 0xde, 0x27, 0xae, 0x4b, 0x61,
+	0xd8, 0xd0, 0xa0, 0xaf, 0xc0, 0xef, 0x27, 0xf1, 0xa6, 0x08, 0x47, 0x58, 0x7e, 0x6a, 0xcb, 0xff,
+	0x4d, 0x7b, 0x63, 0xf3, 0x7e, 0x28, 0x73, 0x65, 0xba, 0x02, 0x4f, 0x0b, 0x25, 0xb5, 0x09, 0xc7,
+	0x88, 0x9d, 0xde, 0xc1, 0x18, 0xc6, 0x48, 0x0d, 0xd5, 0xe4, 0x1d, 0xcc, 0x0f, 0xaf, 0xdb, 0x1f,
+	0xc6, 0x6d, 0x63, 0x38, 0x8c, 0x1b, 0x34, 0x07, 0x4f, 0x76, 0x46, 0x75, 0x06, 0x0f, 0x13, 0xb0,
+	0x41, 0x25, 0x67, 0xf0, 0xe4, 0xe0, 0x30, 0xfa, 0x18, 0x8e, 0xab, 0xa6, 0xef, 0xdb, 0x85, 0xac,
+	0x48, 0x7e, 0x1c, 0xc1, 0xc3, 0x5b, 0xfd, 0xb6, 0xdb, 0x19, 0xfa, 0x0c, 0x60, 0xb8, 0xb4, 0x4d,
+	0x65, 0x27, 0x8f, 0x58, 0x30, 0x38, 0x57, 0x05, 0x7d, 0x0e, 0x33, 0x17, 0x37, 0xbc, 0x16, 0xc3,
+	0x0e, 0xa6, 0x83, 0xf7, 0x9e, 0xd7, 0x82, 0x9e, 0x80, 0x9f, 0xf3, 0x16, 0xf1, 0x11, 0xe2, 0x5e,
+	0x2f, 0xaf, 0x0a, 0x7a, 0x0a, 0x01, 0x06, 0x08, 0x8e, 0x11, 0x9c, 0xf4, 0x06, 0x52, 0x0b, 0x98,
+	0x14, 0x9d, 0xe6, 0xa6, 0x92, 0x4d, 0x78, 0x8c, 0xd8, 0x3f, 0x4d, 0x17, 0x10, 0x34, 0xed, 0x46,
+	0x09, 0xbd, 0x91, 0x2a, 0xf4, 0x62, 0x92, 0x12, 0xe6, 0x37, 0xed, 0x47, 0xa1, 0x3f, 0x28, 0x1a,
+	0xc3, 0x8c, 0xef, 0x76, 0x32, 0x77, 0xb1, 0x1f, 0x93, 0x74, 0xcc, 0x00, 0x3d, 0xdb, 0x58, 0xc1,
+	0x3c, 0xfb, 0x6e, 0x44, 0xbb, 0x41, 0x8f, 0x1b, 0x51, 0xb8, 0xee, 0x04, 0xbb, 0x8f, 0x30, 0x7d,
+	0xed, 0x42, 0x84, 0x92, 0x35, 0x44, 0x77, 0xee, 0xd2, 0xde, 0x10, 0x13, 0x5f, 0x3b, 0xd1, 0x1a,
+	0xfa, 0x12, 0x7c, 0x8d, 0x46, 0x1b, 0x92, 0x78, 0x94, 0x4e, 0x2f, 0x4e, 0x0e, 0xbc, 0x6f, 0x04,
+	0x5c, 0xef, 0x72, 0x7e, 0xf3, 0x27, 0xba, 0x77, 0xb3, 0x8f, 0xc8, 0xaf, 0x7d, 0x44, 0x7e, 0xef,
+	0x23, 0xf2, 0x19, 0x7f, 0x84, 0xcc, 0xc3, 0x4f, 0x7a, 0xf5, 0x37, 0x00, 0x00, 0xff, 0xff, 0xd0,
+	0x75, 0xb0, 0xfb, 0x26, 0x03, 0x00, 0x00,
 }
 
 func (m *GoBenchmarkSpec) Marshal() (dAtA []byte, err error) {
@@ -267,7 +314,7 @@ func (m *GoBenchmarkSpec) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			i = encodeVarintGobench(dAtA, i, uint64(size))
 		}
 		i--
-		dAtA[i] = 0x1a
+		dAtA[i] = 0x22
 	}
 	if m.Command != nil {
 		{
@@ -279,7 +326,7 @@ func (m *GoBenchmarkSpec) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			i = encodeVarintGobench(dAtA, i, uint64(size))
 		}
 		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0x1a
 	}
 	if m.Server != nil {
 		{
@@ -290,6 +337,13 @@ func (m *GoBenchmarkSpec) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			i -= size
 			i = encodeVarintGobench(dAtA, i, uint64(size))
 		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Package) > 0 {
+		i -= len(m.Package)
+		copy(dAtA[i:], m.Package)
+		i = encodeVarintGobench(dAtA, i, uint64(len(m.Package)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -406,9 +460,10 @@ func (m *GoBenchmarkResult) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x38
 	}
 	if m.NsPerOp != 0 {
-		i = encodeVarintGobench(dAtA, i, uint64(m.NsPerOp))
+		i -= 8
+		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(math.Float64bits(float64(m.NsPerOp))))
 		i--
-		dAtA[i] = 0x30
+		dAtA[i] = 0x31
 	}
 	if m.Duration != 0 {
 		i = encodeVarintGobench(dAtA, i, uint64(m.Duration))
@@ -442,6 +497,47 @@ func (m *GoBenchmarkResult) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *GoBenchmarkReportResultRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *GoBenchmarkReportResultRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GoBenchmarkReportResultRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Results) > 0 {
+		for iNdEx := len(m.Results) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Results[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGobench(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintGobench(dAtA []byte, offset int, v uint64) int {
 	offset -= sovGobench(v)
 	base := offset
@@ -459,6 +555,10 @@ func (m *GoBenchmarkSpec) Size() (n int) {
 	}
 	var l int
 	_ = l
+	l = len(m.Package)
+	if l > 0 {
+		n += 1 + l + sovGobench(uint64(l))
+	}
 	if m.Server != nil {
 		l = m.Server.Size()
 		n += 1 + l + sovGobench(uint64(l))
@@ -537,13 +637,31 @@ func (m *GoBenchmarkResult) Size() (n int) {
 		n += 1 + sovGobench(uint64(m.Duration))
 	}
 	if m.NsPerOp != 0 {
-		n += 1 + sovGobench(uint64(m.NsPerOp))
+		n += 9
 	}
 	if m.AllocPerOp != 0 {
 		n += 1 + sovGobench(uint64(m.AllocPerOp))
 	}
 	if m.BytesAllocatedPerOp != 0 {
 		n += 1 + sovGobench(uint64(m.BytesAllocatedPerOp))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *GoBenchmarkReportResultRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Results) > 0 {
+		for _, e := range m.Results {
+			l = e.Size()
+			n += 1 + l + sovGobench(uint64(l))
+		}
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -588,6 +706,38 @@ func (m *GoBenchmarkSpec) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Package", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGobench
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGobench
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthGobench
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Package = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Server", wireType)
 			}
 			var msglen int
@@ -622,7 +772,7 @@ func (m *GoBenchmarkSpec) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 2:
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Command", wireType)
 			}
@@ -658,7 +808,7 @@ func (m *GoBenchmarkSpec) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 3:
+		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Report", wireType)
 			}
@@ -1074,24 +1224,16 @@ func (m *GoBenchmarkResult) Unmarshal(dAtA []byte) error {
 				}
 			}
 		case 6:
-			if wireType != 0 {
+			if wireType != 1 {
 				return fmt.Errorf("proto: wrong wireType = %d for field NsPerOp", wireType)
 			}
-			m.NsPerOp = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowGobench
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.NsPerOp |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
+			var v uint64
+			if (iNdEx + 8) > l {
+				return io.ErrUnexpectedEOF
 			}
+			v = uint64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
+			iNdEx += 8
+			m.NsPerOp = float64(math.Float64frombits(v))
 		case 7:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field AllocPerOp", wireType)
@@ -1106,7 +1248,7 @@ func (m *GoBenchmarkResult) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.AllocPerOp |= int64(b&0x7F) << shift
+				m.AllocPerOp |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1125,11 +1267,99 @@ func (m *GoBenchmarkResult) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.BytesAllocatedPerOp |= int64(b&0x7F) << shift
+				m.BytesAllocatedPerOp |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGobench(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGobench
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthGobench
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *GoBenchmarkReportResultRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGobench
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: GoBenchmarkReportResultRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: GoBenchmarkReportResultRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Results", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGobench
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGobench
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGobench
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Results = append(m.Results, &GoBenchmarkResult{})
+			if err := m.Results[len(m.Results)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGobench(dAtA[iNdEx:])

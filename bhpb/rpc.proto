@@ -30,12 +30,20 @@ message JobEstimation {
     int64 history_max_time = 2;
 }
 
+message ResultReportResponse {
+    bool ok = 1;
+}
+
 service BenchHub {
     rpc Ping (PingRequest) returns (PingResponse) {
 
     }
 
-    // TODO: have a wrapper to reduce number of rpc definition for different type of benchmarks
-    rpc RegisterGoBenchmark (GoBenchmarkSpec) returns (JobRegisterResponse) {
+    // style: BenchmarkTypeAction
+    // TODO: have a wrapper to reduce number of rpc definition for different types of benchmarks
+    rpc GoBenchmarkRegisterJob (GoBenchmarkSpec) returns (JobRegisterResponse) {
+    }
+
+    rpc GoBenchmarkReportResult (GoBenchmarkReportResultRequest) returns (ResultReportResponse) {
     }
 }

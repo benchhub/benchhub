@@ -30,8 +30,9 @@ var runCmd = &cobra.Command{
 			return err
 		}
 
+		ctx := context.Background()
 		// Register
-		regRes, err := client.RegisterGoBenchmark(context.Background(), &spec)
+		regRes, err := client.GoBenchmarkRegisterJob(ctx, &spec)
 		if err != nil {
 			return errors.Wrap(err, "failed to register")
 		}
@@ -48,8 +49,26 @@ var runCmd = &cobra.Command{
 			return errors.Wrap(err, "error parse benchmark output")
 		}
 		log.Infof("found %d results", len(result))
-
-		// TODO: Add server side methods for report
+		// Convert to result
+		var converted []*bhpb.GoBenchmarkResult
+		for _, res := range result {
+			converted = append(converted, &bhpb.GoBenchmarkResult{
+				PackageId:           0,
+				PackageName:         spec.Package,
+				CaseId:              0,
+				CaseName:            res.Name,
+				Duration:            0, // TODO: how do I get duration?
+				NsPerOp:             res.NsPerOp,
+				AllocPerOp:          res.AllocsPerOp,
+				BytesAllocatedPerOp: res.AllocedBytesPerOp,
+			})
+		}
+		_, err = client.GoBenchmarkReportResult(ctx, &bhpb.GoBenchmarkReportResultRequest{
+			Results: converted,
+		})
+		if err != nil {
+			return errors.Wrap(err, "error report result")
+		}
 		return nil
 	},
 }

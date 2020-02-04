@@ -52,6 +52,10 @@ func (s *BenchHubGRPCServer) Ping(ctx context.Context, req *bhpb.PingRequest) (*
 	}, nil
 }
 
-func (s *BenchHubGRPCServer) RegisterGoBenchmark(ctx context.Context, spec *bhpb.GoBenchmarkSpec) (*bhpb.JobRegisterResponse, error) {
-	return s.meta.RegisterGoBenchmark(ctx, spec)
+func (s *BenchHubGRPCServer) GoBenchmarkRegisterJob(ctx context.Context, spec *bhpb.GoBenchmarkSpec) (*bhpb.JobRegisterResponse, error) {
+	return s.meta.GoBenchmarkRegister(ctx, spec)
+}
+
+func (s *BenchHubGRPCServer) GoBenchmarkReportResult(ctx context.Context, result *bhpb.GoBenchmarkReportResultRequest) (*bhpb.ResultReportResponse, error) {
+	return s.meta.GoBenchmarkReportResult(ctx, result)
 }

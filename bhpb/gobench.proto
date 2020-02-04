@@ -13,9 +13,10 @@ option (gogoproto.goproto_getters_all) = false;
 
 // TODO: single server, single command and single report to make things easier for now
 message GoBenchmarkSpec {
-    ServerTarget server = 1;
-    GoBenchmarkCommandSpec command = 2;
-    GoBenchmarkReportSpec report = 3;
+    string package = 1;
+    ServerTarget server = 2;
+    GoBenchmarkCommandSpec command = 3;
+    GoBenchmarkReportSpec report = 4;
 }
 
 message GoBenchmarkCommandSpec {
@@ -27,13 +28,18 @@ message GoBenchmarkReportSpec {
     string input = 1;
 }
 
+// TODO: id should be generated on server side after report is submitted, need to name the original request and expanded result properly
 message GoBenchmarkResult {
     int64 package_id = 1;
     string package_name = 2;
     int64 case_id = 3;
     string case_name = 4;
     int64 duration = 5;
-    int64 ns_per_op = 6;
-    int64 alloc_per_op = 7;
-    int64 bytes_allocated_per_op = 8;
+    double ns_per_op = 6;
+    uint64 alloc_per_op = 7;
+    uint64 bytes_allocated_per_op = 8;
+}
+
+message GoBenchmarkReportResultRequest {
+    repeated GoBenchmarkResult results = 1;
 }

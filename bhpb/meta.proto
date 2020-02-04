@@ -12,9 +12,9 @@ option (gogoproto.unmarshaler_all) = true;
 option (gogoproto.goproto_getters_all) = false;
 
 enum BenchmarkType {
-    BENCHMARKTYPE_UNKNOWN = 0;
-    BENCHMARKTYPE_GO = 1;
-    BENCHMARKTYPE_XEPHONB = 2;
+    BENCHMARK_TYPE_UNKNOWN = 0;
+    BENCHMARK_TYPE_GO = 1;
+    BENCHMARK_TYPE_XEPHONB = 2;
 }
 
 message Spec {

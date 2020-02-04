@@ -1,18 +1,18 @@
-go test -bench Benchmark -run xx -count 2 -benchmem -benchtime=5s
+go test -bench Benchmark -run xx -count 2 -benchmem -benchtime=1s
 goos: linux
 goarch: amd64
 pkg: github.com/benchhub/benchhub/_example/sort
-BenchmarkStd-8                        	       2	3384461947 ns/op	      64 B/op	       2 allocs/op
-BenchmarkStd-8                        	       2	3425613435 ns/op	      64 B/op	       2 allocs/op
-BenchmarkMergeOnlySort-8              	       2	2555323582 ns/op	3064307920 B/op	 7684181 allocs/op
-BenchmarkMergeOnlySort-8              	       2	2562586500 ns/op	3064294416 B/op	 7683849 allocs/op
-BenchmarkMergeWithInsertionSort-8     	       3	2069383327 ns/op	2415919821 B/op	  262145 allocs/op
-BenchmarkMergeWithInsertionSort-8     	       3	2069655504 ns/op	2415919136 B/op	  262143 allocs/op
-BenchmarkMergeSortWithBuf-8           	       3	2394948080 ns/op	134217728 B/op	       1 allocs/op
-BenchmarkMergeSortWithBuf-8           	       3	2396576907 ns/op	134217728 B/op	       1 allocs/op
-BenchmarkMergeSortWithHalfBuf-8       	       3	2333086093 ns/op	67117056 B/op	       1 allocs/op
-BenchmarkMergeSortWithHalfBuf-8       	       3	2327555823 ns/op	67117056 B/op	       1 allocs/op
-BenchmarkMergeSortParallelWithBuf-8   	       4	1294692564 ns/op	134217840 B/op	       2 allocs/op
-BenchmarkMergeSortParallelWithBuf-8   	       4	1287067735 ns/op	134217744 B/op	       2 allocs/op
+BenchmarkStd-8                        	       1	3554476817 ns/op	      64 B/op	       2 allocs/op
+BenchmarkStd-8                        	       1	3539201712 ns/op	      64 B/op	       2 allocs/op
+BenchmarkMergeOnlySort-8              	       1	2780036510 ns/op	3064301600 B/op	 7684072 allocs/op
+BenchmarkMergeOnlySort-8              	       1	2718915429 ns/op	3064301152 B/op	 7684016 allocs/op
+BenchmarkMergeWithInsertionSort-8     	       1	2192547838 ns/op	2415919104 B/op	  262143 allocs/op
+BenchmarkMergeWithInsertionSort-8     	       1	2173850039 ns/op	2415919200 B/op	  262144 allocs/op
+BenchmarkMergeSortWithBuf-8           	       1	2579462273 ns/op	134217728 B/op	       1 allocs/op
+BenchmarkMergeSortWithBuf-8           	       1	2605274315 ns/op	134217728 B/op	       1 allocs/op
+BenchmarkMergeSortWithHalfBuf-8       	       1	2475023033 ns/op	67117056 B/op	       1 allocs/op
+BenchmarkMergeSortWithHalfBuf-8       	       1	2474888412 ns/op	67117056 B/op	       1 allocs/op
+BenchmarkMergeSortParallelWithBuf-8   	       1	1353296786 ns/op	134218512 B/op	       4 allocs/op
+BenchmarkMergeSortParallelWithBuf-8   	       1	1329417393 ns/op	134218128 B/op	       3 allocs/op
 PASS
-ok  	github.com/benchhub/benchhub/_example/sort	147.185s
+ok  	github.com/benchhub/benchhub/_example/sort	33.195s
