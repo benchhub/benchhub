@@ -23,6 +23,7 @@ var runCmd = &cobra.Command{
 	Use:   "run",
 	Short: "run benchmark",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// TODO: move this logic inside gobench package
 		client := mustDefaultClient()
 		var spec bhpb.GoBenchmarkSpec
 		if err := LoadYAMLTo(DefaultConfig, &spec); err != nil {
