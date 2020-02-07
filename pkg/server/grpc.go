@@ -28,7 +28,7 @@ func New(cfg Config) (*BenchHubGRPCServer, error) {
 }
 
 func (s *BenchHubGRPCServer) Run(ctx context.Context) error {
-	log.Infof("listen on addr %s", s.cfg.Addr)
+	log.Infof("Listen on addr %s", s.cfg.Addr)
 	lis, err := net.Listen("tcp", s.cfg.Addr)
 	if err != nil {
 		return errors.Wrapf(err, "error listen on: %s", s.cfg.Addr)
@@ -53,9 +53,14 @@ func (s *BenchHubGRPCServer) Ping(ctx context.Context, req *bhpb.PingRequest) (*
 }
 
 func (s *BenchHubGRPCServer) GoBenchmarkRegisterJob(ctx context.Context, spec *bhpb.GoBenchmarkSpec) (*bhpb.JobRegisterResponse, error) {
-	return s.meta.GoBenchmarkRegister(ctx, spec)
+	res, err := s.meta.GoBenchmarkRegister(ctx, spec)
+	if res != nil {
+		log.Infof("Job %d registered", res.JobId)
+	}
+	return res, err
 }
 
-func (s *BenchHubGRPCServer) GoBenchmarkReportResult(ctx context.Context, result *bhpb.GoBenchmarkReportResultRequest) (*bhpb.ResultReportResponse, error) {
-	return s.meta.GoBenchmarkReportResult(ctx, result)
+func (s *BenchHubGRPCServer) GoBenchmarkReportResult(ctx context.Context, req *bhpb.GoBenchmarkReportResultRequest) (*bhpb.ResultReportResponse, error) {
+	log.Infof("Register job %d with %d results", req.JobId, len(req.Results))
+	return s.meta.GoBenchmarkReportResult(ctx, req)
 }

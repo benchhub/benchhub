@@ -69,6 +69,7 @@ func (m *GoBenchmarkSpec) XXX_DiscardUnknown() {
 var xxx_messageInfo_GoBenchmarkSpec proto.InternalMessageInfo
 
 type GoBenchmarkCommandSpec struct {
+	// TODO: command.command is not a good naming ...
 	Command              string   `protobuf:"bytes,1,opt,name=command,proto3" json:"command,omitempty"`
 	Output               string   `protobuf:"bytes,2,opt,name=output,proto3" json:"output,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -149,16 +150,21 @@ func (m *GoBenchmarkReportSpec) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GoBenchmarkReportSpec proto.InternalMessageInfo
 
-// TODO: id should be generated on server side after report is submitted, need to name the original request and expanded result properly
 type GoBenchmarkResult struct {
-	PackageId            int64    `protobuf:"varint,1,opt,name=package_id,json=packageId,proto3" json:"package_id,omitempty"`
-	PackageName          string   `protobuf:"bytes,2,opt,name=package_name,json=packageName,proto3" json:"package_name,omitempty"`
-	CaseId               int64    `protobuf:"varint,3,opt,name=case_id,json=caseId,proto3" json:"case_id,omitempty"`
-	CaseName             string   `protobuf:"bytes,4,opt,name=case_name,json=caseName,proto3" json:"case_name,omitempty"`
-	Duration             int64    `protobuf:"varint,5,opt,name=duration,proto3" json:"duration,omitempty"`
-	NsPerOp              float64  `protobuf:"fixed64,6,opt,name=ns_per_op,json=nsPerOp,proto3" json:"ns_per_op,omitempty"`
-	AllocPerOp           uint64   `protobuf:"varint,7,opt,name=alloc_per_op,json=allocPerOp,proto3" json:"alloc_per_op,omitempty"`
-	BytesAllocatedPerOp  uint64   `protobuf:"varint,8,opt,name=bytes_allocated_per_op,json=bytesAllocatedPerOp,proto3" json:"bytes_allocated_per_op,omitempty"`
+	Package string `protobuf:"bytes,1,opt,name=package,proto3" json:"package,omitempty"`
+	// name does not have core suffix
+	Name                string  `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	NOp                 int64   `protobuf:"varint,3,opt,name=n_op,json=nOp,proto3" json:"n_op,omitempty"`
+	NsPerOp             float64 `protobuf:"fixed64,4,opt,name=ns_per_op,json=nsPerOp,proto3" json:"ns_per_op,omitempty"`
+	AllocPerOp          uint64  `protobuf:"varint,5,opt,name=alloc_per_op,json=allocPerOp,proto3" json:"alloc_per_op,omitempty"`
+	BytesAllocatedPerOp uint64  `protobuf:"varint,6,opt,name=bytes_allocated_per_op,json=bytesAllocatedPerOp,proto3" json:"bytes_allocated_per_op,omitempty"`
+	MbPerSecond         float64 `protobuf:"fixed64,7,opt,name=mb_per_second,json=mbPerSecond,proto3" json:"mb_per_second,omitempty"`
+	Measured            int64   `protobuf:"varint,8,opt,name=measured,proto3" json:"measured,omitempty"`
+	Ord                 uint32  `protobuf:"varint,9,opt,name=ord,proto3" json:"ord,omitempty"`
+	// calculated
+	Duration int64 `protobuf:"varint,10,opt,name=duration,proto3" json:"duration,omitempty"`
+	// extracted
+	Cpu                  uint32   `protobuf:"varint,11,opt,name=cpu,proto3" json:"cpu,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -197,11 +203,17 @@ func (m *GoBenchmarkResult) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GoBenchmarkResult proto.InternalMessageInfo
 
+// TODO: it only reports a single package at a time
 type GoBenchmarkReportResultRequest struct {
-	Results              []*GoBenchmarkResult `protobuf:"bytes,1,rep,name=results,proto3" json:"results,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
-	XXX_unrecognized     []byte               `json:"-"`
-	XXX_sizecache        int32                `json:"-"`
+	JobId   int64                `protobuf:"varint,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	Package string               `protobuf:"bytes,2,opt,name=package,proto3" json:"package,omitempty"`
+	Results []*GoBenchmarkResult `protobuf:"bytes,3,rep,name=results,proto3" json:"results,omitempty"`
+	// unix nano
+	StartTime            int64    `protobuf:"varint,4,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime              int64    `protobuf:"varint,5,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *GoBenchmarkReportResultRequest) Reset()         { *m = GoBenchmarkReportResultRequest{} }
@@ -248,36 +260,41 @@ func init() {
 func init() { proto.RegisterFile("gobench.proto", fileDescriptor_a18a56bd951d162f) }
 
 var fileDescriptor_a18a56bd951d162f = []byte{
-	// 455 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x93, 0xcf, 0x6e, 0xd3, 0x30,
-	0x1c, 0xc7, 0xf1, 0xda, 0x25, 0xcd, 0xaf, 0x45, 0x08, 0x03, 0x5d, 0xd4, 0x41, 0x14, 0x72, 0x8a,
-	0x90, 0xd6, 0x89, 0x55, 0xe2, 0xce, 0x38, 0xa0, 0x71, 0x00, 0xe4, 0x72, 0xe2, 0x52, 0x39, 0x89,
-	0x49, 0xa3, 0x35, 0xb1, 0x71, 0x1c, 0x24, 0x5e, 0x85, 0xe7, 0xe1, 0xb0, 0x23, 0x8f, 0x00, 0x7d,
-	0x12, 0x94, 0x9f, 0x63, 0xc4, 0xb4, 0xde, 0xf2, 0xfd, 0xf3, 0xf1, 0xcf, 0x76, 0x12, 0xb8, 0x5f,
-	0xca, 0x4c, 0x34, 0xf9, 0x76, 0xa9, 0xb4, 0x34, 0x92, 0x8e, 0xb3, 0xad, 0xca, 0x16, 0x67, 0x65,
-	0x65, 0xb6, 0x5d, 0xb6, 0xcc, 0x65, 0x7d, 0x5e, 0xca, 0x52, 0x9e, 0x63, 0x98, 0x75, 0x5f, 0x50,
-	0xa1, 0xc0, 0x27, 0x0b, 0x2d, 0x66, 0xb9, 0xac, 0x6b, 0xd9, 0x58, 0x95, 0xfc, 0x24, 0xf0, 0xe0,
-	0xad, 0xbc, 0xec, 0x17, 0xad, 0xb9, 0xbe, 0x5e, 0x2b, 0x91, 0xd3, 0x10, 0x7c, 0xc5, 0xf3, 0x6b,
-	0x5e, 0x8a, 0x90, 0xc4, 0x24, 0x0d, 0x98, 0x93, 0xf4, 0x05, 0x78, 0xad, 0xd0, 0xdf, 0x84, 0x0e,
-	0x8f, 0x62, 0x92, 0x4e, 0x2f, 0xe8, 0xb2, 0xdf, 0xc1, 0x72, 0x8d, 0xde, 0x27, 0xae, 0x4b, 0x61,
-	0xd8, 0xd0, 0xa0, 0xaf, 0xc0, 0xef, 0x27, 0xf1, 0xa6, 0x08, 0x47, 0x58, 0x7e, 0x6a, 0xcb, 0xff,
-	0x4d, 0x7b, 0x63, 0xf3, 0x7e, 0x28, 0x73, 0x65, 0xba, 0x02, 0x4f, 0x0b, 0x25, 0xb5, 0x09, 0xc7,
-	0x88, 0x9d, 0xde, 0xc1, 0x18, 0xc6, 0x48, 0x0d, 0xd5, 0xe4, 0x1d, 0xcc, 0x0f, 0xaf, 0xdb, 0x1f,
-	0xc6, 0x6d, 0x63, 0x38, 0x8c, 0x1b, 0x34, 0x07, 0x4f, 0x76, 0x46, 0x75, 0x06, 0x0f, 0x13, 0xb0,
-	0x41, 0x25, 0x67, 0xf0, 0xe4, 0xe0, 0x30, 0xfa, 0x18, 0x8e, 0xab, 0xa6, 0xef, 0xdb, 0x85, 0xac,
-	0x48, 0x7e, 0x1c, 0xc1, 0xc3, 0x5b, 0xfd, 0xb6, 0xdb, 0x19, 0xfa, 0x0c, 0x60, 0xb8, 0xb4, 0x4d,
-	0x65, 0x27, 0x8f, 0x58, 0x30, 0x38, 0x57, 0x05, 0x7d, 0x0e, 0x33, 0x17, 0x37, 0xbc, 0x16, 0xc3,
-	0x0e, 0xa6, 0x83, 0xf7, 0x9e, 0xd7, 0x82, 0x9e, 0x80, 0x9f, 0xf3, 0x16, 0xf1, 0x11, 0xe2, 0x5e,
-	0x2f, 0xaf, 0x0a, 0x7a, 0x0a, 0x01, 0x06, 0x08, 0x8e, 0x11, 0x9c, 0xf4, 0x06, 0x52, 0x0b, 0x98,
-	0x14, 0x9d, 0xe6, 0xa6, 0x92, 0x4d, 0x78, 0x8c, 0xd8, 0x3f, 0x4d, 0x17, 0x10, 0x34, 0xed, 0x46,
-	0x09, 0xbd, 0x91, 0x2a, 0xf4, 0x62, 0x92, 0x12, 0xe6, 0x37, 0xed, 0x47, 0xa1, 0x3f, 0x28, 0x1a,
-	0xc3, 0x8c, 0xef, 0x76, 0x32, 0x77, 0xb1, 0x1f, 0x93, 0x74, 0xcc, 0x00, 0x3d, 0xdb, 0x58, 0xc1,
-	0x3c, 0xfb, 0x6e, 0x44, 0xbb, 0x41, 0x8f, 0x1b, 0x51, 0xb8, 0xee, 0x04, 0xbb, 0x8f, 0x30, 0x7d,
-	0xed, 0x42, 0x84, 0x92, 0x35, 0x44, 0x77, 0xee, 0xd2, 0xde, 0x10, 0x13, 0x5f, 0x3b, 0xd1, 0x1a,
-	0xfa, 0x12, 0x7c, 0x8d, 0x46, 0x1b, 0x92, 0x78, 0x94, 0x4e, 0x2f, 0x4e, 0x0e, 0xbc, 0x6f, 0x04,
-	0x5c, 0xef, 0x72, 0x7e, 0xf3, 0x27, 0xba, 0x77, 0xb3, 0x8f, 0xc8, 0xaf, 0x7d, 0x44, 0x7e, 0xef,
-	0x23, 0xf2, 0x19, 0x7f, 0x84, 0xcc, 0xc3, 0x4f, 0x7a, 0xf5, 0x37, 0x00, 0x00, 0xff, 0xff, 0xd0,
-	0x75, 0xb0, 0xfb, 0x26, 0x03, 0x00, 0x00,
+	// 531 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x93, 0x41, 0x6f, 0xd3, 0x30,
+	0x14, 0xc7, 0x49, 0xd3, 0x26, 0xed, 0xeb, 0x2a, 0x98, 0x61, 0x25, 0x14, 0xa8, 0xa2, 0x9c, 0x2a,
+	0xa4, 0x75, 0x62, 0x95, 0xb8, 0x33, 0x0e, 0x08, 0x2e, 0x9b, 0xdc, 0x9d, 0xb8, 0x54, 0x71, 0x62,
+	0xd2, 0x6c, 0x8d, 0x6d, 0x1c, 0x07, 0x89, 0x2f, 0xc7, 0x09, 0x89, 0x1d, 0xf9, 0x08, 0xd0, 0x4f,
+	0x82, 0xfc, 0xdc, 0xa0, 0x4d, 0xab, 0xb8, 0xf9, 0xbd, 0xff, 0xef, 0xbd, 0xbf, 0xfd, 0x6f, 0x03,
+	0xa3, 0x42, 0x32, 0x2e, 0xb2, 0xf5, 0x5c, 0x69, 0x69, 0x24, 0xe9, 0xb2, 0xb5, 0x62, 0x93, 0xe3,
+	0xa2, 0x34, 0xeb, 0x86, 0xcd, 0x33, 0x59, 0x9d, 0x14, 0xb2, 0x90, 0x27, 0x28, 0xb2, 0xe6, 0x33,
+	0x56, 0x58, 0xe0, 0xc9, 0x0d, 0x4d, 0x0e, 0x32, 0x59, 0x55, 0x52, 0xb8, 0x2a, 0xf9, 0xe1, 0xc1,
+	0xc3, 0xf7, 0xf2, 0xcc, 0x2e, 0xad, 0x52, 0x7d, 0xbd, 0x54, 0x3c, 0x23, 0x11, 0x84, 0x2a, 0xcd,
+	0xae, 0xd3, 0x82, 0x47, 0x5e, 0xec, 0xcd, 0x06, 0xb4, 0x2d, 0xc9, 0x2b, 0x08, 0x6a, 0xae, 0xbf,
+	0x72, 0x1d, 0x75, 0x62, 0x6f, 0x36, 0x3c, 0x25, 0x73, 0x7b, 0x83, 0xf9, 0x12, 0x7b, 0x97, 0xa9,
+	0x2e, 0xb8, 0xa1, 0x3b, 0x82, 0xbc, 0x81, 0xd0, 0x3a, 0xa5, 0x22, 0x8f, 0x7c, 0x84, 0x5f, 0x38,
+	0xf8, 0x96, 0xdb, 0x3b, 0xa7, 0x5b, 0x53, 0xda, 0xc2, 0x64, 0x01, 0x81, 0xe6, 0x4a, 0x6a, 0x13,
+	0x75, 0x71, 0xec, 0xf9, 0xbd, 0x31, 0x8a, 0x32, 0x4e, 0xed, 0xd0, 0xe4, 0x23, 0x8c, 0xf7, 0xef,
+	0xb5, 0x8f, 0x69, 0xaf, 0xb1, 0x7b, 0x4c, 0x6b, 0x34, 0x86, 0x40, 0x36, 0x46, 0x35, 0x06, 0x1f,
+	0x33, 0xa0, 0xbb, 0x2a, 0x39, 0x86, 0xa3, 0xbd, 0x66, 0xe4, 0x09, 0xf4, 0x4a, 0x61, 0x79, 0xb7,
+	0xc8, 0x15, 0xc9, 0xcf, 0x0e, 0x1c, 0xde, 0xe1, 0xeb, 0x66, 0x63, 0xfe, 0x93, 0x21, 0x81, 0xae,
+	0x48, 0x2b, 0xbe, 0x33, 0xc5, 0x33, 0x39, 0x84, 0xae, 0x58, 0x49, 0x85, 0x41, 0xf9, 0xd4, 0x17,
+	0xe7, 0x8a, 0x4c, 0x60, 0x20, 0xea, 0x95, 0xe2, 0xda, 0xf6, 0x6d, 0x12, 0x1e, 0x0d, 0x45, 0x7d,
+	0xc1, 0xf5, 0xb9, 0x22, 0x31, 0x1c, 0xa4, 0x9b, 0x8d, 0xcc, 0x5a, 0xb9, 0x17, 0x7b, 0xb3, 0x2e,
+	0x05, 0xec, 0x39, 0x62, 0x01, 0x63, 0xf6, 0xcd, 0xf0, 0x7a, 0x85, 0xbd, 0xd4, 0xf0, 0xbc, 0x65,
+	0x03, 0x64, 0x1f, 0xa3, 0xfa, 0xb6, 0x15, 0xdd, 0x50, 0x02, 0xa3, 0x8a, 0x21, 0x57, 0xf3, 0x4c,
+	0x8a, 0x3c, 0x0a, 0xd1, 0x76, 0x58, 0xb1, 0x0b, 0xae, 0x97, 0xd8, 0x22, 0x13, 0xe8, 0x57, 0x3c,
+	0xad, 0x1b, 0xcd, 0xf3, 0xa8, 0x8f, 0xb7, 0xfd, 0x57, 0x93, 0x47, 0xe0, 0x4b, 0x9d, 0x47, 0x83,
+	0xd8, 0x9b, 0x8d, 0xa8, 0x3d, 0x5a, 0x3a, 0x6f, 0x74, 0x6a, 0x4a, 0x29, 0x22, 0x70, 0x74, 0x5b,
+	0x5b, 0x3a, 0x53, 0x4d, 0x34, 0x74, 0x74, 0xa6, 0x9a, 0xe4, 0xbb, 0x07, 0xd3, 0x7b, 0xc9, 0xbb,
+	0x3c, 0x29, 0xff, 0xd2, 0xf0, 0xda, 0x90, 0x23, 0x08, 0xae, 0x24, 0x5b, 0x95, 0xee, 0xc7, 0xf4,
+	0x69, 0xef, 0x4a, 0xb2, 0x0f, 0xf9, 0xed, 0xb4, 0x3b, 0x77, 0xd3, 0x7e, 0x0d, 0xa1, 0xc6, 0x0d,
+	0x75, 0xe4, 0xc7, 0xfe, 0x6c, 0x78, 0xfa, 0x74, 0xcf, 0xdf, 0x09, 0x1d, 0x5a, 0x8e, 0xbc, 0x04,
+	0xa8, 0x4d, 0xaa, 0xcd, 0xca, 0x94, 0x15, 0xc7, 0xe8, 0x7d, 0x3a, 0xc0, 0xce, 0x65, 0x59, 0x71,
+	0xf2, 0x0c, 0xfa, 0x5c, 0xe4, 0x4e, 0xec, 0xa1, 0x18, 0x72, 0x91, 0x5b, 0xe9, 0x6c, 0x7c, 0xf3,
+	0x67, 0xfa, 0xe0, 0x66, 0x3b, 0xf5, 0x7e, 0x6d, 0xa7, 0xde, 0xef, 0xed, 0xd4, 0xfb, 0x84, 0x5f,
+	0x28, 0x0b, 0xf0, 0x5b, 0x5b, 0xfc, 0x0d, 0x00, 0x00, 0xff, 0xff, 0xfe, 0xe5, 0x04, 0x2a, 0xbf,
+	0x03, 0x00, 0x00,
 }
 
 func (m *GoBenchmarkSpec) Marshal() (dAtA []byte, err error) {
@@ -449,50 +466,66 @@ func (m *GoBenchmarkResult) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
+	if m.Cpu != 0 {
+		i = encodeVarintGobench(dAtA, i, uint64(m.Cpu))
+		i--
+		dAtA[i] = 0x58
+	}
+	if m.Duration != 0 {
+		i = encodeVarintGobench(dAtA, i, uint64(m.Duration))
+		i--
+		dAtA[i] = 0x50
+	}
+	if m.Ord != 0 {
+		i = encodeVarintGobench(dAtA, i, uint64(m.Ord))
+		i--
+		dAtA[i] = 0x48
+	}
+	if m.Measured != 0 {
+		i = encodeVarintGobench(dAtA, i, uint64(m.Measured))
+		i--
+		dAtA[i] = 0x40
+	}
+	if m.MbPerSecond != 0 {
+		i -= 8
+		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(math.Float64bits(float64(m.MbPerSecond))))
+		i--
+		dAtA[i] = 0x39
+	}
 	if m.BytesAllocatedPerOp != 0 {
 		i = encodeVarintGobench(dAtA, i, uint64(m.BytesAllocatedPerOp))
 		i--
-		dAtA[i] = 0x40
+		dAtA[i] = 0x30
 	}
 	if m.AllocPerOp != 0 {
 		i = encodeVarintGobench(dAtA, i, uint64(m.AllocPerOp))
 		i--
-		dAtA[i] = 0x38
+		dAtA[i] = 0x28
 	}
 	if m.NsPerOp != 0 {
 		i -= 8
 		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(math.Float64bits(float64(m.NsPerOp))))
 		i--
-		dAtA[i] = 0x31
+		dAtA[i] = 0x21
 	}
-	if m.Duration != 0 {
-		i = encodeVarintGobench(dAtA, i, uint64(m.Duration))
-		i--
-		dAtA[i] = 0x28
-	}
-	if len(m.CaseName) > 0 {
-		i -= len(m.CaseName)
-		copy(dAtA[i:], m.CaseName)
-		i = encodeVarintGobench(dAtA, i, uint64(len(m.CaseName)))
-		i--
-		dAtA[i] = 0x22
-	}
-	if m.CaseId != 0 {
-		i = encodeVarintGobench(dAtA, i, uint64(m.CaseId))
+	if m.NOp != 0 {
+		i = encodeVarintGobench(dAtA, i, uint64(m.NOp))
 		i--
 		dAtA[i] = 0x18
 	}
-	if len(m.PackageName) > 0 {
-		i -= len(m.PackageName)
-		copy(dAtA[i:], m.PackageName)
-		i = encodeVarintGobench(dAtA, i, uint64(len(m.PackageName)))
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintGobench(dAtA, i, uint64(len(m.Name)))
 		i--
 		dAtA[i] = 0x12
 	}
-	if m.PackageId != 0 {
-		i = encodeVarintGobench(dAtA, i, uint64(m.PackageId))
+	if len(m.Package) > 0 {
+		i -= len(m.Package)
+		copy(dAtA[i:], m.Package)
+		i = encodeVarintGobench(dAtA, i, uint64(len(m.Package)))
 		i--
-		dAtA[i] = 0x8
+		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
@@ -521,6 +554,16 @@ func (m *GoBenchmarkReportResultRequest) MarshalToSizedBuffer(dAtA []byte) (int,
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
+	if m.EndTime != 0 {
+		i = encodeVarintGobench(dAtA, i, uint64(m.EndTime))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.StartTime != 0 {
+		i = encodeVarintGobench(dAtA, i, uint64(m.StartTime))
+		i--
+		dAtA[i] = 0x20
+	}
 	if len(m.Results) > 0 {
 		for iNdEx := len(m.Results) - 1; iNdEx >= 0; iNdEx-- {
 			{
@@ -532,8 +575,20 @@ func (m *GoBenchmarkReportResultRequest) MarshalToSizedBuffer(dAtA []byte) (int,
 				i = encodeVarintGobench(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0xa
+			dAtA[i] = 0x1a
 		}
+	}
+	if len(m.Package) > 0 {
+		i -= len(m.Package)
+		copy(dAtA[i:], m.Package)
+		i = encodeVarintGobench(dAtA, i, uint64(len(m.Package)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.JobId != 0 {
+		i = encodeVarintGobench(dAtA, i, uint64(m.JobId))
+		i--
+		dAtA[i] = 0x8
 	}
 	return len(dAtA) - i, nil
 }
@@ -619,22 +674,16 @@ func (m *GoBenchmarkResult) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.PackageId != 0 {
-		n += 1 + sovGobench(uint64(m.PackageId))
-	}
-	l = len(m.PackageName)
+	l = len(m.Package)
 	if l > 0 {
 		n += 1 + l + sovGobench(uint64(l))
 	}
-	if m.CaseId != 0 {
-		n += 1 + sovGobench(uint64(m.CaseId))
-	}
-	l = len(m.CaseName)
+	l = len(m.Name)
 	if l > 0 {
 		n += 1 + l + sovGobench(uint64(l))
 	}
-	if m.Duration != 0 {
-		n += 1 + sovGobench(uint64(m.Duration))
+	if m.NOp != 0 {
+		n += 1 + sovGobench(uint64(m.NOp))
 	}
 	if m.NsPerOp != 0 {
 		n += 9
@@ -644,6 +693,21 @@ func (m *GoBenchmarkResult) Size() (n int) {
 	}
 	if m.BytesAllocatedPerOp != 0 {
 		n += 1 + sovGobench(uint64(m.BytesAllocatedPerOp))
+	}
+	if m.MbPerSecond != 0 {
+		n += 9
+	}
+	if m.Measured != 0 {
+		n += 1 + sovGobench(uint64(m.Measured))
+	}
+	if m.Ord != 0 {
+		n += 1 + sovGobench(uint64(m.Ord))
+	}
+	if m.Duration != 0 {
+		n += 1 + sovGobench(uint64(m.Duration))
+	}
+	if m.Cpu != 0 {
+		n += 1 + sovGobench(uint64(m.Cpu))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -657,11 +721,24 @@ func (m *GoBenchmarkReportResultRequest) Size() (n int) {
 	}
 	var l int
 	_ = l
+	if m.JobId != 0 {
+		n += 1 + sovGobench(uint64(m.JobId))
+	}
+	l = len(m.Package)
+	if l > 0 {
+		n += 1 + l + sovGobench(uint64(l))
+	}
 	if len(m.Results) > 0 {
 		for _, e := range m.Results {
 			l = e.Size()
 			n += 1 + l + sovGobench(uint64(l))
 		}
+	}
+	if m.StartTime != 0 {
+		n += 1 + sovGobench(uint64(m.StartTime))
+	}
+	if m.EndTime != 0 {
+		n += 1 + sovGobench(uint64(m.EndTime))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -1103,27 +1180,8 @@ func (m *GoBenchmarkResult) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PackageId", wireType)
-			}
-			m.PackageId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowGobench
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PackageId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PackageName", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Package", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1151,13 +1209,13 @@ func (m *GoBenchmarkResult) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.PackageName = string(dAtA[iNdEx:postIndex])
+			m.Package = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field CaseId", wireType)
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
 			}
-			m.CaseId = 0
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGobench
@@ -1167,63 +1225,44 @@ func (m *GoBenchmarkResult) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.CaseId |= int64(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGobench
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthGobench
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NOp", wireType)
+			}
+			m.NOp = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGobench
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.NOp |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
 		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field CaseName", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowGobench
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthGobench
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthGobench
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.CaseName = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Duration", wireType)
-			}
-			m.Duration = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowGobench
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Duration |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 6:
 			if wireType != 1 {
 				return fmt.Errorf("proto: wrong wireType = %d for field NsPerOp", wireType)
 			}
@@ -1234,7 +1273,7 @@ func (m *GoBenchmarkResult) Unmarshal(dAtA []byte) error {
 			v = uint64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
 			iNdEx += 8
 			m.NsPerOp = float64(math.Float64frombits(v))
-		case 7:
+		case 5:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field AllocPerOp", wireType)
 			}
@@ -1253,7 +1292,7 @@ func (m *GoBenchmarkResult) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 8:
+		case 6:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field BytesAllocatedPerOp", wireType)
 			}
@@ -1268,6 +1307,93 @@ func (m *GoBenchmarkResult) Unmarshal(dAtA []byte) error {
 				b := dAtA[iNdEx]
 				iNdEx++
 				m.BytesAllocatedPerOp |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 7:
+			if wireType != 1 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MbPerSecond", wireType)
+			}
+			var v uint64
+			if (iNdEx + 8) > l {
+				return io.ErrUnexpectedEOF
+			}
+			v = uint64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
+			iNdEx += 8
+			m.MbPerSecond = float64(math.Float64frombits(v))
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Measured", wireType)
+			}
+			m.Measured = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGobench
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Measured |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 9:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Ord", wireType)
+			}
+			m.Ord = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGobench
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Ord |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 10:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Duration", wireType)
+			}
+			m.Duration = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGobench
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Duration |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 11:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Cpu", wireType)
+			}
+			m.Cpu = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGobench
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Cpu |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1327,6 +1453,57 @@ func (m *GoBenchmarkReportResultRequest) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field JobId", wireType)
+			}
+			m.JobId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGobench
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.JobId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Package", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGobench
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGobench
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthGobench
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Package = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Results", wireType)
 			}
@@ -1360,6 +1537,44 @@ func (m *GoBenchmarkReportResultRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field StartTime", wireType)
+			}
+			m.StartTime = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGobench
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.StartTime |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EndTime", wireType)
+			}
+			m.EndTime = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGobench
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.EndTime |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGobench(dAtA[iNdEx:])

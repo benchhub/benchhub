@@ -3,6 +3,8 @@
 ## v0.0.4
 
 - [ ] initial support for go micro benchmark
+  - [ ] may not support label in sub benchmark `BenchmarkXXX/a=123,b=456/`
+  - [ ] might skip machine information as well ... thought it's actually very important ...
 - [ ] in memory storage backend for easy testing
 - [ ] relational database if we can create proper data model
 
