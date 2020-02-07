@@ -24,6 +24,7 @@ func ParseFile(p string) ([]*parse.Benchmark, error) {
 	return Parse(f), nil
 }
 
+// TODO: change to ParseSet? Also can we keep labels of test output, e.g. go version etc.
 func Parse(rr io.Reader) []*parse.Benchmark {
 	var res []*parse.Benchmark
 	r := bufio.NewReader(rr)

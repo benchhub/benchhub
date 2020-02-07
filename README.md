@@ -12,17 +12,13 @@
 	<br>
 </h1>
 
-BenchHub is a service for running and storing benchmark result of distributed databases in database.
+BenchHub is a service for running and storing benchmark result of databases in database.
 
-- status: Under major rewrite
+- status: Under major rewrite. See [roadmap](doc/ROADMAP.md)
 
 ## Usage
 
 NOTE: not in a usable state. See [_example](_example)
-
-## Develop
-
-see [doc](doc/README.md)
 
 ## License
 
