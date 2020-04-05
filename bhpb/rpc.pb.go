@@ -190,39 +190,84 @@ func (m *JobEstimation) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_JobEstimation proto.InternalMessageInfo
 
+type ResultReportResponse struct {
+	Ok                   bool     `protobuf:"varint,1,opt,name=ok,proto3" json:"ok,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ResultReportResponse) Reset()         { *m = ResultReportResponse{} }
+func (m *ResultReportResponse) String() string { return proto.CompactTextString(m) }
+func (*ResultReportResponse) ProtoMessage()    {}
+func (*ResultReportResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_77a6da22d6a3feb1, []int{4}
+}
+func (m *ResultReportResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ResultReportResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ResultReportResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ResultReportResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ResultReportResponse.Merge(m, src)
+}
+func (m *ResultReportResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *ResultReportResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ResultReportResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ResultReportResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*PingRequest)(nil), "bhpb.PingRequest")
 	proto.RegisterType((*PingResponse)(nil), "bhpb.PingResponse")
 	proto.RegisterType((*JobRegisterResponse)(nil), "bhpb.JobRegisterResponse")
 	proto.RegisterType((*JobEstimation)(nil), "bhpb.JobEstimation")
+	proto.RegisterType((*ResultReportResponse)(nil), "bhpb.ResultReportResponse")
 }
 
 func init() { proto.RegisterFile("rpc.proto", fileDescriptor_77a6da22d6a3feb1) }
 
 var fileDescriptor_77a6da22d6a3feb1 = []byte{
-	// 350 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x92, 0xd1, 0x4e, 0xfa, 0x30,
-	0x14, 0xc6, 0x19, 0xf0, 0x87, 0x3f, 0x07, 0x31, 0x5a, 0x82, 0xe2, 0x2e, 0x16, 0xb2, 0x1b, 0x77,
-	0xe3, 0x48, 0xe0, 0x0d, 0x48, 0x8c, 0x42, 0x62, 0x62, 0xa6, 0x57, 0xde, 0x90, 0x75, 0xd4, 0xad,
-	0x98, 0xf5, 0xcc, 0xad, 0x4b, 0xd0, 0x07, 0xf0, 0xd9, 0xb8, 0xf4, 0x11, 0x94, 0x27, 0x31, 0x6b,
-	0x81, 0x0c, 0x2f, 0xbc, 0xeb, 0xf7, 0x9d, 0xdf, 0x69, 0x7b, 0xbe, 0x16, 0x5a, 0x69, 0x12, 0xb8,
-	0x49, 0x8a, 0x12, 0x49, 0x9d, 0x46, 0x09, 0x35, 0xaf, 0x42, 0x2e, 0xa3, 0x9c, 0xba, 0x01, 0xc6,
-	0xc3, 0x10, 0x43, 0x1c, 0xaa, 0x22, 0xcd, 0x9f, 0x95, 0x52, 0x42, 0xad, 0x74, 0x93, 0xd9, 0x09,
-	0x91, 0x32, 0x11, 0x44, 0x5a, 0xda, 0x97, 0xd0, 0xbe, 0xe7, 0x22, 0xf4, 0xd8, 0x6b, 0xce, 0x32,
-	0x49, 0xfa, 0xd0, 0x0c, 0x50, 0x48, 0x26, 0x64, 0xdf, 0x18, 0x18, 0x4e, 0xcb, 0xdb, 0x49, 0xdb,
-	0x81, 0x23, 0x0d, 0x66, 0x09, 0x8a, 0x8c, 0xfd, 0x41, 0xbe, 0x43, 0x77, 0x86, 0xd4, 0x63, 0x21,
-	0xcf, 0x24, 0x4b, 0xf7, 0x0d, 0x3d, 0x68, 0x2c, 0x91, 0xce, 0xf9, 0x42, 0xf1, 0x35, 0xef, 0xdf,
-	0x12, 0xe9, 0x74, 0x41, 0xce, 0xa1, 0x99, 0x25, 0x2c, 0x28, 0xfc, 0xaa, 0xf2, 0x1b, 0x85, 0x9c,
-	0x2e, 0xc8, 0x18, 0x80, 0x65, 0x92, 0xc7, 0xbe, 0xe4, 0x28, 0xfa, 0xb5, 0x81, 0xe1, 0xb4, 0x47,
-	0x5d, 0xb7, 0x18, 0xd9, 0x9d, 0x21, 0xbd, 0xde, 0x97, 0xbc, 0x12, 0x66, 0x07, 0xd0, 0x39, 0x28,
-	0x12, 0x07, 0x4e, 0x22, 0x9e, 0x49, 0x4c, 0xdf, 0xe6, 0x31, 0x17, 0x73, 0xc9, 0x63, 0xb6, 0x3d,
-	0xff, 0x78, 0xeb, 0xdf, 0x71, 0xf1, 0xc8, 0x63, 0x76, 0x40, 0xfa, 0x2b, 0x4d, 0x56, 0x0f, 0x49,
-	0x7f, 0x55, 0x90, 0xa3, 0x0f, 0x03, 0xfe, 0x4f, 0x8a, 0x0c, 0x6f, 0x73, 0x4a, 0x86, 0x50, 0x2f,
-	0x72, 0x21, 0xa7, 0xfa, 0x6a, 0xa5, 0x30, 0x4d, 0x52, 0xb6, 0x74, 0x0a, 0x76, 0x85, 0x4c, 0xa1,
-	0xbb, 0xcb, 0xe6, 0x06, 0xd5, 0x36, 0xb1, 0x9f, 0xbe, 0x90, 0x9e, 0x86, 0x4b, 0xd6, 0x43, 0xc2,
-	0x02, 0xf3, 0x62, 0x3f, 0xf1, 0xef, 0x40, 0xed, 0xca, 0xe4, 0x6c, 0xfd, 0x6d, 0x55, 0xd6, 0x1b,
-	0xcb, 0xf8, 0xdc, 0x58, 0xc6, 0xd7, 0xc6, 0x32, 0x9e, 0xd4, 0x97, 0xa0, 0x0d, 0xf5, 0xb6, 0xe3,
-	0x9f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xf8, 0xc8, 0x40, 0xbc, 0x2c, 0x02, 0x00, 0x00,
+	// 404 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x92, 0xc1, 0x6e, 0xd3, 0x40,
+	0x10, 0x86, 0x6d, 0xb7, 0xa4, 0xed, 0x94, 0x56, 0xb0, 0xa5, 0x6d, 0xf0, 0xc1, 0xaa, 0x2c, 0x04,
+	0xbe, 0xe0, 0x48, 0xed, 0x1b, 0x44, 0x42, 0x90, 0x08, 0x24, 0xb4, 0x70, 0x42, 0x42, 0x91, 0xd7,
+	0x59, 0xec, 0x4d, 0xe2, 0x1d, 0xe3, 0x5d, 0x4b, 0x81, 0x27, 0xcc, 0x91, 0x47, 0x80, 0x9c, 0x78,
+	0x0c, 0xe4, 0xdd, 0xc4, 0xb2, 0x01, 0xf5, 0xe6, 0x7f, 0xfe, 0x6f, 0xc6, 0x3b, 0xbf, 0x06, 0x4e,
+	0xaa, 0x32, 0x8d, 0xcb, 0x0a, 0x35, 0x92, 0x43, 0x96, 0x97, 0xcc, 0x7f, 0x99, 0x09, 0x9d, 0xd7,
+	0x2c, 0x4e, 0xb1, 0x18, 0x65, 0x98, 0xe1, 0xc8, 0x98, 0xac, 0xfe, 0x62, 0x94, 0x11, 0xe6, 0xcb,
+	0x36, 0xf9, 0x67, 0x19, 0x32, 0x2e, 0xd3, 0xdc, 0xca, 0xf0, 0x05, 0x9c, 0xbe, 0x17, 0x32, 0xa3,
+	0xfc, 0x6b, 0xcd, 0x95, 0x26, 0x43, 0x38, 0x4a, 0x51, 0x6a, 0x2e, 0xf5, 0xd0, 0xbd, 0x71, 0xa3,
+	0x13, 0xba, 0x97, 0x61, 0x04, 0x0f, 0x2d, 0xa8, 0x4a, 0x94, 0x8a, 0xdf, 0x43, 0x7e, 0x87, 0x8b,
+	0x29, 0x32, 0xca, 0x33, 0xa1, 0x34, 0xaf, 0xda, 0x86, 0x4b, 0x18, 0x2c, 0x90, 0xcd, 0xc4, 0xdc,
+	0xf0, 0x07, 0xf4, 0xc1, 0x02, 0xd9, 0x64, 0x4e, 0xae, 0xe1, 0x48, 0x95, 0x3c, 0x6d, 0xea, 0x9e,
+	0xa9, 0x0f, 0x1a, 0x39, 0x99, 0x93, 0x3b, 0x00, 0xae, 0xb4, 0x28, 0x12, 0x2d, 0x50, 0x0e, 0x0f,
+	0x6e, 0xdc, 0xe8, 0xf4, 0xf6, 0x22, 0x6e, 0x56, 0x8e, 0xa7, 0xc8, 0x5e, 0xb5, 0x16, 0xed, 0x60,
+	0x61, 0x0a, 0x67, 0x3d, 0x93, 0x44, 0xf0, 0x28, 0x17, 0x4a, 0x63, 0xf5, 0x6d, 0x56, 0x08, 0x39,
+	0xd3, 0xa2, 0xe0, 0xbb, 0xff, 0x9f, 0xef, 0xea, 0xef, 0x84, 0xfc, 0x28, 0x0a, 0xde, 0x23, 0x93,
+	0xb5, 0x25, 0xbd, 0x3e, 0x99, 0xac, 0x1b, 0x32, 0x7c, 0x0e, 0x4f, 0x28, 0x57, 0xf5, 0x4a, 0x53,
+	0x5e, 0x62, 0xa5, 0xdb, 0x0d, 0xcf, 0xc1, 0xc3, 0xa5, 0x99, 0x7e, 0x4c, 0x3d, 0x5c, 0xde, 0xfe,
+	0x76, 0xe1, 0x78, 0xdc, 0x64, 0xfd, 0xa6, 0x66, 0x64, 0x04, 0x87, 0x4d, 0x7e, 0xe4, 0xb1, 0x5d,
+	0xa1, 0x13, 0xba, 0x4f, 0xba, 0x25, 0x3b, 0x2b, 0x74, 0xc8, 0x5b, 0xb8, 0x7a, 0x8d, 0xa6, 0xbd,
+	0x48, 0xaa, 0xe5, 0x3e, 0xce, 0x29, 0x32, 0x72, 0x69, 0xf9, 0x8e, 0xfb, 0xa1, 0xe4, 0xa9, 0xff,
+	0xb4, 0x0d, 0xe7, 0xef, 0xec, 0x43, 0x87, 0x7c, 0x86, 0xeb, 0xde, 0xb4, 0xdd, 0xc3, 0xeb, 0x95,
+	0x26, 0xcf, 0xfe, 0x19, 0xd7, 0xb5, 0xf7, 0x8f, 0xf4, 0x2d, 0xf5, 0xbf, 0xc5, 0x43, 0x67, 0x7c,
+	0xb5, 0xf9, 0x15, 0x38, 0x9b, 0x6d, 0xe0, 0xfe, 0xd8, 0x06, 0xee, 0xcf, 0x6d, 0xe0, 0x7e, 0x32,
+	0xc7, 0xc9, 0x06, 0xe6, 0xca, 0xee, 0xfe, 0x04, 0x00, 0x00, 0xff, 0xff, 0xc0, 0xac, 0xe7, 0xa7,
+	0xb6, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -238,8 +283,10 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type BenchHubClient interface {
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
-	// TODO: have a wrapper to reduce number of rpc definition for different type of benchmarks
-	RegisterGoBenchmark(ctx context.Context, in *GoBenchmarkSpec, opts ...grpc.CallOption) (*JobRegisterResponse, error)
+	// style: BenchmarkTypeAction
+	// TODO: have a wrapper to reduce number of rpc definition for different types of benchmarks
+	GoBenchmarkRegisterJob(ctx context.Context, in *GoBenchmarkSpec, opts ...grpc.CallOption) (*JobRegisterResponse, error)
+	GoBenchmarkReportResult(ctx context.Context, in *GoBenchmarkReportResultRequest, opts ...grpc.CallOption) (*ResultReportResponse, error)
 }
 
 type benchHubClient struct {
@@ -259,9 +306,18 @@ func (c *benchHubClient) Ping(ctx context.Context, in *PingRequest, opts ...grpc
 	return out, nil
 }
 
-func (c *benchHubClient) RegisterGoBenchmark(ctx context.Context, in *GoBenchmarkSpec, opts ...grpc.CallOption) (*JobRegisterResponse, error) {
+func (c *benchHubClient) GoBenchmarkRegisterJob(ctx context.Context, in *GoBenchmarkSpec, opts ...grpc.CallOption) (*JobRegisterResponse, error) {
 	out := new(JobRegisterResponse)
-	err := c.cc.Invoke(ctx, "/bhpb.BenchHub/RegisterGoBenchmark", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/bhpb.BenchHub/GoBenchmarkRegisterJob", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *benchHubClient) GoBenchmarkReportResult(ctx context.Context, in *GoBenchmarkReportResultRequest, opts ...grpc.CallOption) (*ResultReportResponse, error) {
+	out := new(ResultReportResponse)
+	err := c.cc.Invoke(ctx, "/bhpb.BenchHub/GoBenchmarkReportResult", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -271,8 +327,10 @@ func (c *benchHubClient) RegisterGoBenchmark(ctx context.Context, in *GoBenchmar
 // BenchHubServer is the server API for BenchHub service.
 type BenchHubServer interface {
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
-	// TODO: have a wrapper to reduce number of rpc definition for different type of benchmarks
-	RegisterGoBenchmark(context.Context, *GoBenchmarkSpec) (*JobRegisterResponse, error)
+	// style: BenchmarkTypeAction
+	// TODO: have a wrapper to reduce number of rpc definition for different types of benchmarks
+	GoBenchmarkRegisterJob(context.Context, *GoBenchmarkSpec) (*JobRegisterResponse, error)
+	GoBenchmarkReportResult(context.Context, *GoBenchmarkReportResultRequest) (*ResultReportResponse, error)
 }
 
 // UnimplementedBenchHubServer can be embedded to have forward compatible implementations.
@@ -282,8 +340,11 @@ type UnimplementedBenchHubServer struct {
 func (*UnimplementedBenchHubServer) Ping(ctx context.Context, req *PingRequest) (*PingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
 }
-func (*UnimplementedBenchHubServer) RegisterGoBenchmark(ctx context.Context, req *GoBenchmarkSpec) (*JobRegisterResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RegisterGoBenchmark not implemented")
+func (*UnimplementedBenchHubServer) GoBenchmarkRegisterJob(ctx context.Context, req *GoBenchmarkSpec) (*JobRegisterResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GoBenchmarkRegisterJob not implemented")
+}
+func (*UnimplementedBenchHubServer) GoBenchmarkReportResult(ctx context.Context, req *GoBenchmarkReportResultRequest) (*ResultReportResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GoBenchmarkReportResult not implemented")
 }
 
 func RegisterBenchHubServer(s *grpc.Server, srv BenchHubServer) {
@@ -308,20 +369,38 @@ func _BenchHub_Ping_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BenchHub_RegisterGoBenchmark_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BenchHub_GoBenchmarkRegisterJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GoBenchmarkSpec)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BenchHubServer).RegisterGoBenchmark(ctx, in)
+		return srv.(BenchHubServer).GoBenchmarkRegisterJob(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/bhpb.BenchHub/RegisterGoBenchmark",
+		FullMethod: "/bhpb.BenchHub/GoBenchmarkRegisterJob",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BenchHubServer).RegisterGoBenchmark(ctx, req.(*GoBenchmarkSpec))
+		return srv.(BenchHubServer).GoBenchmarkRegisterJob(ctx, req.(*GoBenchmarkSpec))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BenchHub_GoBenchmarkReportResult_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GoBenchmarkReportResultRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BenchHubServer).GoBenchmarkReportResult(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bhpb.BenchHub/GoBenchmarkReportResult",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BenchHubServer).GoBenchmarkReportResult(ctx, req.(*GoBenchmarkReportResultRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -335,8 +414,12 @@ var _BenchHub_serviceDesc = grpc.ServiceDesc{
 			Handler:    _BenchHub_Ping_Handler,
 		},
 		{
-			MethodName: "RegisterGoBenchmark",
-			Handler:    _BenchHub_RegisterGoBenchmark_Handler,
+			MethodName: "GoBenchmarkRegisterJob",
+			Handler:    _BenchHub_GoBenchmarkRegisterJob_Handler,
+		},
+		{
+			MethodName: "GoBenchmarkReportResult",
+			Handler:    _BenchHub_GoBenchmarkReportResult_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -497,6 +580,43 @@ func (m *JobEstimation) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *ResultReportResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ResultReportResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ResultReportResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Ok {
+		i--
+		if m.Ok {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintRpc(dAtA []byte, offset int, v uint64) int {
 	offset -= sovRpc(v)
 	base := offset
@@ -573,6 +693,21 @@ func (m *JobEstimation) Size() (n int) {
 	}
 	if m.HistoryMaxTime != 0 {
 		n += 1 + sovRpc(uint64(m.HistoryMaxTime))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *ResultReportResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Ok {
+		n += 2
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -953,6 +1088,80 @@ func (m *JobEstimation) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipRpc(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthRpc
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthRpc
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ResultReportResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowRpc
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ResultReportResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ResultReportResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Ok", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRpc
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Ok = bool(v != 0)
 		default:
 			iNdEx = preIndex
 			skippy, err := skipRpc(dAtA[iNdEx:])

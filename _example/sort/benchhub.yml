@@ -1,5 +1,6 @@
 # benchhubtype=go
 
+package: github.com/benchhub/benchhub/_example/sort
 server:
   name: local # unique name on client side, not send to server
   addr: localhost:1124

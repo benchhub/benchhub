@@ -13,12 +13,14 @@ option (gogoproto.goproto_getters_all) = false;
 
 // TODO: single server, single command and single report to make things easier for now
 message GoBenchmarkSpec {
-    ServerTarget server = 1;
-    GoBenchmarkCommandSpec command = 2;
-    GoBenchmarkReportSpec report = 3;
+    string package = 1;
+    ServerTarget server = 2;
+    GoBenchmarkCommandSpec command = 3;
+    GoBenchmarkReportSpec report = 4;
 }
 
 message GoBenchmarkCommandSpec {
+    // TODO: command.command is not a good naming ...
     string command = 1;
     string output = 2;
 }
@@ -28,12 +30,28 @@ message GoBenchmarkReportSpec {
 }
 
 message GoBenchmarkResult {
-    int64 package_id = 1;
-    string package_name = 2;
-    int64 case_id = 3;
-    string case_name = 4;
-    int64 duration = 5;
-    int64 ns_per_op = 6;
-    int64 alloc_per_op = 7;
-    int64 bytes_allocated_per_op = 8;
+    string package = 1;
+    // name does not have core suffix
+    string name = 2;
+    int64 n_op = 3;
+    double ns_per_op = 4;
+    uint64 alloc_per_op = 5;
+    uint64 bytes_allocated_per_op = 6;
+    double mb_per_second = 7;
+    int64  measured = 8;
+    uint32 ord = 9;
+    // calculated
+    int64 duration = 10;
+    // extracted
+    uint32 cpu = 11;
+}
+
+// TODO: it only reports a single package at a time
+message GoBenchmarkReportResultRequest {
+    int64 job_id = 1;
+    string package = 2;
+    repeated GoBenchmarkResult results = 3;
+    // unix nano
+    int64 start_time = 4;
+    int64 end_time = 5;
 }
