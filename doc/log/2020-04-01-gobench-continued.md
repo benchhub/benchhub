@@ -20,7 +20,7 @@ Again ... it's been about 2 months since last work on gobench ...
 
 ## Current flow
 
-Client 
+Client
 
 - register
 - run
