@@ -1,4 +1,4 @@
-# Sort example
+# Merge sort in Go
 
 ## Usage
 
