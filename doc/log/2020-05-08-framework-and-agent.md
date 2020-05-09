@@ -66,3 +66,6 @@ frameworks
     xephonb
 test // integration, end to end test etc.
 ```
+
+For the core data model and traits ... I think we can figure it along the way after supporting more than one frameworks.
+There should be very big change after adding database benchmark, but I think we should be good for now ...
