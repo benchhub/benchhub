@@ -11,4 +11,6 @@ build
 .vscode
 bin
 .classpath
+.project
 .settings
+.factorypath
