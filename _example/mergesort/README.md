@@ -5,4 +5,5 @@ It does merge sort in different ways and shows how BenchHub can extract informat
 
 ## Acknowledgement
 
-The idea is from [pingcap/talent-plan](https://github.com/pingcap/talent-plan) where the first assignment for go track is optimize merge sort.
+The idea and go test code is from [pingcap/talent-plan](https://github.com/pingcap/talent-plan).
+The first assignment for go track is optimizing merge sort.
