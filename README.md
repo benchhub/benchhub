@@ -20,6 +20,11 @@ BenchHub is a service for running and storing benchmark result of databases in d
 
 NOTE: not in a usable state. See [_example](_example)
 
+## Alternatives
+
+- https://www.aliyun.com/product/pts Aliyun Performance Testing Service
+- https://github.com/conbench/conbench the repo is still README only, created by the creator of pandas
+
 ## License
 
 MIT

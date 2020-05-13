@@ -1,6 +1,6 @@
 module github.com/benchhub/benchhub
 
-go 1.13
+go 1.14
 
 require (
 	github.com/dyweb/go.ice v0.0.3

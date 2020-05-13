@@ -1,4 +1,4 @@
-# Go benchmark
+# Go micro benchmark
 
 - https://github.com/golang/perf
 - https://github.com/knqyf263/cob Continuous Benchmark for Go Project
