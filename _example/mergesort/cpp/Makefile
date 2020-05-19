@@ -17,7 +17,7 @@ bench:
 test:
 	./build/test_mergesort
 
-download-vendor: download-google-benchmark
+download-vendor: download-catch2 download-google-benchmark
 
 download-catch2:
 	mkdir -p vendor/catchorg

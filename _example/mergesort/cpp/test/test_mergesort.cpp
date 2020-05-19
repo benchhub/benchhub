@@ -1,7 +1,10 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include <catch2/catch.hpp>
 
+#include "mergesort.h"
+
 unsigned int Factorial( unsigned int number ) {
+    benchhub::example::mergesort::Foo();
     return number <= 1 ? number : Factorial(number-1)*number;
 }
 
