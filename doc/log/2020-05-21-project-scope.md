@@ -8,13 +8,14 @@ Like most of my projects, the scope changes frequently ... so better keep a log 
 
 BenchHub is designed for comparing the performance of:
 
+- same system, different parameters
 - same system, different version of code
 - same benchmark, different system
 
 It provides the following (stage 1, still not fully implemented after 2 years XD)
 
 - adapter for different frameworks
-- storage for benchmark result aggregated result, metrics and profiling data.
+- storage for benchmark parameters and result (aggregated result, metrics and profiling data).
 
 It will provide the following (stage 2)
 
