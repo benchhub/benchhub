@@ -1,5 +1,23 @@
 package config
 
+import (
+	"io/ioutil"
+
+	"gopkg.in/yaml.v2"
+)
+
+func Read(p string) (Root, error) {
+	b, err := ioutil.ReadFile(p)
+	if err != nil {
+		return Root{}, err
+	}
+	var cfg Root
+	if err := yaml.Unmarshal(b, &cfg); err != nil {
+		return Root{}, err
+	}
+	return cfg, nil
+}
+
 // Root is top level config.
 type Root struct {
 	Data       Data
@@ -30,6 +48,8 @@ type Parameter struct {
 }
 
 type Container struct {
+	Abstract bool
+	Extends  string
 	Image    string
 	Resource Resource
 	Envs     []Env

@@ -41,18 +41,25 @@ parameters:
   - name: numChunk
     default: 1
 containers:
-    - name: f1
+    - name: f
+      abstract: true
       image: context.image # might just skip that if all containers are using same image
       resource:
         cpu: 2
         ram: 4g
       envs:
-        port: 8081
-        batchSize: batchSize
-    - name: f2
-      image: context.image # TODO: avoid the dup, now just copy and paste
+        - key: BATCH_SIZE
+          value: param.batchSize
+    - name: f1
+      extends: f
       envs:
-        port: 8082
+        - key: port
+          value: 8081
+    - name: f2
+      extends: f
+      envs:
+        - key: port
+          value: 8082
     - name: b
       image: context.image
 ```
