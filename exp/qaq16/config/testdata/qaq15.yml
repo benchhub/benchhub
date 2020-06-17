@@ -1,0 +1,42 @@
+data:
+  db: mysql:8.0
+  dir: .
+contexts:
+  - name: go
+    image: q1:gov1
+  - name: rust
+    image: q1:rsv1
+  - name: cpp
+    image: q1:cppv1
+score:
+  capture: "final score is (\\d+)"
+  timeout: 20s
+parameters:
+  - name: batchSize
+    default: 20_000
+  - name: numChunk
+    default: 1
+containers:
+  - name: f1
+    image: context.image
+    resource:
+      cpu: 2
+      ram: 4g
+    envs:
+      - key: port
+        value: 8081
+      - key: batchSize
+  - name: f2
+    image: context.image
+    resource:
+      cpu: 2
+      ram: 4g
+    envs:
+      - key: port
+        value: 8082
+      - key: batchSize
+  - name: b
+    image: context.image
+    resource:
+      cpu: 1
+      ram: 2g

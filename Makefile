@@ -6,6 +6,14 @@ FLAGS = -X main.version=$(VERSION) -X main.commit=$(BUILD_COMMIT) -X main.buildT
 PKGST = ./cmd ./pkg
 PKGS = ./cmd/... ./pkg...
 
+.PHONY: fmt
+fmt:
+	goimports -d -l -w $(PKGST)
+
+.PHONY: test
+test:
+	go test -v -cover $(PKGS)
+
 .PHONY: install
 install:
 	go install -ldflags "$(FLAGS)" ./cmd/bh
@@ -18,10 +26,3 @@ clean:
 generate:
 	gommon generate -v
 
-.PHONY: fmt
-fmt:
-	goimports -d -l -w $(PKGST)
-
-.PHONY: test
-test:
-	go test -v -cover $(PKGS)
