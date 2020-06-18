@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/dyweb/gommon/log/handlers/cli"
 
@@ -99,14 +100,14 @@ func run(contextName string) error {
 		return err
 	}
 	// select context
-	var runContext config.Context
+	var selectedContext config.Context
 	for _, ctx := range cfg.Contexts {
 		if ctx.Name == contextName {
-			runContext = ctx
+			selectedContext = ctx
 			break
 		}
 	}
-	if runContext.Name == "" {
+	if selectedContext.Name == "" {
 		return errors.Errorf("context not found no %s", contextName)
 	}
 
@@ -120,35 +121,47 @@ func run(contextName string) error {
 		}
 	}
 
+	now := time.Now()
+	logPrefix, err := NewLogDir(cfg.Data, now)
+	if err != nil {
+		return err
+	}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	merr := errors.NewMultiErrSafe()
 	var wg sync.WaitGroup
 	wg.Add(len(containers) + 1)
-	// Run score
-	go func() {
-		defer wg.Done()
+	merr := errors.NewMultiErrSafe()
 
-		if err := RunScore(ctx, cfg.Score); err != nil {
-			merr.Append(err)
-			log.Error(err)
-			cancel()
-		}
-	}()
 	// Run containers
 	for _, container := range containers {
 		container := container
-		container.Image = runContext.Image
+		container.Image = selectedContext.Image
 		go func() {
 			defer wg.Done()
 
-			if err := RunContainer(ctx, container); err != nil {
+			execCtx := ExecContext{log: FormatLog(logPrefix, container.Name)}
+			if err := RunContainer(ctx, container, execCtx); err != nil {
 				merr.Append(err)
 				log.Error(err)
 				cancel() // TODO: is cancel go routine safe?
 			}
 		}()
 	}
+	// FIXME: hack to wait container ready
+	time.Sleep(1 * time.Second)
+
+	// Run score
+	go func() {
+		defer wg.Done()
+
+		execCtx := ExecContext{log: FormatLog(logPrefix, "score")}
+		if err := RunScore(ctx, cfg.Score, execCtx); err != nil {
+			merr.Append(err)
+			log.Error(err)
+			cancel()
+		}
+	}()
+
 	wg.Wait()
 	return merr.ErrorOrNil()
 }

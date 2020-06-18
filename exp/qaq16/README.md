@@ -78,3 +78,16 @@ main {
     saveLogAndDatabase
 }
 ```
+
+Layout of data
+
+```
+db
+  mysql // bind mount for mysql
+log
+  2020-06-13/
+    all.log
+    score.log
+    f1.log
+    f2.log
+```

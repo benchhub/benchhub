@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -10,10 +12,13 @@ import (
 
 	"github.com/benchhub/benchhub/exp/qaq16/config"
 	"github.com/dyweb/gommon/errors"
-	"github.com/dyweb/gommon/errors/errortype"
 )
 
-func RunScore(ctx context.Context, cfg config.Score) error {
+type ExecContext struct {
+	log string
+}
+
+func RunScore(ctx context.Context, cfg config.Score, run ExecContext) error {
 	// TODO: should use shell split args etc.
 	cmdCfg := cfg.Command
 	args := strings.Split(cmdCfg.Shell, " ")
@@ -35,6 +40,18 @@ func RunScore(ctx context.Context, cfg config.Score) error {
 	cmd := exec.CommandContext(ctx, fullBin, args[1:]...)
 	cmd.Dir = cmdCfg.Dir
 
-	// TODO: stream log to file, and optionally stdout/stderr
-	return errortype.NewNotImplemented("RunCommand")
+	return RunCommand(cmd, run.log)
+}
+
+func RunCommand(cmd *exec.Cmd, logPath string) error {
+	logFile, err := os.Create(logPath)
+	if err != nil {
+		return err
+	}
+	var buf bytes.Buffer
+	stdout := io.MultiWriter(os.Stdout, logFile, &buf)
+	stderr := io.MultiWriter(os.Stderr, logFile, &buf)
+	cmd.Stdout = stdout
+	cmd.Stderr = stderr
+	return cmd.Run()
 }
