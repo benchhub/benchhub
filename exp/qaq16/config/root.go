@@ -38,8 +38,15 @@ type Context struct {
 }
 
 type Score struct {
+	Command Command
 	Timeout string
 	Capture string // The regex that capture the score
+}
+
+type Command struct {
+	Shell string
+	Dir   string
+	Envs  []Env
 }
 
 type Parameter struct {
@@ -48,6 +55,7 @@ type Parameter struct {
 }
 
 type Container struct {
+	Name     string
 	Abstract bool
 	Extends  string
 	Image    string

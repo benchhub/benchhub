@@ -3,5 +3,5 @@ fmt:
 	goimports -d -l -w .
 
 .PHONY: install
-install:
+install: fmt
 	go install .

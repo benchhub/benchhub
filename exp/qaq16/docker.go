@@ -1,16 +1,15 @@
-package docker
+package main
 
 import (
 	"context"
+	"strings"
 
 	"github.com/benchhub/benchhub/exp/qaq16/config"
 	"github.com/dyweb/gommon/errors/errortype"
 )
 
-// run docker image in foreground by shell out to docker cli
-
-// Run blocks until context is cancelled or the container exit.
-func Run(ctx context.Context, cfg config.Container) error {
+// RunContainer blocks until context is cancelled or the container exit.
+func RunContainer(ctx context.Context, cfg config.Container) error {
 	args := []string{
 		"run", "--rm", "--net", "host",
 	}
@@ -19,5 +18,6 @@ func Run(ctx context.Context, cfg config.Container) error {
 			"--env", env.Key, env.Value,
 		)
 	}
-	return errortype.NewNotImplemented("Run")
+	log.Infof("docker %s", strings.Join(args, " "))
+	return errortype.NewNotImplemented("RunContainer")
 }
