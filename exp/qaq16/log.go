@@ -24,6 +24,14 @@ func NewLogDir(cfg config.Data, tm time.Time) (string, error) {
 	return p, nil
 }
 
+func NewMountDir(prefix string, name string) (string, error) {
+	p := filepath.Join(prefix, name)
+	if err := os.Mkdir(p, fsutil.DefaultDirPerm); err != nil {
+		return "", err
+	}
+	return p, nil
+}
+
 func FormatLog(prefix string, name string) string {
 	return filepath.Join(prefix, name+".log")
 }

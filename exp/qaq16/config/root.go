@@ -61,6 +61,7 @@ type Container struct {
 	Image    string
 	Resource Resource
 	Envs     []Env
+	Mounts   []Mount
 }
 
 type Resource struct {
@@ -71,4 +72,10 @@ type Resource struct {
 type Env struct {
 	Key   string
 	Value string
+}
+
+// TODO: only bind mount is supported
+type Mount struct {
+	Src string
+	Dst string
 }

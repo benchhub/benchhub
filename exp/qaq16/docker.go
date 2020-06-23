@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"fmt"
+	"os"
 	"os/exec"
 	"strings"
 
@@ -20,6 +23,10 @@ func RunContainer(ctx context.Context, cfg config.Container, run ExecContext) er
 			"--env", env.Key+"="+env.Value,
 		)
 	}
+	// --mount "type=bind,src=$(pwd)/shared,dst=/opt/shared"
+	for _, mount := range cfg.Mounts {
+		args = append(args, "--mount", fmt.Sprintf("type=bind,src=%s,dst=%s", mount.Src, mount.Dst))
+	}
 	args = append(args, cfg.Image)
 	log.Infof("docker %s", strings.Join(args, " "))
 	cmd := exec.CommandContext(ctx, "docker", args...)
@@ -35,7 +42,29 @@ func RmContainers(ctx context.Context) error {
 	if err != nil {
 		return errors.Wrap(err, "error find qaq16 containers")
 	}
-	log.Infof("%s", b)
-	// TODO: extract ids and docker rm, split by new line
-	return nil
+
+	ids := bytes.Split(b, []byte{'\n'})
+	var cids []string
+	for _, id := range ids {
+		id = bytes.TrimSpace(id)
+		if len(id) == 0 {
+			continue
+		}
+		cids = append(cids, string(id))
+	}
+	if len(cids) == 0 {
+		log.Info("no qaq16 container to remove")
+		return nil
+	} else {
+		log.Infof("should remove %d containers %v", len(cids), cids)
+	}
+
+	rmArgs := []string{
+		"rm", "-f",
+	}
+	rmArgs = append(rmArgs, cids...)
+	rmCmd := exec.CommandContext(ctx, "docker", rmArgs...)
+	rmCmd.Stdout = os.Stdout
+	rmCmd.Stderr = os.Stderr
+	return errors.Wrapf(rmCmd.Run(), "error remove %d container", len(cids))
 }

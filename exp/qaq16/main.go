@@ -153,11 +153,26 @@ func run(contextName string) error {
 		go func() {
 			defer wg.Done()
 
-			execCtx := ExecContext{log: FormatLog(logPrefix, container.Name)}
-			if err := RunContainer(ctx, container, execCtx); err != nil {
+			reportError := func(err error) {
 				merr.Append(err)
 				log.Error(err)
 				cancel() // TODO: is cancel go routine safe?
+			}
+
+			// Add a mount in $logdir/$container to /qaq16
+			if p, err := NewMountDir(logPrefix, container.Name); err != nil {
+				reportError(err)
+				return
+			} else {
+				container.Mounts = append(container.Mounts, config.Mount{
+					Src: p,
+					Dst: "/qaq16",
+				})
+			}
+
+			execCtx := ExecContext{log: FormatLog(logPrefix, container.Name)}
+			if err := RunContainer(ctx, container, execCtx); err != nil {
+				reportError(err)
 			}
 		}()
 	}
