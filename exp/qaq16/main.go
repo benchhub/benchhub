@@ -24,11 +24,25 @@ func main() {
 	args := os.Args
 	// TODO: use gommon/dcli, don't want to use cobra anymore
 	if len(args) < 2 {
-		log.Fatal("must provide context e.g. qaq16 go")
+		log.Fatal("must provide action e.g. qaq16 run; qaq16 rm")
 		return
 	}
-	ctx := args[1]
-	if err := run(ctx); err != nil {
+	var err error
+	action := args[1]
+	switch action {
+	case "rm":
+		err = RmContainers(context.Background())
+	case "run":
+		if len(args) < 3 {
+			log.Fatal("must provide context for run e.g. qaq16 run go")
+			return
+		}
+		ctx := args[2]
+		err = run(ctx)
+	default:
+		log.Fatalf("unknown action %s", action)
+	}
+	if err != nil {
 		log.Fatal(err)
 	}
 }
