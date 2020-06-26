@@ -6,6 +6,8 @@ See [log/2020-05-28-ali-contest-quick-hack](../../doc/log/2020-05-28-ali-contest
 
 - need a handy tool for [alibaba tianchi contest](https://tianchi.aliyun.com/competition/entrance/231790/introduction)
 - `docker-compose` v3 does not allow setting resource constraint for single node
+  - https://github.com/docker/compose/issues/4513
+  - https://stackoverflow.com/questions/42345235/how-to-specify-memory-cpu-limit-in-docker-compose-version-3
 - need a simple prototype that could help actual benchhub implementation
 
 ## Requirement
