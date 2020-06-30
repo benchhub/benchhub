@@ -51,6 +51,8 @@ Order by implementation order.
 
 ### v0.0.4 Register Benchmark
 
+See [v0.0.4](../v0.0.4-register) for latest doc.
+
 NOTE: pick 0.0.4 because 0.0.3 is the latest archive tag
 
 Description

@@ -17,6 +17,9 @@ func main() {
 			log.Info("bh does nothing")
 			return nil
 		},
+		Children: []dcli.Command{
+			CmdRegister(),
+		},
 	}
 	dcli.RunApplication(root)
 }
