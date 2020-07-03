@@ -30,7 +30,7 @@ func main() {
 	var err error
 	action := args[1]
 	switch action {
-	case "rm":
+	case "rm", "kill":
 		err = RmContainers(context.Background())
 	case "run":
 		if len(args) < 3 {

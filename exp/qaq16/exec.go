@@ -38,7 +38,7 @@ func RunScore(ctx context.Context, cfg config.Score, run ExecContext) error {
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 	cmd := exec.CommandContext(ctx, fullBin, args[1:]...)
-	cmd.Dir = cmdCfg.Dir
+	cmd.Dir = filepath.Join(pwd, cmdCfg.Dir)
 
 	return RunCommand(cmd, run.log)
 }
