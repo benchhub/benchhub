@@ -1,0 +1,15 @@
+[package]
+name = "mergesort"
+version = "0.1.0"
+authors = ["Pinglei Guo <at15@outlook.com>"]
+edition = "2018"
+
+[dependencies]
+rand = "0.7.3"
+
+[dev-dependencies]
+criterion = "0.3"
+
+[[bench]]
+name = "bench_mergesort"
+harness = false

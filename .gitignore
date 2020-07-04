@@ -10,7 +10,10 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+# Editor
 .idea
+.vscode
+
 vendor
 
 .vagrant

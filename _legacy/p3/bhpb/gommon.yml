@@ -1,0 +1,13 @@
+shells:
+  - code: protoc --proto_path=$GOPATH/src/:. --gogo_out=. common.proto
+    shell: true
+    cd: true
+  - code: protoc --proto_path=$GOPATH/src/:. --gogo_out=. gobench.proto
+    shell: true
+    cd: true
+  - code: protoc --proto_path=$GOPATH/src/:. --gogo_out=. meta.proto
+    shell: true
+    cd: true
+  - code: protoc --proto_path=$GOPATH/src/:. --gogo_out=plugins=grpc:. rpc.proto
+    shell: true
+    cd: true

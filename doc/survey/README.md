@@ -1,5 +1,4 @@
 # Survey
 
-## TODO
-
-- https://github.com/conbench/conbench the repo is still README only, created by the creator of pandas
+For survey on benchmark frameworks, see [doc/frameworks](../frameworks).
+This folder contains survey on CI/CD for providing a managed benchmark runtime.
