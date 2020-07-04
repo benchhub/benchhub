@@ -1,4 +1,4 @@
-VERSION = 0.0.1
+VERSION = 0.0.4-dev
 BUILD_COMMIT := $(shell git rev-parse HEAD)
 BUILD_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 BUILD_TIME := $(shell date +%Y-%m-%dT%H:%M:%S%z)

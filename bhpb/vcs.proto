@@ -1,13 +1,13 @@
 syntax = "proto3";
 package bhpb;
 
-option go_package = "bhpb";
+option go_package = "github.com/benchhub/benchhub/bhpb";
 
 enum GitHostType {
-    GITHOST_TYPE_UNKNOWN = 0;
-    GITHOST_TYPE_GITHUB = 1;
-    GITHOST_TYPE_GITLAB = 2;
-    GITHOST_TYPE_OTHER = 3;
+    GITHOSTTYPE_UNKNOWN = 0;
+    GITHOSTTYPE_GITHUB = 1;
+    GITHOSTTYPE_GITLAB = 2;
+    GITHOSTTYPE_OTHER = 3;
 }
 
 // GitHost is a code hosting provider e.g. GitHub.
