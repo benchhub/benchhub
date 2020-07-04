@@ -1,0 +1,4 @@
+shells:
+  - code: protoc --proto_path=$GOPATH/src/:. --go_out=. vcs.proto
+    shell: true
+    cd: true

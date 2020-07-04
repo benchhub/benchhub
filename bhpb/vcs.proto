@@ -1,0 +1,26 @@
+syntax = "proto3";
+package bhpb;
+
+option go_package = "bhpb";
+
+enum GitHostType {
+    GITHOST_TYPE_UNKNOWN = 0;
+    GITHOST_TYPE_GITHUB = 1;
+    GITHOST_TYPE_GITLAB = 2;
+    GITHOST_TYPE_OTHER = 3;
+}
+
+// GitHost is a code hosting provider e.g. GitHub.
+message GitHost {
+    // id is assigned by database or hard coded in code
+    uint64 id = 1;
+    GitHostType type = 2;
+    // name is the a unique all lower case name e.g. github
+    string name = 3;
+    // title is display title e.g. GitHub
+    string title = 4;
+    // e.g. https://github.com
+    string website = 5;
+    // go import path when using this vcs e.g. github.com
+    string goimport = 6;
+}

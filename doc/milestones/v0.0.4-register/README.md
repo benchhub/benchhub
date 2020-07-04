@@ -2,9 +2,6 @@
 
 ## TODO
 
-- [ ] forgot bhpb
-- [ ] forgot server
-
 ## Motivation
 
 Split from [v0.1.0](../v0.1.0-micro). v0.0.4 covers registering benchmark(s) from vcs to benchhub's database.
@@ -24,6 +21,43 @@ Skipped
 ## Features
 
 Order by implementation order.
+
+### Register Git Host
+
+Description
+
+We can use `github.com` but there is gitlab, coding.net, private github/gitlab instances.
+And all the cloud service providers have their own VCS solutions.
+
+To make things easier and consistent, we should hard code popular vcs providers.
+
+- `0` reserved
+- `1-7` common public providers (that I use)
+  - `1` github.com
+  - `2` gitlab.com
+  - `3` bitbucket.org
+  - `4` dyweb
+  - `5` coding.net
+  - `6` gitcafe.com (sold to coding.net)
+- `8+` other providers
+
+Providers can have the following type, this is hard coded in proto and can be used when we offer CI/CD integration.
+
+- github (enterprise)
+- gitlab (self deployed instances)
+- other
+
+Components
+
+- `bhpb`
+  - proto definition for `GitHost`
+  - rpc `GetGitHost`, `ListGitHost`
+- `core/storage/rdbms`
+  - save git host in database, maybe memory as well?
+- `core/server`
+  - implement rpc
+- `ui`
+  - `githost` default to github
 
 ### Register Repository
 
