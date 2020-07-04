@@ -2,7 +2,8 @@
 
 ## TODO
 
-- [ ] forgot bhpb ...
+- [ ] forgot bhpb
+- [ ] forgot server
 
 ## Motivation
 
@@ -33,12 +34,19 @@ Requires registering `<git-host>` and `<owner>` before registering project.
 
 Components
 
+- `bhpb`
+  - proto definition for `Repo`, `RepoConfig`
+  - rpc `GetRepo`, `ListRepo`, `UpdateRepo`, `DeleteRepo`
 - `core/config`
   - specify the repo in config
+  - use yaml if rcl is not ready
 - `core/storage/rdbms`
   - save git host, owner, repo in three different tables
+- `core/server`
+  - return registered repos
 - `cmd/bh`
-  - `bh register repo`
+  - `bh register repo` or `bh repo register`
+  - `bh list repo` or `bh repo list`
 - `ui`
   - `git-host>owner>repo` allow click down the menu
 - `test`
