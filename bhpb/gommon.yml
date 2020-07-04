@@ -1,4 +1,4 @@
 shells:
-  - code: protoc --proto_path=$GOPATH/src/:. --go_out=$GOPATH/src/ vcs.proto
+  - code: protoc --proto_path=$GOPATH/src/:. --go_out=$GOPATH/src/ vcs.proto framework.proto
     shell: true
     cd: true

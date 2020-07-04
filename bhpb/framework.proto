@@ -1,0 +1,10 @@
+syntax = "proto3";
+package bhpb;
+
+option go_package = "github.com/benchhub/benchhub/bhpb";
+
+enum FrameworkType {
+    FRAMEWORKTYPE_UNKNOWN = 0;
+    FRAMEWORKTYPE_UNIT_TEST = 1;
+    FRAMEWORKTYPE_MICRO_BENCHMARK = 2;
+}

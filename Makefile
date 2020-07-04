@@ -7,7 +7,7 @@ DCLI_PKG = github.com/dyweb/gommon/dcli.
 DCLI_LDFLAGS = -X $(DCLI_PKG)buildVersion=$(VERSION) -X $(DCLI_PKG)buildCommit=$(BUILD_COMMIT) -X $(DCLI_PKG)buildBranch=$(BUILD_BRANCH) -X $(DCLI_PKG)buildTime=$(BUILD_TIME) -X $(DCLI_PKG)buildUser=$(CURRENT_USER)
 FLAGS = $(DCLI_LDFLAGS)
 PKGST = ./cmd ./core ./frameworks
-PKGS = ./cmd/... ./core... ./frameworks
+PKGS = $(addsuffix ...,$(PKGST))
 
 .PHONY: fmt
 fmt:
