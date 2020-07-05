@@ -1,0 +1,29 @@
+syntax = "proto3";
+package bhpb;
+
+option go_package = "github.com/benchhub/benchhub/bhpb";
+
+import "common.proto";
+
+// TODO: modeled after ring 0,1,2,3 but does it really fit here?
+enum UserPrivilegeLevel {
+    UPL_UNKNOWN = 0;
+    UPL_CORE = 1;
+    UPL_FRAMEWORK = 2;
+    UPL_USER = 3;
+}
+
+message User {
+    // id is assigned by database
+    uint64 id = 1;
+    // short user handler e.g. at15
+    string name = 2;
+    // First Last name e.g. Qin Qin
+    string full_name = 3;
+    // a (could be invalid) email
+    string email = 4;
+}
+
+service UserService {
+    rpc GetUser(IdOrName) returns (User);
+}

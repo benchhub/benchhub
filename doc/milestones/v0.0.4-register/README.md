@@ -2,6 +2,11 @@
 
 ## TODO
 
+- [ ] forgot example
+- [ ] still need user even if we don't have authentication
+- [ ] http api? we can mount the logic in both http and grpc server, this should make ui life easier
+  - or we could use grpc gateway etc.
+
 ## Motivation
 
 Split from [v0.1.0](../v0.1.0-micro). v0.0.4 covers registering benchmark(s) from vcs to benchhub's database.
@@ -21,6 +26,21 @@ Skipped
 ## Features
 
 Order by implementation order.
+
+### Register User
+
+Description
+
+Although we tide user, repo logic with vcs. It's common for a user to have account on multiple vcs or multiple accounts in same vcs.
+Further more, the user running test/benchmark may not be the owner of the repo.
+
+Components
+
+- `bhpb`
+  - define `User`
+  - rpc `GetUser`, `ListUser`, `RegisterUser`
+- `core/storage/rdbms`
+  - save user in rdbms
 
 ### Register Git Host
 

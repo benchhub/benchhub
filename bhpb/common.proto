@@ -1,0 +1,12 @@
+syntax = "proto3";
+package bhpb;
+
+option go_package = "github.com/benchhub/benchhub/bhpb";
+
+// common.proto defines message shared by different services
+
+message IdOrName {
+    bool is_id = 1;
+    uint64 id = 2;
+    string name = 3;
+}

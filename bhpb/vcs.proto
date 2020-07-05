@@ -3,6 +3,8 @@ package bhpb;
 
 option go_package = "github.com/benchhub/benchhub/bhpb";
 
+// vcs.proto models after Github.
+
 enum GitHostType {
     GITHOSTTYPE_UNKNOWN = 0;
     GITHOSTTYPE_GITHUB = 1;
@@ -19,8 +21,48 @@ message GitHost {
     string name = 3;
     // title is display title e.g. GitHub
     string title = 4;
-    // e.g. https://github.com
+    // url prefix for the git host w/o trailing slash. e.g. https://github.com
     string website = 5;
-    // go import path when using this vcs e.g. github.com
+    // go import path when using this vcs provider e.g. github.com
+    string goimport = 6;
+}
+
+enum GitOwnerType {
+    GITOWNERTYPE_UNKNOWN = 0;
+    GITOWNERTYPE_USER = 1;
+    GITOWNERTYPE_ORGANIZATION = 2;
+}
+
+message GitOwner {
+    // id is assigned by database
+    uint64 id = 1;
+    // type is user or organization
+    GitOwnerType type = 2;
+    // id for host
+    uint64 host_id = 3;
+    // host.name
+    string host = 4;
+    // e.g. benchhub, at15, gaocegege
+    string name = 5;
+}
+
+enum GitRepoType {
+    GITREPOTYPE_UNKNOWN = 0;
+    GITREPOTYPE_DEFAULT = 1;
+}
+
+// GitRepo is a repository
+message GitRepo {
+    // id is assigned by database
+    uint64 id = 1;
+    // reserved, default to 1
+    GitRepoType type = 2;
+    // id of owner
+    uint64 owner_id = 3;
+    // owner.name e.g. github.com/dyweb/gommon has owner == gommon
+    string owner = 4;
+    // e.g. github.com/dyweb/gommon has name == benchhub
+    string name = 5;
+    // go import path when using this repo e.g. github.com/dyweb/gommon
     string goimport = 6;
 }
