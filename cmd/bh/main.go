@@ -19,6 +19,8 @@ func main() {
 		},
 		Children: []dcli.Command{
 			CmdRegister(),
+			CmdUser(),
+			CmdServer(),
 		},
 	}
 	dcli.RunApplication(root)

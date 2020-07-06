@@ -15,5 +15,6 @@ func CmdRegister() *dcli.Cmd {
 			log.Info("TODO: register")
 			return nil
 		},
+		// TODO: register share sub command from user etc.
 	}
 }

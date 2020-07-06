@@ -41,6 +41,11 @@ Components
   - rpc `GetUser`, `ListUser`, `RegisterUser`
 - `core/storage/rdbms`
   - save user in rdbms
+- `cmd/bh`
+  - `bh register user at15`
+- `ui`
+  - `users` show registered users
+  - NO plan for implementing login, oauth etc. (for now)
 
 ### Register Git Host
 
@@ -49,7 +54,7 @@ Description
 We can use `github.com` but there is gitlab, coding.net, private github/gitlab instances.
 And all the cloud service providers have their own VCS solutions.
 
-To make things easier and consistent, we should hard code popular vcs providers.
+To make things easier and consistent, we hard code popular vcs providers in code and create them on startup.
 
 - `0` reserved
 - `1-7` common public providers (that I use)
@@ -78,6 +83,21 @@ Components
   - implement rpc
 - `ui`
   - `githost` default to github
+  
+### Register Owner
+
+Description
+
+Register a owner (user/organization). It does not need to be associated with a benchhub user.
+e.g. even if based on github API current user is does not own specific organization, they can still create that git owner.
+
+Components
+
+- `bhpb`
+  - proto definition `GitOwner`
+- `cmd/bh`
+  - `bh register owner at15` or `bh register owner benchhub`
+  - `bh list owner` or `bh owner list --host=gitlab` default host is github
 
 ### Register Repository
 
@@ -89,7 +109,7 @@ Requires registering `<git-host>` and `<owner>` before registering project.
 Components
 
 - `bhpb`
-  - proto definition for `Repo`, `RepoConfig`
+  - proto definition for `GitRepo`, `RepoConfig`
   - rpc `GetRepo`, `ListRepo`, `UpdateRepo`, `DeleteRepo`
 - `core/config`
   - specify the repo in config
@@ -99,7 +119,7 @@ Components
 - `core/server`
   - return registered repos
 - `cmd/bh`
-  - `bh register repo` or `bh repo register`
+  - `bh register repo gommon` or `bh repo register gommon`
   - `bh list repo` or `bh repo list`
 - `ui`
   - `git-host>owner>repo` allow click down the menu

@@ -8,7 +8,11 @@
     - frameworks
   - internal
 
+## See Also
+
+- [gRPC](grpc.md)
+
 ## Overview
 
-BenchHub us protobuf as external API format. e.g. config file, API (including JSON).
+BenchHub uses protobuf to define external API. e.g. config file, API (including JSON).
 Internal RPC and struct definition can use protoc generated struct when appropriate.
