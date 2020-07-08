@@ -7,6 +7,10 @@
 - [ ] http api? we can mount the logic in both http and grpc server, this should make ui life easier
   - or we could use grpc gateway etc.
 
+Done
+
+- [x] rdbms framework name `tqbuilder`, type safe query builder
+
 ## Motivation
 
 Split from [v0.1.0](../v0.1.0-micro). v0.0.4 covers registering benchmark(s) from vcs to benchhub's database.
@@ -39,8 +43,13 @@ Components
 - `bhpb`
   - define `User`
   - rpc `GetUser`, `ListUser`, `RegisterUser`
+- `lib/tqbuilder`
+  - define schema in go code
+  - generate basic query like normal orm
 - `core/storage/rdbms`
   - save user in rdbms
+- `core/server`
+  - init grpc server
 - `cmd/bh`
   - `bh register user at15`
 - `ui`
