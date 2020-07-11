@@ -126,4 +126,30 @@ func t1() tqbuilder.Table {
 }
 ```
 
+### Schema user layout
 
+```text
+benchhub
+  cmd
+    pmgen // imports userddl and run it
+  lib
+    tqbuilder
+      generator
+        ddl.go // generates go code from sql/ddl/ast
+      sql // sql ast and builder
+        ddl
+          ast.go
+          builder.go
+        dml
+  core
+    services
+        user
+            schema
+                userddl // need a different package so it compiles even if dml failed
+                    user.go
+```
+
+### Trigger generator
+
+- [ ] not sure how to trigger generator ... having user manually type is error prone and time consuming ...
+  - can scan code and looks for `Table` method and generate a go file to call them like entgo does ...

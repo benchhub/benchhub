@@ -9,7 +9,8 @@ enum GitHostType {
     GITHOSTTYPE_UNKNOWN = 0;
     GITHOSTTYPE_GITHUB = 1;
     GITHOSTTYPE_GITLAB = 2;
-    GITHOSTTYPE_OTHER = 3;
+    GITHOSTTYPE_BITBUCKET = 3;
+    GITHOSTTYPE_OTHER = 4;
 }
 
 // GitHost is a code hosting provider e.g. GitHub.
