@@ -1,4 +1,4 @@
-package schema
+package ddl
 
 import "github.com/benchhub/benchhub/lib/tqbuilder/sql/ddl"
 
@@ -7,12 +7,13 @@ const (
 	strLen = ddl.CharMax
 )
 
-func Table() ddl.TableDef {
+func Tables() []ddl.TableDef {
 	cols := []ddl.ColumnDef{
 		ddl.PrimaryKey("id"),
 		ddl.VarChar("name", strLen),
 		ddl.VarChar("full_name", strLen),
 		ddl.VarChar("email", strLen),
 	}
-	return ddl.Table("users", cols)
+	user := ddl.Table("users", cols)
+	return []ddl.TableDef{user}
 }

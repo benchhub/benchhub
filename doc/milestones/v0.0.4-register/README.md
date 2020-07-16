@@ -31,6 +31,15 @@ Skipped
 
 Order by implementation order.
 
+- [Register User](#register-user)
+- Git i.e. VCS
+  - [Register Git Host](#register-git-host)
+  - [Register Owner](#register-owner)
+  - [Register Repository](#register-repository)
+- [Register Project](#register-project)
+- [Register Test](#register-test)
+- [Register Benchmark](#register-benchmark)
+
 ### Register User
 
 Description

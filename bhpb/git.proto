@@ -3,7 +3,7 @@ package bhpb;
 
 option go_package = "github.com/benchhub/benchhub/bhpb";
 
-// vcs.proto models after Github.
+// git.proto contains git host and TODO: git commit etc..
 
 enum GitHostType {
     GITHOSTTYPE_UNKNOWN = 0;

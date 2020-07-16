@@ -106,6 +106,7 @@ The definition and code generation contains multiple stages and each one depends
 ### Schema definition design
 
 ```go
+// TODO: this is outdated ...
 // TODO: maybe need a schema package because query has col as well
 func t1() tqbuilder.Table {
     return tqbuilder.Table{
@@ -145,11 +146,51 @@ benchhub
     services
         user
             schema
-                userddl // need a different package so it compiles even if dml failed
-                    user.go
+               ddl // ddl and dml in different package because dml definition relies on code generated from ddl
+                  table.go
+               dml
+                  query.go
+               generated
+                  userschema
+                  userquery
 ```
 
 ### Trigger generator
 
-- [ ] not sure how to trigger generator ... having user manually type is error prone and time consuming ...
-  - can scan code and looks for `Table` method and generate a go file to call them like entgo does ...
+Requirements
+
+- avoid user manually register schema for each table
+- if one package is broken, code generation should still work for other packages
+
+Scan under specific path e.g. `core/services` for pattern like `${prefix}/schema/ddl/table.go`
+
+```text
+scanFolder {
+    ddls
+    if hasSuffix(dir, schema/ddl/table.go) {
+        addPath(ddls, dir)
+    }
+}
+
+// the generated generator go file in build/generated/tqbuilder/ddl/main.go
+import (
+    userddl "core/services/user/schema/ddl"
+    gitddl "core/services/git/schema/ddl"
+)
+
+func main() {
+    ddls := []bundle{
+        {
+            path: "core/services/user/schema/ddl",
+            tables: userddl.Tables(),
+        },
+        {
+            path: "core/services/git/schema/ddl",
+            tables: gitddl.Tables(),
+        }
+    }
+    for _, ddl := range ddls {
+       generator.GenDDL(ddl.tales, ddl.path) 
+    }
+}
+```

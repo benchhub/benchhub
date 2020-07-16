@@ -20,12 +20,15 @@ test:
 .PHONY: install
 install:
 	go install -ldflags "$(FLAGS)" ./cmd/bh
+	go install ./cmd/bhgen
 
 .PHONY: clean
 clean:
 	rm $(shell which bh)
+	rm -rf bhpb/*.pb.go
 
 .PHONY: generate
 generate:
 	gommon generate -v
+	bhgen schema
 
