@@ -2,7 +2,6 @@
 
 ## TODO
 
-- [ ] split test out to v0.0.5 register test
 - [ ] forgot example
 - [ ] http api? we can mount the logic in both http and grpc server, this should make ui life easier
   - or we could use grpc gateway etc.
@@ -14,6 +13,7 @@ Done
 ## Related
 
 - Parent: [v0.1.0 Micro](../v0.1.0-micro)
+- Next: [v0.0.5 Register Test](../v0.0.5-register-test)
 
 ## Motivation
 
@@ -31,18 +31,20 @@ Skipped
 
 - authentication, assuming a `bh` client can create record for anything w/o user credential
 
+## Implementation
+
+- [ ] list actual implementation order
+
 ## Features
 
 Order by implementation order.
 
 - [Register User](#register-user)
-- Git i.e. VCS
+- Git
   - [Register Git Host](#register-git-host)
   - [Register Owner](#register-owner)
   - [Register Repository](#register-repository)
 - [Register Project](#register-project)
-- [Register Test](#register-test)
-- [Register Benchmark](#register-benchmark)
 
 ### Register User
 
@@ -110,7 +112,7 @@ Components
 
 Description
 
-Register a owner (user/organization). It does not need to be associated with a benchhub user.
+Register an owner (user/organization). It does not need to be associated with a benchhub user.
 e.g. even if based on github API current user is does not own specific organization, they can still create that git owner.
 
 Components
@@ -230,33 +232,6 @@ project: {
 }
 ```
 
-### Register Test
-
-Description
-
-It's impractical to have people manually enter all the test/benchmark names.
-The easiest solution is to run the test and parse the output.
-The name of the test should be unique inside the project and relies on the framework.
-
-Known issues
-
-- conditional test won't work i.e. `go test -short`, this is a special case of parameter. We will consider that when we start actually running test/benchmark with parameters.
-
-Components
-
-- `core/config`
-  - allow ignoring or force specific test patterns, it is opaque to bh and depends on framework
-  - the command to run test, the command need to save the output in a place framework can find it (or stream to stdout/err)
-- `core/storage/rdbms`
-  - save test, saving all tests in a single table w/o partition may cause slow query in the end, but for now `id, project_id, test_name` should be good enough
-- `cmd/bh`
-  - `bh register test`
-- `ui`
-  - `host>owner>repo>project>bench`
-  
-### Register Benchmark
-
-Same as [test](#register-test).
 
 ## Components
 
@@ -264,7 +239,7 @@ Same as [test](#register-test).
 
 Description
 
-The client binary. Also include server in `bh srv`.
+A single binary contains both client and server
 
 ### Core Config
 
@@ -276,8 +251,6 @@ Used in
 
 - [repo](#register-repository)
 - [project](#register-project)
-- [test](#register-test)
-- [benchmark](#register-benchmark)
 
 Internal Dependencies
 
@@ -305,8 +278,6 @@ Used in
 
 - [repo](#register-repository)
 - [project](#register-project)
-- [test](#register-test)
-- [benchmark](#register-benchmark)
 
 Internal Dependencies
 
@@ -327,8 +298,6 @@ Used in
 
 - [repo](#register-repository)
 - [project](#register-project)
-- [test](#register-test)
-- [benchmark](#register-benchmark)
 
 Internal Dependencies
 
@@ -339,46 +308,3 @@ TODO
 - [ ] service definition
    - can use a `Result<Bla>` in response and `Request<Bla>` for common error message and request meta.
 - [ ] talks to RDBMS
-
-### Framework gotest
-
-Description
-
-Parse `go test` output
-
-Used in
-
-- [test](#register-test)
-
-TODO
-
-- [ ] there should be json output format for go test?
-  - can try to use proto ...
-
-### Framework gobench
-
-Description
-
-Parse `go test -bench` output
-
-Used in
-
-- [benchmark](#register-benchmark)
-
-TODO
-
-- [ ] parse go bench output? though it might be same as go test if we just need test name?
-
-### Framework rusttest
-
-Description
-
-Get result from `cargo test`
-
-Used in
-
-- [test](#register-test)
-
-TODO
-
-- [ ] `cargo test` output format?
