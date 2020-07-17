@@ -1,3 +1,4 @@
+# TODO: switch to bhgen
 shells:
   - code: protoc --proto_path=$GOPATH/src/:. --go_out=$GOPATH/src/ --go-grpc_out=$GOPATH/src/ *.proto
     shell: true

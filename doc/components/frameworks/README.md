@@ -1,4 +1,4 @@
-# Frameworks survey and adapter design
+# Frameworks
 
 This folder contains survey and design of adapters implemented under [frameworks](../../frameworks).
 

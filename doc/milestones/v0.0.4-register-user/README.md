@@ -33,7 +33,17 @@ Skipped
 
 ## Implementation
 
-- [ ] list actual implementation order
+- [ ] `bhpb` define proto for
+  - [x] user
+  - [x] git
+  - [ ] project
+- [ ] `lib/tqbuilder`
+  - [ ] generate migration from ddl
+  - [ ] generate query from simple CRUD
+- [ ] `core/services`
+  - [ ] user
+  - [ ] git
+  - [ ] project
 
 ## Features
 

@@ -1,7 +1,5 @@
 # Go micro benchmark
 
-
-
 NOTE: the following content is moved from old gobench.md under design.
 
 ## Workflow

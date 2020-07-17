@@ -59,9 +59,9 @@ Proposed examples are:
 
 Order by implementation order.
 
-### v0.0.4 Register Benchmark
+### v0.0.5 Register Benchmark
 
-See [v0.0.4](../v0.0.4-register) for latest doc.
+See [v0.0.5](../v0.0.5-register-test) for latest doc.
 
 NOTE: pick 0.0.4 because 0.0.3 is the latest archive tag
 
@@ -102,7 +102,7 @@ External Dependencies
 - `reikla`
   - `rcl/rcl-go` Can use YAML for now ... just need a JSON with comment support
 
-### v0.0.5 Run Test
+### v0.0.6 Run Test
 
 Description
 
@@ -136,7 +136,7 @@ Components
 - `example/sort`
   - correct merge sort implementation in go and rust
 
-### v0.0.6 Run Benchmarks
+### v0.0.7 Run Benchmarks
 
 Description
 
