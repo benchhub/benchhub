@@ -25,7 +25,15 @@ const (
 )
 
 const (
-	CharMax = 1 << 8 - 1
+	CharMax = 1<<8 - 1
+)
+
+const (
+	// TODO: not sure about length of common string columns
+	// StrSmall is for name, email etc.
+	StrSmall = CharMax
+	// Medium is for path, url etc.
+	StrMedium = 1024
 )
 
 type DataTypeDef struct {
@@ -36,4 +44,5 @@ type DataTypeDef struct {
 type ColumnConstraintDef struct {
 	PrimaryKey bool
 	Unique     bool
+	// TODO: NotNull?
 }

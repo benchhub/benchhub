@@ -5,6 +5,7 @@
 
 FROM ubuntu:18.04
 
-# TODO: need to use proxy when building docker image
+# TODO: need to use proxy when building docker image locally
+# TODO: build the docker image using dockerhub/github runner
 # protoc
 # google.golang.org/protobuf/cmd/protoc-gen-go

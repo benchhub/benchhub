@@ -11,4 +11,5 @@ See [milestones](milestones) for the entire milestones tree.
 See [components](components) for the entire components tree.
 
 - [cmd](components/cmd) Binary
-- [frameworks](components/frameworks) Frameworks are adapters for different programming languages and benchmark frameworks. 
+- [frameworks](components/frameworks) Frameworks are adapters for different programming languages and benchmark frameworks.
+- [lib](components/lib) Libraries that can split out and use in other projects, e.g. SQL query builder. 
