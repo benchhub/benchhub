@@ -1,15 +1,19 @@
-# v0.0.4 Register
+# v0.0.4 Register User
 
 ## TODO
 
+- [ ] split test out to v0.0.5 register test
 - [ ] forgot example
-- [ ] still need user even if we don't have authentication
 - [ ] http api? we can mount the logic in both http and grpc server, this should make ui life easier
   - or we could use grpc gateway etc.
 
 Done
 
 - [x] rdbms framework name `tqbuilder`, type safe query builder
+
+## Related
+
+- Parent: [v0.1.0 Micro](../v0.1.0-micro)
 
 ## Motivation
 

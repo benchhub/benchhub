@@ -13,11 +13,11 @@
 
 BenchHub is a service for running (database) benchmark and save result in databases.
 
-- status: Under major rewrite. See [roadmap](doc/ROADMAP.md)
+- status: Under major rewrite. See [roadmap](doc/README.md#roadmap)
 
 ## Usage
 
-NOTE: not in a usable state. See [_example](_example)
+Not usable at all.
 
 ## Alternatives
 

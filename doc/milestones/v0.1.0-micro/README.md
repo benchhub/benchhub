@@ -1,5 +1,15 @@
 # v0.1.0 Micro
 
+## TODO
+
+- [ ] shift version number because split register user and register test & benchmark
+
+## Related
+
+- Children:
+  - [v0.0.4 Register User](../v0.0.4-register-user)
+  - [v0.0.5 Register Test](../v0.0.5-register-test)
+
 ## Motivation
 
 Have BenchHub up and running for micro benchmarks. It is used more often than database benchmarks.
