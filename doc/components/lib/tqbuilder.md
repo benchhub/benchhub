@@ -4,11 +4,11 @@
 
 ## TODO
 
-- [ ] sync useful doc from milestone
+- [ ] sync core part from milestone
 
 ## Overview
 
-A type safe SQL query builder and code generator.
+A type safe SQL query builder and code generator. All the queries are known at compile time.
 
 ## Milestones
 

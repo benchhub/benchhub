@@ -75,7 +75,7 @@ Why not
 
 Highlight
 
-- the generated code has a package level out for `table`, `view`, `model`
+- the generated code has a package level output for `table`, `view`, `model`
 - use dot import and looks like SQL when writing
 
 Why not
@@ -103,34 +103,35 @@ The definition and code generation contains multiple stages and each one depends
 - query definition
 - proto conversion
 
-### Schema definition design
+### Schema Definition Design
 
 ```go
-// TODO: this is outdated ...
-// TODO: maybe need a schema package because query has col as well
-func t1() tqbuilder.Table {
-    return tqbuilder.Table{
-        Name: "users",
-        Columns: []tqbuilder.Col{
-            {
-                Name: "id",
-                Type: tqbuilder.Int,
-                Primary: true,
-            },
-            {
-                Name: "name",
-                Type: tqbuilder.String,
-                Unique: true,
-            },
-        }
-    }
+// core/services/user/schema/ddl/table.go
+package ddl
+
+import "github.com/benchhub/benchhub/lib/tqbuilder/sql/ddl"
+
+func Tables() []ddl.TableDef {
+	cols := []ddl.ColumnDef{
+		ddl.PrimaryKey("id"),
+		ddl.VarChar("name", ddl.StrSmall),
+		ddl.VarChar("full_name", ddl.StrSmall),
+		ddl.VarChar("email", ddl.StrSmall),
+	}
+	user := ddl.Table("users", cols)
+	return ddl.Tables(user)
 }
 ```
 
-### Schema user layout
+### Schema Layout
 
 ```text
 benchhub
+  build
+    generated
+       tqbuilder
+         ddl
+            main.go // run it to generate usermodel, userschema, userquery
   cmd
     pmgen // imports userddl and run it
   lib
@@ -151,11 +152,12 @@ benchhub
                dml
                   query.go
                generated
+                  usermodel
                   userschema
                   userquery
 ```
 
-### Trigger generator
+### Trigger Generator
 
 Requirements
 
@@ -192,5 +194,84 @@ func main() {
     for _, ddl := range ddls {
        generator.GenDDL(ddl.tales, ddl.path) 
     }
+}
+```
+
+### Schema Generated Code
+
+- go struct that maps to table, e.g. `core/services/user/schema/generated/usermodel/user.go`
+- markdown table snippet or simply `README.md`
+- table definition for query builder
+  - [ ] check entgo
+- ? orm like query e.g. getAll, getById/Name etc. could leave it to query
+
+```go
+package usermodel
+
+type User struct {
+    ID int64
+    Name string
+    FullName string
+    Email string          
+}
+```
+
+```markdown
+## User
+
+- Defined in [core/services/users/](...)
+- Generated in [...](...)
+
+TODO: forgot the markdown table syntax ...
+| name | type | length | comment |
+| email | varchar | 128 | |
+```
+
+```go
+// package userschema
+
+var User = newUserTable()
+
+type UserTable struct {
+    ID ddl.IntegerDef
+    FirstName ddl.StringDef
+}
+
+func newUserTable() UserTable {
+    return UserTable {
+        ID: ddl.IntegerDef{Name: "id"}, // basically copy from what user wrote in their ddl/table.go
+    }
+}
+```
+
+### Query Definition Design
+
+- dot import schema generated in previous phase
+- dot import generic (well untyped) sql keywords
+
+```go
+// package dml
+
+import (
+    "lib/tqbuilder/sql/ddl"
+    "lib/tqbuilder/sql/dml/crud"
+
+    . "core/services/user/schema/generated/userschema"
+    . "lib/tqbuilder/sql/dml"
+)
+
+func Queries() []Query {
+    // write query manually
+    s1 := SELECT(User.All()).FROM(User)
+    q1 := NewQuery("getAllUsers", s1)
+
+    // common crud in one go, can switch to functional argument
+    crudOption := crud.Option{
+        FindBy: []ddl.ColumnDef{
+            User.Email, User.Twitter
+        }
+    }
+    cruds := crud.New(User, crudOptions)
+    return []Query{q1}
 }
 ```

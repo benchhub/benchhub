@@ -60,6 +60,8 @@ type DDLTables struct {
 	Tables []ddl.TableDef
 }
 
+// GenDDLMain generates a main.go file that can generate go binding and SQL
+// based on DDL ast written in go.
 func GenDDLMain(dst io.Writer, importPrefix string, ddls []string) error {
 	// Generate unique import name based on path
 	// TODO: it is no longer unique if there are packages with same name ...\
@@ -100,6 +102,7 @@ func GenDDLMain(dst io.Writer, importPrefix string, ddls []string) error {
 	return nil
 }
 
+// GenDDL generates table(s) for a single package (service).
 func GenDDL(d DDLTables) error {
 	log.Infof("GenDDL TODO: %s %d", d.Path, len(d.Tables))
 	return nil

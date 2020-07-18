@@ -32,6 +32,7 @@ func Int(name string) ColumnDef {
 	}
 }
 
+// TODO: change to String and switch underlying type based on length requirement
 func VarChar(name string, length int) ColumnDef {
 	return ColumnDef{
 		Name: name,
