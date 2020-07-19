@@ -37,7 +37,7 @@ Skipped
   - [x] user
   - [x] git
   - [ ] project
-- [ ] `lib/tqbuilder`
+- [ ] `lib/tqbuilder` (active)
   - [ ] generate migration from ddl
   - [ ] generate query from simple CRUD
 - [ ] `core/services`
