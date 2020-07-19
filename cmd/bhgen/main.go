@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"os"
 
 	"github.com/dyweb/gommon/util/fsutil"
 
@@ -43,11 +42,7 @@ func genSchema() error {
 		return err
 	}
 	const dstDir = "build/generated/tqbuilder/ddl"
-	// TODO(gommon): add a new util to create file and dir all together
-	if err := fsutil.MkdirIfNotExists(dstDir); err != nil {
-		return err
-	}
-	ddlMain, err := os.Create(dstDir + "/main.go")
+	ddlMain, err := fsutil.CreateFileAndPath(dstDir, "main.go")
 	if err != nil {
 		return err
 	}

@@ -201,8 +201,8 @@ func main() {
 
 - go struct that maps to table, e.g. `core/services/user/schema/generated/usermodel/user.go`
 - markdown table snippet or simply `README.md`
-- table definition for query builder
-  - [ ] check entgo
+- SQL
+- table definition for query builder, similar to [jet](#jet) and cqlc
 - ? orm like query e.g. getAll, getById/Name etc. could leave it to query
 
 ```go
@@ -225,6 +225,14 @@ type User struct {
 TODO: forgot the markdown table syntax ...
 | name | type | length | comment |
 | email | varchar | 128 | |
+```
+
+```sql
+CREATE TABLE users (
+    id INT PRIMARY KEY,
+    name VARCHAR(128),
+    email VARCHAR(128)
+);
 ```
 
 ```go

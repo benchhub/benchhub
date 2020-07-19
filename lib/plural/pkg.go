@@ -1,0 +1,26 @@
+// Package plural converts word between plural and singular.
+// FIXME: this is a hack for tqbuilder, should got replaced by other packages eventually.
+// TODO: move the package to gommon when it actually works
+package plural
+
+var p2s = map[string]string{
+	"users": "user",
+}
+
+var s2p = map[string]string{}
+
+// ToSingular returns singular from plural.
+// It may return the input directly if is not a known (hard coded) plural form.
+func ToSingular(p string) string {
+	s, ok := p2s[p]
+	if ok {
+		return s
+	}
+	return p
+}
+
+func init() {
+	for k, v := range p2s {
+		s2p[v] = k
+	}
+}
