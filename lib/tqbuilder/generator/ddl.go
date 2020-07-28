@@ -2,6 +2,7 @@ package generator
 
 import (
 	"io"
+	"path/filepath"
 	"strings"
 
 	"github.com/benchhub/benchhub/lib/plural"
@@ -37,6 +38,7 @@ func main() {
 			Path: "{{ .Path }}",
 			Package: "{{ .Package }}",
 			Tables: {{ .Name }}.Tables(),
+			GeneratedPath: "{{ .GeneratedPath }}",
 		},
 {{- end }}
 	}
@@ -51,15 +53,17 @@ func main() {
 `
 
 type DDLImport struct {
-	Name    string // import alias in generated go code
-	Path    string // import path
-	Package string // extracted package name, e.g. user, act etc.
+	Name          string // import alias in generated go code
+	Path          string // import path
+	Package       string // extracted package name, e.g. user, act etc.
+	GeneratedPath string // path to output generated files, e.g. core/services/user/schema/generated
 }
 
 type DDLTables struct {
-	Path    string
-	Package string // extracted package name for generating new package name. e.g. user -> usermodel
-	Tables  []ddl.TableDef
+	Path          string
+	Package       string // copied from DDLImport name for generating new package name. e.g. user -> usermodel
+	Tables        []ddl.TableDef
+	GeneratedPath string // copied from DDLImport
 }
 
 // GenDDLMain generates a main.go file that can generate go binding and SQL
@@ -76,11 +80,14 @@ func GenDDLMain(dst io.Writer, importPrefix string, ddls []string) error {
 		}
 		pkg := segs[len(segs)-3] // user
 		name := pkg + "ddl"      // userddl
+		segs[len(segs)-1] = "generated"
+		genPath := filepath.Join(segs...) // core/services/user/schema/generated
 		ddlImports = append(ddlImports, DDLImport{
 			Name: name,
 			// core/services/user/schema/ddl -> github.com/benchhub/benchhub/core/services/user/schema/ddl
-			Path:    importPrefix + "/" + ddlPath,
-			Package: pkg,
+			Path:          importPrefix + "/" + ddlPath,
+			Package:       pkg,
+			GeneratedPath: importPrefix + "/" + genPath,
 		})
 	}
 
@@ -92,11 +99,7 @@ func GenDDLMain(dst io.Writer, importPrefix string, ddls []string) error {
 
 // GenDDL generates table(s) for a single package (service).
 func GenDDL(d DDLTables) error {
-	log.Infof("GenDDL TODO: %s %d", d.Path, len(d.Tables))
-
-	// TODO: need the path to save generated file
-	// core/services/user/schema/generated
-	// this need to be generated in previous phase
+	log.Infof("GenDDL TODO: %s %d to %s", d.Path, len(d.Tables), d.GeneratedPath)
 	return nil
 }
 
