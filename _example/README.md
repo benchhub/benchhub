@@ -1,6 +1,12 @@
 # BenchHub Examples
 
-Unit test
+## Micro benchmark
 
-- [mergesort](mergsort) In memory merge sort in different languages [go](mergesort/go), [rust](mergesort/rust), [cpp](mergesort/cpp)
+Sort
+
+- [mergesort](mergesort) In memory merge sort in different languages [go](mergesort/go), [rust](mergesort/rust), [cpp](mergesort/cpp)
+
+String
+
 - [ ] strstr
+- [ ] regexp

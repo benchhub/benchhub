@@ -35,5 +35,6 @@ MIT
 ## About
 
 BenchHub is an implementation of [@at15](https://github.com/at15)'s master thesis in [UCSC](https://www.ucsc.edu/) 'BenchHub: Store database benchmark result in database'.
-Its goal is defining a spec for running distributed database benchmark and provides a continuous integration service, so database developer can focus on developing database itself.
-By saving benchmark result in databases, it allows people to query and compare results across different times and sources.
+Its goal is defining a spec for running distributed database benchmark and providing a continuous integration service with managed runtime. 
+BenchHub help database developer to focus on developing database itself instead of tools.
+By saving benchmark result in databases, people can query and compare results across different times and sources.
