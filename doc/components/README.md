@@ -5,4 +5,6 @@
   - [bhgen](cmd/bhgen.md) Code generator
 - [lib](lib)
   - [tqbuilder](lib/tqbuilder.md) Type safe SQL query builder
+- [core](core)
 - [frameworks](frameworks)
+- [runtimes](runtimes)

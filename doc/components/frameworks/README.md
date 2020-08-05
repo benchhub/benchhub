@@ -1,6 +1,6 @@
-# Frameworks
+# BenchHub Frameworks
 
-This folder contains survey and design of adapters implemented under [frameworks](../../frameworks).
+Survey and design of adapters implemented in [frameworks](../../../frameworks).
 
 For each framework it should cover
 

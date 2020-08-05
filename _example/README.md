@@ -10,3 +10,16 @@ String
 
 - [ ] strstr
 - [ ] regexp
+- [ ] inverted index (using wikipedia data)
+  - can split a section for serialization
+
+Serialization
+
+- [ ] json
+- [ ] xml
+
+Compression
+
+- [ ] gzip
+- [ ] zstd
+- [ ] snappy
