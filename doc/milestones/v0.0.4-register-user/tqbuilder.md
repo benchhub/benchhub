@@ -2,7 +2,15 @@
 
 ## TODO
 
-- [ ] list goal and non goals
+- [x] list goal and non goals
+- [ ] [schema generated code](#schema-generated-code)
+  - [x] go struct in `xxxmodel`
+  - [ ] struct definition for query builder `xxxschema`
+  - [ ] markdown table
+  - [ ] sql
+
+## Command
+
 
 ## Motivation
 
@@ -153,6 +161,7 @@ benchhub
                   query.go
                generated
                   usermodel
+                    pkg.go
                   userschema
                   userquery
 ```

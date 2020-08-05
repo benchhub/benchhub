@@ -37,7 +37,9 @@ Skipped
   - [x] user
   - [x] git
   - [ ] project
-- [ ] `lib/tqbuilder` (active)
+- [ ] [lib/tqbuilder](tqbuilder.md) (active)
+  - [x] define database schema in go code
+    - See [tqbuilder/generator/ddl.go](../../../lib/tqbuilder/generator/ddl.go) and [tqbuilder/sql/ddl](../../../lib/tqbuilder/sql/ddl)
   - [ ] generate migration from ddl
   - [ ] generate query from simple CRUD
 - [ ] `core/services`

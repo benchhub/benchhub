@@ -10,6 +10,7 @@ import (
 )
 
 // util.go contains wrapper around text/template
+// TODO(dyweb/gommon/generator): renderTo should be a exported function
 
 func renderTo(name string, dst io.Writer, tmpl string, data interface{}) error {
 	tpl, err := template.New(name).Parse(tmpl)
