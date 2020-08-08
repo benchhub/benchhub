@@ -36,6 +36,7 @@ func main() {
 
 const bhRepo = "github.com/benchhub/benchhub"
 
+// TODO: remove hard coded path and move the logic into tqbuilder/generator
 func genSchema() error {
 	res, err := generator.Walk("core/services")
 	if err != nil {
@@ -51,5 +52,11 @@ func genSchema() error {
 		return err
 	}
 	log.Infof("TODO: DMLS %v", res.DMLS)
+	return nil
+}
+
+func cleanSchema() error {
+	// TODO: remove generated file
+	// TODO: GenDDLMain need to split out its path extraction logic, so we can have generated path
 	return nil
 }

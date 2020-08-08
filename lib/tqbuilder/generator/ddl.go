@@ -3,13 +3,11 @@ package generator
 import (
 	"io"
 	"path/filepath"
-	"strings"
 
 	"github.com/dyweb/gommon/util/stringutil"
 
 	"github.com/benchhub/benchhub/lib/plural"
 	"github.com/benchhub/benchhub/lib/tqbuilder/sql/ddl"
-	"github.com/dyweb/gommon/errors"
 	"github.com/dyweb/gommon/util/fsutil"
 )
 
@@ -45,10 +43,10 @@ func run() error {
 	ddls := []generator.DDLTables{
 {{ range .DDLImports }}
 		{
-			Path: "{{ .Path }}",
+			ImportPath: "{{ .Path }}",
 			Package: "{{ .Package }}",
 			Tables: {{ .Name }}.Tables(),
-			GeneratedPath: "{{ .GeneratedPath }}",
+			OutputPath: "{{ .OutputPath }}",
 		},
 {{- end }}
 	}
@@ -61,17 +59,17 @@ func run() error {
 `
 
 type DDLImport struct {
-	Name          string // import alias in generated go code
-	Path          string // import path
-	Package       string // extracted package name, e.g. user, act etc.
-	GeneratedPath string // relative path to output generated files, e.g. core/services/user/schema/generated
+	Name       string // import alias in generated go code
+	Path       string // import path
+	Package    string // extracted package name, e.g. user, act etc.
+	OutputPath string // relative path to output generated files, e.g. core/services/user/schema/generated
 }
 
 type DDLTables struct {
-	Path          string
-	Package       string // copied from DDLImport name for generating new package name. e.g. user -> usermodel
-	Tables        []ddl.TableDef
-	GeneratedPath string // copied from DDLImport, e.g. core/services/user/schema/generated
+	ImportPath string // import path
+	Package    string // copied from DDLImport name for generating new package name. e.g. user -> usermodel
+	Tables     []ddl.TableDef
+	OutputPath string // copied from DDLImport, e.g. core/services/user/schema/generated
 }
 
 // GenDDLMain generates a main.go file that can generate go binding and SQL
@@ -81,21 +79,15 @@ func GenDDLMain(dst io.Writer, importPrefix string, ddls []string) error {
 	// TODO: it is no longer unique if there are packages with same name ...\
 	var ddlImports []DDLImport
 	for _, ddlPath := range ddls {
-		// user/schema/ddl -> userddl
-		segs := strings.Split(ddlPath, "/")
-		if len(segs) < 3 {
-			return errors.Errorf("expect at least 3 segments in ddl path, got %d from %s", len(segs), ddlPath)
+		ep, err := ExtractPath(ddlPath, importPrefix)
+		if err != nil {
+			return err
 		}
-		pkg := segs[len(segs)-3] // user
-		name := pkg + ddlSuffix  // userddl
-		segs[len(segs)-1] = "generated"
-		genPath := filepath.Join(segs...) // core/services/user/schema/generated
 		ddlImports = append(ddlImports, DDLImport{
-			Name: name,
-			// core/services/user/schema/ddl -> github.com/benchhub/benchhub/core/services/user/schema/ddl
-			Path:          importPrefix + "/" + ddlPath,
-			Package:       pkg,
-			GeneratedPath: genPath,
+			Name:       ep.Package + ddlSuffix, // userddl
+			Path:       ep.ImportPath,
+			Package:    ep.Package,
+			OutputPath: ep.OutputPath,
 		})
 	}
 
@@ -108,8 +100,8 @@ func GenDDLMain(dst io.Writer, importPrefix string, ddls []string) error {
 // GenDDL generates table(s) for a single package (service).
 func GenDDL(d DDLTables) error {
 	// Model
-	p := filepath.Join(d.GeneratedPath, d.Package+modelSuffix)
-	log.Infof("GenDDL %s %d tables to %s", d.Path, len(d.Tables), p)
+	p := filepath.Join(d.OutputPath, d.Package+modelSuffix)
+	log.Infof("GenDDL %s %d tables to %s", d.ImportPath, len(d.Tables), p)
 	f, err := fsutil.CreateFileAndPath(p, "pkg.go")
 	if err != nil {
 		return err
@@ -168,7 +160,7 @@ func genDDLModel(dst io.Writer, d DDLTables) error {
 		structs = append(structs, table2Structdef(tbl))
 	}
 	data := ddlModelData{
-		DDLPath: d.Path,
+		DDLPath: d.ImportPath,
 		Package: d.Package + modelSuffix,
 		Structs: structs,
 	}

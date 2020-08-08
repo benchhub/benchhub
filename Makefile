@@ -14,11 +14,11 @@ PKGS = $(addsuffix ...,$(PKGST))
 
 .PHONY: fmt
 fmt:
-	goimports -d -l -w $(PKGST)
+	gommon format -d -l -w $(PKGST)
 
 .PHONY: test
 test:
-	go test -v -cover $(PKGS)
+	$(GO) test -v -cover $(PKGS)
 
 .PHONY: install
 install: install-generator

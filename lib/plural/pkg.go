@@ -4,7 +4,9 @@
 package plural
 
 var p2s = map[string]string{
-	"users": "user",
+	"users":      "user",
+	"git_owners": "git_owner",
+	"git_repos":  "git_repo",
 }
 
 var s2p = map[string]string{}

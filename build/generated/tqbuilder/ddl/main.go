@@ -26,16 +26,16 @@ func run() error {
 	ddls := []generator.DDLTables{
 
 		{
-			Path:          "github.com/benchhub/benchhub/core/services/git/schema/ddl",
-			Package:       "git",
-			Tables:        gitddl.Tables(),
-			GeneratedPath: "core/services/git/schema/generated",
+			ImportPath: "github.com/benchhub/benchhub/core/services/git/schema/ddl",
+			Package:    "git",
+			Tables:     gitddl.Tables(),
+			OutputPath: "core/services/git/schema/generated",
 		},
 		{
-			Path:          "github.com/benchhub/benchhub/core/services/user/schema/ddl",
-			Package:       "user",
-			Tables:        userddl.Tables(),
-			GeneratedPath: "core/services/user/schema/generated",
+			ImportPath: "github.com/benchhub/benchhub/core/services/user/schema/ddl",
+			Package:    "user",
+			Tables:     userddl.Tables(),
+			OutputPath: "core/services/user/schema/generated",
 		},
 	}
 	merr := errors.NewMultiErr()
