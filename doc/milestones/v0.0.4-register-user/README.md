@@ -190,6 +190,8 @@ A repository can contain multiple projects. There are two types of projects:
 
 - meta projects, group multiple projects together e.g. mergesort in go, cpp, rust etc.
 - executable project, run the actual benchmark using a specific framework e.g. go, tpc-c
+- [ ] maybe we should reduce the coupling between repo and project, so it's easier to move repo to a different place
+  - e.g. `github/benchhub/benchub` contains both `project/benchhub`, `project/benchhub/example`
 
 Components
 

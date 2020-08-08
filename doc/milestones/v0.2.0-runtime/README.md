@@ -3,6 +3,7 @@
 ## TODO
 
 - [ ] split into small features that can work in parallel w/ v0.1.0
+- [ ] resource counting, runtime reports back to core?
 
 ## Overview
 
@@ -97,6 +98,9 @@ Components
 - `core/runtime`
   - allow user to submit request and use a managed runtime to run a job
   - define the interface for runtime to implement
+  - runtime should be able to
+    - build the code (container)
+    - run the code (container)
 - `runtimes/local`
   - the control plane as a process/go routine
   - package code to a container

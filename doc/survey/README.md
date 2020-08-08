@@ -7,6 +7,7 @@ This folder contains survey on CI/CD for providing a managed benchmark runtime.
 
 ## TODO
 
+- https://github.com/google/oss-fuzz a continuous fuzz service for open source projects
 - https://github.com/zhangysh1995/awesome-database-testing
 - https://github.com/chaos-mesh/horoscope
   - benchmark optimizer

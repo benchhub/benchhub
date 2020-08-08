@@ -5,11 +5,12 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/dyweb/gommon/util/stringutil"
+
 	"github.com/benchhub/benchhub/lib/plural"
 	"github.com/benchhub/benchhub/lib/tqbuilder/sql/ddl"
 	"github.com/dyweb/gommon/errors"
 	"github.com/dyweb/gommon/util/fsutil"
-	"github.com/dyweb/gommon/util/genutil"
 )
 
 const ddlSuffix = "ddl"
@@ -149,12 +150,12 @@ func table2Structdef(tbl ddl.TableDef) structDef {
 	var fields []fieldDef
 	for _, f := range tbl.Columns {
 		fields = append(fields, fieldDef{
-			Name: genutil.SnakeToCamel(f.Name),
+			Name: stringutil.SnakeToCamel(f.Name),
 			Type: f.Type.GoType(),
 		})
 	}
 	structName := plural.ToSingular(tbl.Name)
-	structName = genutil.UcFirst(structName)
+	structName = stringutil.SnakeToCamel(structName)
 	return structDef{
 		Name:   structName,
 		Fields: fields,
