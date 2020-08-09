@@ -74,15 +74,11 @@ type DDLTables struct {
 
 // GenDDLMain generates a main.go file that can generate go binding and SQL
 // based on table definitions written in go AST.
-func GenDDLMain(dst io.Writer, importPrefix string, ddls []string) error {
+func GenDDLMain(dst io.Writer, ddls []ExtractedPath) error {
 	// Generate unique import name based on path
 	// TODO: it is no longer unique if there are packages with same name ...\
 	var ddlImports []DDLImport
-	for _, ddlPath := range ddls {
-		ep, err := ExtractPath(ddlPath, importPrefix)
-		if err != nil {
-			return err
-		}
+	for _, ep := range ddls {
 		ddlImports = append(ddlImports, DDLImport{
 			Name:       ep.Package + ddlSuffix, // userddl
 			Path:       ep.ImportPath,

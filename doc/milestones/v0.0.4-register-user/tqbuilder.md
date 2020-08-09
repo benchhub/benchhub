@@ -4,6 +4,7 @@
 
 - [x] list goal and non goals
 - [ ] [schema generated code](#schema-generated-code)
+  - [ ] remove code in generated folder
   - [x] go struct in `xxxmodel`
   - [ ] struct definition for query builder `xxxschema`
   - [ ] markdown table

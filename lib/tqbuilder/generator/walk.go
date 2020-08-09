@@ -9,21 +9,30 @@ import (
 )
 
 type WalkResult struct {
-	DDLs []string
-	DMLS []string
+	DDLs []ExtractedPath
+	DMLS []ExtractedPath
 }
 
-func Walk(root string) (WalkResult, error) {
+func Walk(root string, importPrefix string) (WalkResult, error) {
 	var (
-		ddls []string
-		dmls []string
+		ddls []ExtractedPath
+		dmls []ExtractedPath
 	)
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		// TODO： duplication for ddl and dml ...
 		if strings.HasSuffix(path, "schema/ddl") && info.IsDir() {
-			ddls = append(ddls, path)
+			p, err := ExtractPath(path, importPrefix)
+			if err != nil {
+				return err
+			}
+			ddls = append(ddls, p)
 		}
 		if strings.HasSuffix(path, "schema/dml") && info.IsDir() {
-			dmls = append(dmls, path)
+			p, err := ExtractPath(path, importPrefix)
+			if err != nil {
+				return err
+			}
+			dmls = append(dmls, p)
 		}
 		return nil
 	})

@@ -25,11 +25,15 @@ install: install-generator
 	$(GO) install -ldflags "$(FLAGS)" ./cmd/bh
 
 install-generator:
-	$(GO) install ./cmd/bhgen
+	$(GO) install -ldflags "$(FLAGS)" ./cmd/bhgen
+
+uninstall:
+	rm $(shell which bh)
+	rm $(shell which bhgen)
 
 .PHONY: clean
 clean:
-	rm $(shell which bh)
+	bhgen schema clean
 	rm -rf bhpb/*.pb.go
 
 .PHONY: generate
