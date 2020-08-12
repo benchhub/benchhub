@@ -4,14 +4,26 @@
 
 - [x] list goal and non goals
 - [ ] [schema generated code](#schema-generated-code)
-  - [ ] remove code in generated folder
+  - [x] remove code in generated folder
   - [x] go struct in `xxxmodel`
   - [ ] struct definition for query builder `xxxschema`
   - [ ] markdown table
   - [ ] sql
 
+## Code
+
+- [bhgen/schema.go](../../../cmd/bhgen/schema.go) for `bhgen schema`
+- [lib/tqbuilder](../../../lib/tqbuilder)
+
 ## Command
 
+```bash
+bhgen schema generate
+bhgen schema clean
+
+# or
+make gen-schema
+```
 
 ## Motivation
 

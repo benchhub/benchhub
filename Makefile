@@ -43,5 +43,5 @@ gen-proto: install-generator
 	gommon generate -v
 
 gen-schema: install-generator
-	bhgen schema
+	bhgen schema generate
 	$(GO) run build/generated/tqbuilder/ddl/main.go
