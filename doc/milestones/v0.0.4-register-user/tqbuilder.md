@@ -3,12 +3,14 @@
 ## TODO
 
 - [x] list goal and non goals
-- [ ] [schema generated code](#schema-generated-code)
+- [ ] [schema generated code](#schema-generated-code) i.e. ddl
   - [x] remove code in generated folder
   - [x] go struct in `xxxmodel`
   - [ ] struct definition for query builder `xxxschema`
   - [ ] markdown table
   - [ ] sql
+ - [ ] query
+  - [ ] support dialect, at least mysql and postgres
 
 ## Code
 
@@ -221,11 +223,13 @@ func main() {
 
 ### Schema Generated Code
 
-- go struct that maps to table, e.g. `core/services/user/schema/generated/usermodel/user.go`
+- [model](#model) go struct that maps to table, e.g. `core/services/user/schema/generated/usermodel/user.go`
+- [table definition](#table-definition) for query builder, similar to [jet](#jet) and cqlc
 - markdown table snippet or simply `README.md`
 - SQL
-- table definition for query builder, similar to [jet](#jet) and cqlc
 - ? orm like query e.g. getAll, getById/Name etc. could leave it to query
+
+#### Model
 
 ```go
 package usermodel
@@ -235,6 +239,30 @@ type User struct {
     Name string
     FullName string
     Email string          
+}
+```
+
+#### Table definition
+
+This is a common trick for all query generator like this
+
+- define a struct that contains table definition
+- create a exported instance that can be used directly
+
+```go
+// package userschema
+
+var User = newUserTable()
+
+type UserTable struct {
+    ID ddl.IntegerDef
+    FirstName ddl.StringDef
+}
+
+func newUserTable() UserTable {
+    return UserTable {
+        ID: ddl.IntegerDef{Name: "id"}, // basically copy from what user wrote in their ddl/table.go
+    }
 }
 ```
 
@@ -255,23 +283,6 @@ CREATE TABLE users (
     name VARCHAR(128),
     email VARCHAR(128)
 );
-```
-
-```go
-// package userschema
-
-var User = newUserTable()
-
-type UserTable struct {
-    ID ddl.IntegerDef
-    FirstName ddl.StringDef
-}
-
-func newUserTable() UserTable {
-    return UserTable {
-        ID: ddl.IntegerDef{Name: "id"}, // basically copy from what user wrote in their ddl/table.go
-    }
-}
 ```
 
 ### Query Definition Design

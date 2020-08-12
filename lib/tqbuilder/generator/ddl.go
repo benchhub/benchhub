@@ -4,12 +4,17 @@ import (
 	"io"
 	"path/filepath"
 
+	"github.com/dyweb/gommon/generator"
+
 	"github.com/dyweb/gommon/util/stringutil"
 
 	"github.com/benchhub/benchhub/lib/plural"
 	"github.com/benchhub/benchhub/lib/tqbuilder/sql/ddl"
 	"github.com/dyweb/gommon/util/fsutil"
 )
+
+// ----------------------------------------------------------------------------
+// GenDDLMain generates a main.go as entry point for DDL related code gen
 
 const ddlSuffix = "ddl"
 
@@ -58,42 +63,58 @@ func run() error {
 }
 `
 
-type DDLImport struct {
+// TODO(style): add this go style
+type ddlMainTemplateData struct {
+	DDLImports []ddlImport
+}
+
+// ddlImport is only used in template
+type ddlImport struct {
 	Name       string // import alias in generated go code
 	Path       string // import path
 	Package    string // extracted package name, e.g. user, act etc.
 	OutputPath string // relative path to output generated files, e.g. core/services/user/schema/generated
 }
 
+// DDLTables contains tables definitions from a go a package.
+// It is used by GenDDL to generate actual struct, table schema, SQL etc.
 type DDLTables struct {
-	ImportPath string // import path
-	Package    string // copied from DDLImport name for generating new package name. e.g. user -> usermodel
-	Tables     []ddl.TableDef
-	OutputPath string // copied from DDLImport, e.g. core/services/user/schema/generated
+	ImportPath string         // import path
+	Package    string         // copied from DDLImport name for generating new package name. e.g. user -> usermodel
+	Tables     []ddl.TableDef // from user defined schema, we expect the package has a `Tables() []ddl.TableDef` method
+	OutputPath string         // copied from DDLImport, e.g. core/services/user/schema/generated
 }
 
-// GenDDLMain generates a main.go file that can generate go binding and SQL
-// based on table definitions written in go AST.
+// GenDDLMain generates a main.go file that will do the real code generation when executed.
+// User should write table definition in go code under specific path. Those path are extracted using Walk.
+// It simply renders a go file from template.
 func GenDDLMain(dst io.Writer, ddls []ExtractedPath) error {
-	// Generate unique import name based on path
-	// TODO: it is no longer unique if there are packages with same name ...\
-	var ddlImports []DDLImport
+	var ddlImports []ddlImport
 	for _, ep := range ddls {
-		ddlImports = append(ddlImports, DDLImport{
+		ddlImports = append(ddlImports, ddlImport{
+			// Generate unique import name based on path, otherwise they are all called ddl
+			// FIXME: it is no longer unique if there are packages with same name ...\
 			Name:       ep.Package + ddlSuffix, // userddl
 			Path:       ep.ImportPath,
 			Package:    ep.Package,
 			OutputPath: ep.OutputPath,
 		})
 	}
-
-	data := map[string]interface{}{
-		"DDLImports": ddlImports,
+	tmpl := generator.GoCodeTemplate{
+		Name:    "ddlmain",
+		Content: ddlMainTemplate,
+		Data:    ddlMainTemplateData{DDLImports: ddlImports},
 	}
-	return renderTo("ddlmain", dst, ddlMainTemplate, data)
+	return generator.RenderGoCodeTo(dst, tmpl)
 }
 
+// ----------------------------------------------------------------------------
+// GenDDL
+
 // GenDDL generates table(s) for a single package (service).
+// It calls multiple generators and returns if any of them has error.
+// - genDDLModel
+// -
 func GenDDL(d DDLTables) error {
 	// Model
 	p := filepath.Join(d.OutputPath, d.Package+modelSuffix)
@@ -109,6 +130,9 @@ func GenDDL(d DDLTables) error {
 	// TODO: schema, markdown, sql
 	return nil
 }
+
+// ----------------------------------------------------------------------------
+// genDDLModel go struct from table schema
 
 const modelSuffix = "model"
 
@@ -155,10 +179,14 @@ func genDDLModel(dst io.Writer, d DDLTables) error {
 	for _, tbl := range d.Tables {
 		structs = append(structs, table2Structdef(tbl))
 	}
-	data := ddlModelData{
-		DDLPath: d.ImportPath,
-		Package: d.Package + modelSuffix,
-		Structs: structs,
+	tmpl := generator.GoCodeTemplate{
+		Name:    "ddlmodel",
+		Content: ddlModelTemplate,
+		Data: ddlModelData{
+			DDLPath: d.ImportPath,
+			Package: d.Package + modelSuffix,
+			Structs: structs,
+		},
 	}
-	return renderTo("ddlmodel", dst, ddlModelTemplate, data)
+	return generator.RenderGoCodeTo(dst, tmpl)
 }
