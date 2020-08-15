@@ -2,20 +2,20 @@
 
 package gitmodel
 
-// GitOwner is generated from table definition of TODO(tqbuilder): table name
+// GitOwner is generated from table git_owners
 type GitOwner struct {
-	Id     int
-	Type   int
-	HostId int
-	Name   string
+	Id     int    // id
+	Type   int    // type
+	HostId int    // host_id
+	Name   string // name
 }
 
-// GitRepo is generated from table definition of TODO(tqbuilder): table name
+// GitRepo is generated from table git_repos
 type GitRepo struct {
-	Id       int
-	Type     int
-	OwnerId  int
-	Owner    string
-	Name     string
-	Goimport string
+	Id       int    // id
+	Type     int    // type
+	OwnerId  int    // owner_id
+	Owner    string // owner
+	Name     string // name
+	Goimport string // goimport
 }

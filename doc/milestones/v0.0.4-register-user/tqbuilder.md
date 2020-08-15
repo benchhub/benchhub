@@ -247,7 +247,7 @@ type User struct {
 This is a common trick for all query generator like this
 
 - define a struct that contains table definition
-- create a exported instance that can be used directly
+- create an exported instance that can be used directly
 
 ```go
 // package userschema

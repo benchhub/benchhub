@@ -2,10 +2,10 @@
 
 package usermodel
 
-// User is generated from table definition of TODO(tqbuilder): table name
+// User is generated from table users
 type User struct {
-	Id       int
-	Name     string
-	FullName string
-	Email    string
+	Id       int    // id
+	Name     string // name
+	FullName string // full_name
+	Email    string // email
 }
