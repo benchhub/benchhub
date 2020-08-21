@@ -148,6 +148,8 @@ func Tables() []ddl.TableDef {
 
 ### Schema Layout
 
+NOTE: the path shown here is deprecated, see [lib/tqbuilder.md](../../components/lib/tqbuilder.md)
+
 ```text
 benchhub
   build
