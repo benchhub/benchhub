@@ -20,7 +20,25 @@ type GitOwnerTable struct {
 }
 
 func newGitOwner() GitOwnerTable {
-	// TODO: fill in column def etc.
+	return GitOwnerTable{
+
+		Id: ddl.ColumnDef{
+			Name: "id",
+			// Type: "{INT 0}", // FIXME: need to generate columns properly
+		},
+		Type: ddl.ColumnDef{
+			Name: "type",
+			// Type: "{INT 0}", // FIXME: need to generate columns properly
+		},
+		HostId: ddl.ColumnDef{
+			Name: "host_id",
+			// Type: "{INT 0}", // FIXME: need to generate columns properly
+		},
+		Name: ddl.ColumnDef{
+			Name: "name",
+			// Type: "{VARCHAR 255}", // FIXME: need to generate columns properly
+		},
+	}
 }
 
 // ----------------------------------------------------------------------------
@@ -39,5 +57,31 @@ type GitRepoTable struct {
 }
 
 func newGitRepo() GitRepoTable {
-	// TODO: fill in column def etc.
+	return GitRepoTable{
+
+		Id: ddl.ColumnDef{
+			Name: "id",
+			// Type: "{INT 0}", // FIXME: need to generate columns properly
+		},
+		Type: ddl.ColumnDef{
+			Name: "type",
+			// Type: "{INT 0}", // FIXME: need to generate columns properly
+		},
+		OwnerId: ddl.ColumnDef{
+			Name: "owner_id",
+			// Type: "{INT 0}", // FIXME: need to generate columns properly
+		},
+		Owner: ddl.ColumnDef{
+			Name: "owner",
+			// Type: "{VARCHAR 255}", // FIXME: need to generate columns properly
+		},
+		Name: ddl.ColumnDef{
+			Name: "name",
+			// Type: "{VARCHAR 255}", // FIXME: need to generate columns properly
+		},
+		Goimport: ddl.ColumnDef{
+			Name: "goimport",
+			// Type: "{VARCHAR 1024}", // FIXME: need to generate columns properly
+		},
+	}
 }

@@ -237,7 +237,17 @@ type {{ .Struct.Name }} struct {
 }
 
 func new{{ .Name }}() {{ .Struct.Name }} {
-	// TODO: fill in column def etc.
+	return {{ .Struct.Name }}{
+{{ $table := .Table }}
+{{ range $index, $field := .Struct.Fields }}
+	{{ $field.Name }}: ddl.ColumnDef{
+	{{- with index ($table.Columns) $index }}
+		Name: "{{ .Name }}",
+		// Type: "{{ .Type }}", // FIXME: need to generate columns properly
+	{{- end }}
+	},
+{{- end }}
+	}
 }
 {{ end }}
 `
@@ -252,7 +262,7 @@ type ddlSchemaData struct {
 type ddlSchemaTable struct {
 	Name   string
 	Struct structDef
-	Table  ddl.TableDef
+	Table  ddl.TableDef // TODO: it's hard to generate the proper column definition using go template logic
 }
 
 func table2SchemaTable(tbl ddl.TableDef) ddlSchemaTable {

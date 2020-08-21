@@ -10,19 +10,25 @@ type TableDef struct {
 	Columns  []ColumnDef
 }
 
+type Column interface {
+	Name() string
+	Type() DatabaseDef
+	Constraint() ColumnConstraintDef
+}
+
 type ColumnDef struct {
 	Name       string
 	Type       DataTypeDef
 	Constraint ColumnConstraintDef
 }
 
-type DataTypes string
+type DataType string
 
 const (
 	// TODO: split int and int64? though I'd assume the code always run under env w/ int == int64
-	TypeInt     DataTypes = "INT"
-	TypeChar    DataTypes = "CHAR"
-	TypeVarchar DataTypes = "VARCHAR"
+	TypeInt     DataType = "INT"
+	TypeChar    DataType = "CHAR"
+	TypeVarchar DataType = "VARCHAR"
 )
 
 const (
@@ -30,7 +36,7 @@ const (
 )
 
 const (
-	// TODO: not sure about length of common string columns
+	// TODO: figure out a reasonable default string length, might check web framework like ror, laravel etc.
 	// StrSmall is for name, email etc.
 	StrSmall = CharMax
 	// Medium is for path, url etc.
@@ -38,7 +44,7 @@ const (
 )
 
 type DataTypeDef struct {
-	Type   DataTypes
+	Type   DataType
 	Length int
 }
 

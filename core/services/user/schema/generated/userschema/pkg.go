@@ -20,5 +20,23 @@ type UserTable struct {
 }
 
 func newUser() UserTable {
-	// TODO: fill in column def etc.
+	return UserTable{
+
+		Id: ddl.ColumnDef{
+			Name: "id",
+			// Type: "{INT 0}", // FIXME: need to generate columns properly
+		},
+		Name: ddl.ColumnDef{
+			Name: "name",
+			// Type: "{VARCHAR 255}", // FIXME: need to generate columns properly
+		},
+		FullName: ddl.ColumnDef{
+			Name: "full_name",
+			// Type: "{VARCHAR 255}", // FIXME: need to generate columns properly
+		},
+		Email: ddl.ColumnDef{
+			Name: "email",
+			// Type: "{VARCHAR 255}", // FIXME: need to generate columns properly
+		},
+	}
 }

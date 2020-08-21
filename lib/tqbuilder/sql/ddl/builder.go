@@ -32,6 +32,13 @@ func Int(name string) ColumnDef {
 	}
 }
 
+// TODO: use string and switch to different underlying type based on dialect
+func String(name string) ColumnDef {
+	return ColumnDef{
+		Name: name,
+	}
+}
+
 // TODO: change to String and switch underlying type based on length requirement
 func VarChar(name string, length int) ColumnDef {
 	return ColumnDef{

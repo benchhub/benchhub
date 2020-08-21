@@ -11,6 +11,32 @@ See [lib/tqbuilder](../../../lib/tqbuilder). It is a SQL query builder that writ
 
 ## Updates
 
+### 2020-08-20
+
+- flush the design into document, current doc is too outdated.
+- adjust the ast struct, might need to consider changing column definition to interface in ddl, or in dml.
+- consider dialect, even ddl has dialect when it comes to type mapping.
+- might split package
+
+```
+// before
+sql
+  ddl
+    ast.go
+    builder.go
+  dml
+    ast.go
+    builder.go
+// after
+sql
+  ast
+    ddl.go
+    dml.go
+  builder // split into two packages for dot import
+    ddl
+    dml
+```
+
 ### 2020-08-12
 
 I should have finished tqbuilder if the TODO list was correct.
