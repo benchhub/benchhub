@@ -7,7 +7,7 @@ import (
 
 func AllTables() []ast.Table {
 	user := Table("users",
-		PrimaryKey("id"),
+		Id(),
 		String("name", StrSmall),
 		String("email", StrSmall),
 		String("description", StrMedium),

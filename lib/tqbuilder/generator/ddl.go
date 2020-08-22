@@ -4,15 +4,12 @@ import (
 	"io"
 	"path/filepath"
 
-	"github.com/dyweb/gommon/errors"
-
-	"github.com/dyweb/gommon/generator"
-
-	"github.com/dyweb/gommon/util/stringutil"
-
 	"github.com/benchhub/benchhub/lib/plural"
-	"github.com/benchhub/benchhub/lib/tqbuilder/sql/ddl"
+	"github.com/benchhub/benchhub/lib/tqbuilder/sql/ast"
+	"github.com/dyweb/gommon/errors"
+	"github.com/dyweb/gommon/generator"
 	"github.com/dyweb/gommon/util/fsutil"
+	"github.com/dyweb/gommon/util/stringutil"
 )
 
 // ----------------------------------------------------------------------------
@@ -52,7 +49,7 @@ func run() error {
 		{
 			ImportPath: "{{ .Path }}",
 			Package: "{{ .Package }}",
-			Tables: {{ .Name }}.Tables(),
+			Tables: {{ .Name }}.AllTables(),
 			OutputPath: "{{ .OutputPath }}",
 		},
 {{- end }}
@@ -81,10 +78,10 @@ type ddlImport struct {
 // DDLTables contains tables definitions from a go a package.
 // It is used by GenDDL to generate actual struct, table schema, SQL etc.
 type DDLTables struct {
-	ImportPath string         // import path
-	Package    string         // copied from DDLImport name for generating new package name. e.g. user -> usermodel
-	Tables     []ddl.TableDef // from user defined schema, we expect the package has a `Tables() []ddl.TableDef` method
-	OutputPath string         // copied from DDLImport, e.g. core/services/user/schema/generated
+	ImportPath string      // import path
+	Package    string      // copied from DDLImport name for generating new package name. e.g. user -> usermodel
+	Tables     []ast.Table // from user defined schema, we expect the package has a `Tables() []ddl.TableDef` method
+	OutputPath string      // copied from DDLImport, e.g. core/services/user/schema/generated
 }
 
 // GenDDLMain generates a main.go file that will do the real code generation when executed.
@@ -123,7 +120,7 @@ func GenDDL(d DDLTables) error {
 		generator func(dst io.Writer, d DDLTables) error
 	}{
 		{modelSuffix, genDDLModel},
-		{schemaSuffix, gentDDLSchema},
+		//{schemaSuffix, gentDDLSchema},
 		// TODO: markdown, sql
 	}
 	merr := errors.NewMulti()
@@ -172,14 +169,14 @@ type ddlModelData struct {
 	Structs []structDef
 }
 
-func table2GoModel(tbl ddl.TableDef) structDef {
+func table2GoModel(tbl ast.Table) structDef {
 	var fields []fieldDef
 	for _, col := range tbl.Columns {
 		// TODO: it is possible to add struct tags for runtime reflection etc.
 		fields = append(fields, fieldDef{
-			Column: col.Name,
-			Name:   stringutil.SnakeToCamel(col.Name),
-			Type:   col.Type.GoType(),
+			Column: col.Name(),
+			Name:   stringutil.SnakeToCamel(col.Name()),
+			Type:   col.GoType(),
 		})
 	}
 	structName := plural.ToSingular(tbl.Name)
@@ -262,15 +259,15 @@ type ddlSchemaData struct {
 type ddlSchemaTable struct {
 	Name   string
 	Struct structDef
-	Table  ddl.TableDef // TODO: it's hard to generate the proper column definition using go template logic
+	Table  ast.Table // TODO: it's hard to generate the proper column definition using go template logic
 }
 
-func table2SchemaTable(tbl ddl.TableDef) ddlSchemaTable {
+func table2SchemaTable(tbl ast.Table) ddlSchemaTable {
 	var fields []fieldDef
 	for _, col := range tbl.Columns {
 		fields = append(fields, fieldDef{
-			Column: col.Name,
-			Name:   stringutil.SnakeToCamel(col.Name),
+			Column: col.Name(),
+			Name:   stringutil.SnakeToCamel(col.Name()),
 			Type:   "ddl.ColumnDef",
 		})
 	}

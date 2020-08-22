@@ -7,8 +7,8 @@ import (
 	"github.com/dyweb/gommon/errors"
 	dlog "github.com/dyweb/gommon/log"
 
-	gitddl "github.com/benchhub/benchhub/core/services/git/schema/ddl"
-	userddl "github.com/benchhub/benchhub/core/services/user/schema/ddl"
+	gitddl "github.com/benchhub/benchhub/core/services/git/db/spec/ddl"
+	userddl "github.com/benchhub/benchhub/core/services/user/db/spec/ddl"
 )
 
 var (
@@ -26,16 +26,16 @@ func run() error {
 	ddls := []generator.DDLTables{
 
 		{
-			ImportPath: "github.com/benchhub/benchhub/core/services/git/schema/ddl",
+			ImportPath: "github.com/benchhub/benchhub/core/services/git/db/spec/ddl",
 			Package:    "git",
-			Tables:     gitddl.Tables(),
-			OutputPath: "core/services/git/schema/generated",
+			Tables:     gitddl.AllTables(),
+			OutputPath: "core/services/git/db/generated",
 		},
 		{
-			ImportPath: "github.com/benchhub/benchhub/core/services/user/schema/ddl",
+			ImportPath: "github.com/benchhub/benchhub/core/services/user/db/spec/ddl",
 			Package:    "user",
-			Tables:     userddl.Tables(),
-			OutputPath: "core/services/user/schema/generated",
+			Tables:     userddl.AllTables(),
+			OutputPath: "core/services/user/db/generated",
 		},
 	}
 	merr := errors.NewMultiErr()

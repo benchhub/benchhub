@@ -9,8 +9,8 @@ import (
 )
 
 func TestExtractPath(t *testing.T) {
-	ep, err := generator.ExtractPath("core/services/user/schema/ddl", "github.com/benchhub/benchhub")
+	ep, err := generator.ExtractPath("core/services/user/db/spec/ddl", "github.com/benchhub/benchhub")
 	require.Nil(t, err)
 	assert.Equal(t, "user", ep.Package)
-	assert.Equal(t, "core/services/user/schema/generated", ep.OutputPath)
+	assert.Equal(t, "core/services/user/db/generated", ep.OutputPath)
 }

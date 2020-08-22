@@ -14,18 +14,14 @@ func Table(name string, cols ...ast.Column) ast.Table {
 	}
 }
 
+// ----------------------------------------------------------------------------
+// Columns of different data type
+
 func Columns(cols ...ast.Column) []ast.Column {
 	return cols
 }
 
-func PrimaryKey(name string) *ast.IntColumn {
-	s := Int(name)
-	s.SetConstraint(ast.Constraint{
-		PrimaryKey: true,
-	})
-	return s
-}
-
+// TODO: allow setting constraints using variadic args
 func Int(name string) *ast.IntColumn {
 	s := ast.IntColumn{}
 	s.SetName(name)
@@ -46,4 +42,20 @@ func String(name string, capacity int) *ast.StringColumn {
 	s := ast.StringColumn{Cap: capacity}
 	s.SetName(name)
 	return &s
+}
+
+// ----------------------------------------------------------------------------
+// Common Columns
+
+func PrimaryKey(name string) *ast.IntColumn {
+	s := Int(name)
+	s.SetConstraint(ast.Constraint{
+		PrimaryKey: true,
+	})
+	return s
+}
+
+// Id returns a PrimaryKey column with name `id`
+func Id() *ast.IntColumn {
+	return PrimaryKey("id")
 }

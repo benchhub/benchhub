@@ -67,6 +67,10 @@ core
                        pkg.go // high level function that calls compiled SQL query
 ```
 
+## Workflow
+
+- user write a driver to trigger the first generator, e.g. [bhgen/schema.go](../../../cmd/bhgen/schema.go)
+
 ## DDL
 
 ### Define DDL

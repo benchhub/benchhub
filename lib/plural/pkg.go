@@ -1,6 +1,7 @@
 // Package plural converts word between plural and singular.
 // FIXME: this is a hack for tqbuilder, should got replaced by other packages eventually.
 // TODO: move the package to gommon when it actually works, or move it even when it is not working ...
+// TODO: ref https://github.com/jinzhu/inflection
 package plural
 
 var p2s = map[string]string{
