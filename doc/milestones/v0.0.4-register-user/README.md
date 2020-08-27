@@ -3,7 +3,7 @@
 ## TODO
 
 - [ ] forgot example
-- [ ] http api? we can mount the logic in both http and grpc server, this should make ui life easier
+- [ ] http api? we can mount the logic in both http and grpc server, this should make ui life easier.
   - or we could use grpc gateway etc.
 
 Done

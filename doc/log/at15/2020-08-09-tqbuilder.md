@@ -11,6 +11,10 @@ See [lib/tqbuilder](../../../lib/tqbuilder). It is a SQL query builder that writ
 
 ## Updates
 
+## 2020-08-27
+
+- Honestly, we can write database logic w/o tqbuilder using existing tools, we can switch to tqbuilder later ...
+
 ### 2020-08-20
 
 - flush the design into document, current doc is too outdated.
