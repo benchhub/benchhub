@@ -18,9 +18,11 @@ func main() {
 			return nil
 		},
 		Children: []dcli.Command{
+			CmdCore(),
+			// Actions
 			CmdRegister(),
+			// Services
 			CmdUser(),
-			CmdServer(),
 		},
 	}
 	dcli.RunApplication(root)

@@ -1,5 +1,9 @@
 # 2020-08-27 Registry in Git
 
+## TODO
+
+- [ ] design, we can even use brutal force because it is fast enough when the registry is small
+
 ## Background
 
 While working on dyweb/pm, user saves document in a directory tracked by git.
