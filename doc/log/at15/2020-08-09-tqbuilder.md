@@ -46,7 +46,7 @@ sql
 I should have finished tqbuilder if the TODO list was correct.
 However, like most TODO list, `cp -r this-year next-year`.
 
-Some extra time is spent on designing the runtime and job interface.
+Some extra time was spent on designing the runtime and job interface.
 Those work can happen in parallel and there should be not that much work in register user, project etc.
 
 Though I might still want to think more on how the registry work (for merging multiple benchhub instances etc.)
@@ -106,3 +106,28 @@ Or it we want to have a longer URL, mount each under different paths
         tongqu
             tongqu7        
 ```
+
+### 2020-08-09
+
+Another thing that came to mind is triggering test/benchmark of one project if it is upstream project has changed.
+This requires a **global** static view of the source code (which is easier to implement and reason about in a mono repo).
+We can't force all the projects (repos) in a benchhub instance in one git repo, but we can force a mono id in benchhub.
+
+The mono id is generated in this way, kind of like a merkel tree.
+If the top level hash didn't change, then the entire repo hasn't changed.
+
+```
+trigger = select {
+    timer // e.g. 1min
+    webhook // e.g. projects added in this github instance
+}
+
+for _, project in projects {
+    newHash = github.get(project).lastestCommit
+    if newHash != oldHash {
+        updateParent
+    }
+}
+```
+
+It is also possible to branch out entire benchhub project tree, so some projects can specify a different branch
